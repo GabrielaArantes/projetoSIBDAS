@@ -1,0 +1,56 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: lch(70.19% 20.63 156.35);
+    color: white;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;   
+    gap: 10px;
+    margin-left: 0;
+}
+
+.navbar .logo img {
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    padding: 0;
+}   
+
+.navbar nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.navbar nav a:hover {
+    text-decoration: underline;
+}
+
+section {
+    padding: 40px;
+    text-align: center;
+}
+
+section h2 {
+    font-size: 28px;
+    color: lch(70.19% 20.63 156.35);
+}
+
+section p {
+    font-size: 18px;
+    color: #333;
+}
+
+footer {
+    background-color: lch(70.19% 20.63 156.35);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+}
