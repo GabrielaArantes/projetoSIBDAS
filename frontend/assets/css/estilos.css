@@ -123,3 +123,46 @@ footer {
 main {
     position: relative;   
 }
+
+.sobre-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 120px;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+.sobre-content {
+    max-width: 600px;
+    text-align: left;
+}
+
+.sobre-vantagens {
+    flex:1;
+    text-align: left;
+    background-color: lch(89.09% 6.27 157.56);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    border: 1 px solid #ddd;
+}
+
+
+.sobre-vantagens h3 {
+    font-size: 24px;
+    color: lch(70.19% 20.63 156.35);
+    margin-bottom: 15px;
+}
+
+.sobre-vantagens ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sobre-vantagens li {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333; 
+}
