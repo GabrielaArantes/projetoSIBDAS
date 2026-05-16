@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 450px;
+    gap: 470px;
     padding: 10px 20px;
     background-color: lch(70.19% 20.63 156.35);
     color: white;
@@ -41,13 +41,12 @@
 }
 
 .btn-login {
-    background-color:  lch(49.74% 33.5 153.61);
-    color: white;
+    background-color: lch(70.19% 20.63 156.35) ;
+    color: lch(49.74% 33.5 153.61);
     padding: 8px 20px;
     margin-left: 10px;
     border-radius: 6px;
     font-weight: 600;
-    transition: 0.3s ease;
 }
 
 .btn-login:hover {
@@ -74,13 +73,16 @@ section p {
     line-height: 1.6; 
 }
 
+#sobre {
+    background-color: #f9f9f9;
+    padding: 60px 40px;
+}
+
 .imagem {
     position: relative;
     width: 100%;
     height: 450px;
     overflow: hidden;
-    margin: 0;
-    padding: 0;
 }
 
 .imagem img {
@@ -98,27 +100,13 @@ footer {
     margin-top: 0;
 }
 
-.imagem {
-    position: relative;
-    width: 100%;
-    height: 450px;
-    overflow: hidden;
-}
-
-.imagem img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(60%);
-}
-
 .intro {
     position: absolute;
-    top: 50%;               
-    left: 50%;              
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    z-index: 2;           
+    z-index: 2;
     width: 80%;
 }
 
