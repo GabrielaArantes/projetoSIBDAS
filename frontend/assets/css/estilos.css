@@ -166,3 +166,57 @@ main {
     margin-bottom: 10px;
     color: #333; 
 }
+
+#funcionalidades {
+    background-color: #f9f9f9;
+    padding: 60px 40px;
+}
+
+.funcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+.funcontent,
+.funlista {
+    flex: 1;
+    text-align: left;
+}   
+
+.funlista {
+    background-color: lch(89.09% 6.27 157.56);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    border: 1 px solid #ddd;
+}
+
+.funlista h3 {
+    font-size: 24px;
+    color: lch(70.19% 20.63 156.35);
+    margin-bottom: 15px;
+}
+
+.funlista ul {
+    list-style: none;
+    padding: 0;
+}
+
+.funlista li {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333; 
+    font-weight: 400;
+}
+
+.separador {
+    width: 80%;
+    margin: 40px auto;
+    border: none;
+    border-top: 2px solid #ddd; 
+}
