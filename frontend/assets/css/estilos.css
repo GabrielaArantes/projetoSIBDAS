@@ -220,3 +220,67 @@ main {
     border: none;
     border-top: 2px solid #ddd; 
 }
+
+#contactos {
+    background-color: #f9f9f9;
+    padding: 60px 40px;
+}
+
+.contactocontainer {
+    max-width: 1300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contactoscontainer h2 {
+    font-size: 28px;
+    color: lch(70.19% 20.63 156.35);
+    margin-bottom: 15px;
+}
+
+.contactoscontainer p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 40px; 
+}
+
+.contactosform {
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    border: 1 px solid #ddd;
+    text-align: left;
+}
+
+.contactosform label {
+    font-size: 16px;
+    color: #333;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.contactosform input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.contactosform button {
+    background-color: lch(70.19% 20.63 156.35);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.contactosform button:hover {
+    background-color: lch(49.74% 33.5 153.61);
+}
+
