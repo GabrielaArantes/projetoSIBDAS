@@ -102,12 +102,33 @@ section p {
     filter: brightness(60%);
 }
 
-footer {
+.footercontainer {
+    display: flex;
+    align-items: flex-start;
     background-color: lch(70.19% 20.63 156.35);
     color: white;
+    padding: 20px 20px;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.footersection {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
     text-align: center;
-    padding: 15px;
-    margin-top: 0;
+}
+
+.footersection strong {
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.footersection p {
+    font-size: 16px;
+    margin-bottom: 8px;
 }
 
 .intro {
