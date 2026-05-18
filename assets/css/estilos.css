@@ -406,3 +406,67 @@ main {
         padding: 20px;
     }
 }
+
+.login-page {
+    background-color: #e8f5e9; /* verde muito claro */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-card {
+    background-color: white;
+    width: 100%;
+    max-width: 420px;
+    padding: 35px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15); /* sombra simples */
+    text-align: center;
+}
+
+.login-card img {
+    width: 70px;
+    margin-bottom: 10px;
+}
+
+.login-card h2 {
+    color: lch(49.74% 33.5 153.61); /* verde escuro */
+    font-size: 26px;
+    margin-bottom: 25px;
+}
+
+.login-card label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid lch(89.09% 6.27 157.56); /* verde clarinho */
+    border-radius: 6px;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    background-color: lch(49.74% 33.5 153.61); /* verde escuro */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.login-card button:hover {
+    background-color: lch(70.19% 20.63 156.35); /* verde médio */
+}
