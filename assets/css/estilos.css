@@ -9,17 +9,17 @@
     justify-content: space-between;
     align-items: center;
 
-    height: 100px; 
-    padding: 0 40px; 
+    height: 100px;
+    padding: 0 40px;
 
     background-color: lch(70.19% 20.63 156.35);
     color: white;
-    
+
 }
 
 .navbar .logo {
     display: flex;
-    align-items: center;   
+    align-items: center;
     gap: 10px;
     margin-left: 0;
 }
@@ -29,7 +29,7 @@
     height: 50px;
     margin: 0;
     padding: 0;
-}   
+}
 
 .menu {
     display: flex;
@@ -50,7 +50,7 @@
 }
 
 .btn-login {
-    background-color: lch(70.19% 20.63 156.35) ;
+    background-color: lch(70.19% 20.63 156.35);
     color: lch(49.74% 33.5 153.61);
     padding: 8px 20px;
     border-radius: 6px;
@@ -72,7 +72,7 @@ section h2 {
 section p {
     font-size: 18px;
     color: #333;
-    line-height: 1.6; 
+    line-height: 1.6;
 }
 
 #sobre {
@@ -145,7 +145,7 @@ section p {
 }
 
 main {
-    position: relative;   
+    position: relative;
 }
 
 .sobre-container {
@@ -164,7 +164,7 @@ main {
 }
 
 .sobre-vantagens {
-    flex:1;
+    flex: 1;
     text-align: left;
     background-color: lch(89.09% 6.27 157.56);
     padding: 25px;
@@ -187,7 +187,7 @@ main {
 .sobre-vantagens li {
     font-size: 18px;
     margin-bottom: 10px;
-    color: #333; 
+    color: #333;
 }
 
 #funcionalidades {
@@ -199,7 +199,7 @@ main {
     width: 80%;
     margin: 40px auto;
     border: none;
-    border-top: 2px solid #ddd; 
+    border-top: 2px solid #ddd;
 }
 
 #contactos {
@@ -222,7 +222,7 @@ main {
 .contactoscontainer p {
     font-size: 18px;
     color: #333;
-    margin-bottom: 40px; 
+    margin-bottom: 40px;
 }
 
 .contactosform {
@@ -306,7 +306,7 @@ main {
 
 .funicon {
     display: flex;
-    align-items: center;    
+    align-items: center;
     gap: 12px;
     flex-direction: column;
 }
@@ -320,4 +320,89 @@ main {
     font-size: 16px;
     color: #333;
     margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+
+    .navbar {
+        padding: 15px;
+    }
+
+    .menu a {
+        font-size: 16px;
+        margin: 5px;
+    }
+
+    .intro h2 {
+        font-size: 26px;
+    }
+
+    .intro p {
+        font-size: 15px;
+    }
+
+    .sobre-content p {
+        font-size: 16px;
+    }
+
+    .sobre-vantagens {
+        padding: 18px;
+    }
+
+    .sobre-vantagens h3 {
+        font-size: 20px;
+    }
+
+    .sobre-vantagens li {
+        font-size: 15px;
+        margin-bottom: 6px;
+    }
+
+    .funicon {
+        width: 100%;
+    }
+
+    .contactosform {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 900px) {
+
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .sobre-container {
+        flex-direction: column;
+        gap: 40px;
+        padding: 20px;
+    }
+
+    .sobre-content,
+    .sobre-vantagens {
+        max-width: 100%;
+    }
+
+    .funlista {
+        gap: 30px;
+    }
+
+    .funicon {
+        width: 45%;
+    }
+
+    .contactosform {
+        padding: 20px;
+    }
 }
