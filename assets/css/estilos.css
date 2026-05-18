@@ -35,7 +35,6 @@
     display: flex;
     align-items: center;
     gap: 30px;
-    margin-top: center;
 }
 
 .menu a {
@@ -62,13 +61,6 @@
 .btn-login:hover {
     background-color: lch(49.74% 33.5 153.61);
     color: white;
-}
-
-section {
-    padding: 0;
-    margin: 0;
-    max-width: 100%;
-    text-align: center;
 }
 
 section h2 {
@@ -178,7 +170,6 @@ main {
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    border: 1 px solid #ddd;
 }
 
 
@@ -202,48 +193,6 @@ main {
 #funcionalidades {
     background-color: #f9f9f9;
     padding: 60px 40px;
-}
-
-.funcontainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 40px 0;
-}
-
-.funcontent,
-.funlista {
-    flex: 1;
-    text-align: left;
-}   
-
-.funlista {
-    background-color: lch(89.09% 6.27 157.56);
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    border: 1 px solid #ddd;
-}
-
-.funlista h3 {
-    font-size: 24px;
-    color: lch(70.19% 20.63 156.35);
-    margin-bottom: 15px;
-}
-
-.funlista ul {
-    list-style: none;
-    padding: 0;
-}
-
-.funlista li {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #333; 
-    font-weight: 400;
 }
 
 .separador {
@@ -281,7 +230,6 @@ main {
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    border: 1 px solid #ddd;
     text-align: left;
 }
 
@@ -316,3 +264,60 @@ main {
     background-color: lch(49.74% 33.5 153.61);
 }
 
+.funcontainer {
+    padding: 50px 40px;
+    text-align: center;
+}
+
+.funcontent {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+}
+
+.funcontent h2 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.funcontent p {
+    font-size: 18px;
+    color: #333;
+}
+
+.funlista {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    text-align: center
+}
+
+.funlista h3 {
+    font-size: 24px;
+    color: lch(70.19% 20.63 156.35);
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 700;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.funicon {
+    display: flex;
+    align-items: center;    
+    gap: 12px;
+    flex-direction: column;
+}
+
+.funicon img {
+    width: 60px;
+    height: 60px;
+}
+
+.funicon p {
+    font-size: 16px;
+    color: #333;
+    margin-top: 8px;
+}

@@ -1,0 +1,13 @@
+e48524d - Gabriela - 2026-05-17 00:31:03 +0100 - 13- Atualização do footer: correção de layout e classes
+0964a2e - Gabriela - 2026-05-17 00:14:48 +0100 - 12- Implementação da navbar fixa e ajuste do seu layout
+a638c38 - Gabriela - 2026-05-16 23:53:57 +0100 - 11- implementação dos conatctos e layout
+d9a104b - Gabriela - 2026-05-16 22:49:20 +0100 - 10- implementação das funcionalidades e layout, criação de separador
+bc394e7 - Gabriela - 2026-05-16 22:33:01 +0100 - 9- implementação da caixa de vantagens e correção do CSS da secção "sobre"
+d64d9b6 - Gabriela - 2026-05-16 15:18:12 +0100 - 8- correções no css
+589a8cb - Gabriela - 2026-05-16 15:11:51 +0100 - 7- "sobre" e estilo.css
+bd9c0d0 - Gabriela - 2026-05-16 14:46:36 +0100 - 6- melhorias no estilos.css
+b3a1b23 - Gabriela - 2026-05-16 01:01:23 +0100 - 5- ajustes no css
+f4eee94 - Gabriela - 2026-05-16 00:39:07 +0100 - 4- ajustes na navbar + css
+4683f06 - Gabriela - 2026-05-16 00:12:00 +0100 - 3- atualização da estrutura
+4690b57 - Gabriela - 2026-05-15 23:51:15 +0100 - 2- "Configuração inicial do head"
+52a2f84 - Gabriela - 2026-05-15 23:21:12 +0100 - Commit inicial
