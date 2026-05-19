@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Equipamento - MedStock</title>
+
+    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/estilos.css">
+    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
+</head>
+
+<body class="backoffice">
+
+    <aside class="sidebar">
+        <h2>MedStock</h2>
+        <nav>
+            <a href="../equipamentos/listar.html"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
+            <a href="../fornecedores/listar.html"><i class="fa-solid fa-truck"></i> Fornecedores</a>
+            <a href="../localizacao/listar.html"><i class="fa-solid fa-location-dot"></i> Localização</a>
+            <a href="../garantcontrato/listar.html"><i class="fa-solid fa-file-contract"></i> Garantias/Contratos</a>
+            <a href="../documentacao/listar.html"><i class="fa-solid fa-folder-open"></i> Documentação</a>
+            <a href="../dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        </nav>
+    </aside>
+
+    <main class="conteudo">
+        <h1>Editar Equipamento</h1>
+
+        <form class="mt-4">
+
+            <div class="mb-3">
+                <label class="form-label">Nome do Equipamento</label>
+                <input type="text" class="form-control" value="Monitor Cardíaco">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Categoria</label>
+                <input type="text" class="form-control" value="Monitorização">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Localização</label>
+                <select class="form-select">
+                    <option>Bloco Operatório</option>
+                    <option selected>Urgências</option>
+                    <option>Cuidados Intensivos</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Estado</label>
+                <select class="form-select">
+                    <option selected>Ativo</option>
+                    <option>Inativo</option>
+                    <option>Em Manutenção</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <textarea class="form-control" rows="4">Equipamento utilizado para monitorização cardíaca contínua.</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-warning">
+                <i class="fa-solid fa-pen"></i> Atualizar
+            </button>
+
+            <a href="listar.html" class="btn btn-secondary ms-2">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+
+        </form>
+    </main>
+
+</body>
+</html>
