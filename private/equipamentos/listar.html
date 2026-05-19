@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedStock - Gestão de Equipamentos</title>
+
+    <link rel="stylesheet" href="../assets/css/estilos.css">
+    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
+</head>
+
+<body class="backoffice">
+
+    <aside class="sidebar">
+        <h2>MedStock</h2>
+        <nav>
+            <a href="listar.html"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
+            <a href="../fornecedores/listar.html"><i class="fa-solid fa-truck"></i> Fornecedores</a>
+            <a href="../localizacao/listar.html"><i class="fa-solid fa-location-dot"></i> Localização</a>
+            <a href="../garantcontrato/listar.html"><i class="fa-solid fa-file-contract"></i> Garantias/Contratos</a>
+            <a href="../documentacao/listar.html"><i class="fa-solid fa-folder-open"></i> Documentação</a>
+            <a href="../dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        </nav>
+    </aside>
+
+    <main class="conteudo">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Equipamentos</h1>
+            <a href="inserir.html" class="btn btn-success">
+                <i class="fa-solid fa-plus"></i> Adicionar Equipamento
+            </a>
+        </div>
+
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead class="table-success">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Localização</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Monitor Cardíaco</td>
+                    <td>Monitorização</td>
+                    <td>Bloco Operatório</td>
+                    <td>Ativo</td>
+                    <td>
+                        <a href="detalhes.html" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="editar.html" class="btn btn-warning btn-sm">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a href="eliminar.html" class="btn btn-danger btn-sm">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+</body>
+</html>
