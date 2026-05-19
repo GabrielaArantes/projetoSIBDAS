@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedStock - Eliminar Equipamentos</title>
+
+    <link rel="stylesheet" href="../../assets/css/estilos.css">
+    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="pagprivada">
+
+    <aside class="sidebar">
+
+        <nav>
+            <a href="../index.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="listar.html"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
+            <a href="../fornecedores/listar.html"><i class="fa-solid fa-truck"></i> Fornecedores</a>
+            <a href="../localizacao/listar.html"><i class="fa-solid fa-location-dot"></i> Localização</a>
+            <a href="../garantcontrato/listar.html"><i class="fa-solid fa-file-contract"></i> Garantias/Contratos</a>
+            <a href="../documentacao/listar.html"><i class="fa-solid fa-folder-open"></i> Documentação</a>
+        </nav>
+    </aside>
+
+    <header class="topbar">
+        <div class="logo-topbar">
+            <img src="../../assets/img/logHospital.png" alt="Logo MedStock">
+            <h1>MedStock</h1>
+        </div>
+    </header>
+
+    <main class="conteudo p-4">
+
+        <div class="d-flex justify-content-center mt-4">
+            <div class="card w-100 shadow rounded p-4" style="max-width: 900px;">
+
+                <h2 class="text-center mb-4">
+                    <i class="fa-solid fa-circle-info me-2"></i>
+                    Detalhes do Equipamento
+                </h2>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Código Interno:</label>
+                        <p id="codigo_interno"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Designação:</label>
+                        <p id="designacao"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Categoria / Grupo:</label>
+                        <select class="form-select" disabled>
+                            <option value="">Selecione a categoria</option>
+                            <option value="Monitorização">Monitorização</option>
+                            <option value="Suporte de vida">Suporte de vida</option>
+                            <option value="Terapia">Terapia</option>
+                            <option value="Diagnóstico">Diagnóstico</option>
+                            <option value="Laboratório">Laboratório</option>
+                            <option value="Esterilização">Esterilização</option>
+                            <option value="Reabilitação">Reabilitação</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Marca:</label>
+                        <p id="marca"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Modelo:</label>
+                        <p id="modelo"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Número de Série:</label>
+                        <p id="numero_serie"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Fabricante:</label>
+                        <p id="fabricante"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Data de Aquisição:</label>
+                        <p id="data_aquisicao"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Ano de Fabrico:</label>
+                        <p id="ano_fabrico"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Custo de Aquisição:</label>
+                        <p id="custo_aquisicao"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Tipo de Entrada:</label>
+                        <p id="tipo_entrada"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Estado Atual:</label>
+                        <select class="form-select" disabled>
+                            <option value="">Selecione o estado</option>
+                            <option value="Ativo">Ativo</option>
+                            <option value="Em manutenção">Em manutenção</option>
+                            <option value="Inativo">Inativo</option>
+                            <option value="Em calibração">Em calibração</option>
+                            <option value="Em quarentena">Em quarentena</option>
+                            <option value="Abatido">Abatido</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-bold">Criticidade:</label>
+                        <select class="form-select" disabled>
+                            <option value="">Selecione a criticidade</option>
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Suporte de vida">Suporte de vida</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="fw-bold">Observações:</label>
+                        <p id="observacoes"></p>
+                    </div>
+
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="listar.html" class="btn btn-secondary px-4">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Voltar
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </main>

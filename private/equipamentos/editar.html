@@ -32,54 +32,140 @@
         </div>
     </header>
 
-    <main class="conteudo">
+    <main class="conteudo p-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Editar Equipamento</h1>
+        <a href="listar.html" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
 
-        <form class="mt-4">
+    <form action="atualizar.php" method="POST" class="shadow p-4 rounded bg-white" style="max-width: 900px; margin: auto;">
 
-            <div class="mb-3">
-                <label class="form-label">Nome do Equipamento</label>
-                <input type="text" class="form-control" value="Monitor Cardíaco">
-            </div>
+        <!-- ID oculto -->
+        <input type="hidden" name="id" value="">
 
-            <div class="mb-3">
-                <label class="form-label">Categoria</label>
-                <input type="text" class="form-control" value="Monitorização">
-            </div>
+        <!-- Código Interno -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Código Interno de Inventário</label>
+            <input type="text" name="codigo_interno" class="form-control" value="" required>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Localização</label>
-                <select class="form-select">
-                    <option>Bloco Operatório</option>
-                    <option selected>Urgências</option>
-                    <option>Cuidados Intensivos</option>
-                </select>
-            </div>
+        <!-- Designação -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Designação do Equipamento</label>
+            <input type="text" name="designacao" class="form-control" value="" required>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Estado</label>
-                <select class="form-select">
-                    <option selected>Ativo</option>
-                    <option>Inativo</option>
-                    <option>Em Manutenção</option>
-                </select>
-            </div>
+        <!-- Categoria -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Categoria / Grupo</label>
+            <select name="categoria" class="form-select" required>
+                <option value="">Selecione a categoria</option>
+                <option value="Monitorização">Monitorização</option>
+                <option value="Suporte de vida">Suporte de vida</option>
+                <option value="Terapia">Terapia</option>
+                <option value="Diagnóstico">Diagnóstico</option>
+                <option value="Laboratório">Laboratório</option>
+                <option value="Esterilização">Esterilização</option>
+                <option value="Reabilitação">Reabilitação</option>
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Descrição</label>
-                <textarea class="form-control" rows="4">Equipamento utilizado para monitorização cardíaca contínua.</textarea>
-            </div>
+        <!-- Marca -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Marca</label>
+            <input type="text" name="marca" class="form-control" value="" required>
+        </div>
 
-            <button type="submit" class="btn btn-warning">
-                <i class="fa-solid fa-pen"></i> Atualizar
-            </button>
+        <!-- Modelo -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Modelo</label>
+            <input type="text" name="modelo" class="form-control" value="" required>
+        </div>
 
-            <a href="listar.html" class="btn btn-secondary ms-2">
-                <i class="fa-solid fa-arrow-left"></i> Voltar
-            </a>
+        <!-- Número de Série -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Número de Série</label>
+            <input type="text" name="numero_serie" class="form-control" value="" required>
+        </div>
 
-        </form>
-    </main>
+        <!-- Fabricante -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Fabricante</label>
+            <input type="text" name="fabricante" class="form-control" value="" required>
+        </div>
 
+        <!-- Data de Aquisição -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Data de Aquisição</label>
+            <input type="date" name="data_aquisicao" class="form-control" value="" required>
+        </div>
+
+        <!-- Ano de Fabrico -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Ano de Fabrico</label>
+            <input type="number" name="ano_fabrico" class="form-control" min="1900" max="2100" value="" required>
+        </div>
+
+        <!-- Custo de Aquisição -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Custo de Aquisição (€)</label>
+            <input type="number" name="custo_aquisicao" class="form-control" step="0.01" value="" required>
+        </div>
+
+        <!-- Tipo de Entrada -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tipo de Entrada</label>
+            <select name="tipo_entrada" class="form-select" required>
+                <option value="">Selecione o tipo</option>
+                <option value="Compra">Compra</option>
+                <option value="Doação">Doação</option>
+                <option value="Aluguer">Aluguer</option>
+                <option value="Empréstimo">Empréstimo</option>
+            </select>
+        </div>
+
+        <!-- Estado Atual -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Estado Atual</label>
+            <select name="estado" class="form-select" required>
+                <option value="">Selecione o estado</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Em manutenção">Em manutenção</option>
+                <option value="Inativo">Inativo</option>
+                <option value="Em calibração">Em calibração</option>
+                <option value="Em quarentena">Em quarentena</option>
+                <option value="Abatido">Abatido</option>
+            </select>
+        </div>
+
+        <!-- Criticidade -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Criticidade</label>
+            <select name="criticidade" class="form-select" required>
+                <option value="">Selecione a criticidade</option>
+                <option value="Baixa">Baixa</option>
+                <option value="Média">Média</option>
+                <option value="Alta">Alta</option>
+                <option value="Suporte de vida">Suporte de vida</option>
+            </select>
+        </div>
+
+        <!-- Observações -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Observações</label>
+            <textarea name="observacoes" class="form-control" rows="4"></textarea>
+        </div>
+
+        <!-- Botão Guardar -->
+        <button type="submit" class="btn btn-primary w-100 mt-3">
+            <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Alterações
+        </button>
+
+    </form>
+
+</main>
 </body>
 </html>

@@ -32,55 +32,137 @@
         </div>
     </header>
 
-    <main class="conteudo">
-        <h1>Adicionar Novo Equipamento</h1>
+    <main class="conteudo p-4">
 
-         <form class="mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Inserir Equipamento</h1>
+        <a href="listar.html" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
 
-            <div class="mb-3">
-                <label class="form-label">Nome do Equipamento</label>
-                <input type="text" class="form-control" placeholder="Ex: Monitor Cardíaco">
-            </div>
+    <form action="guardar.php" method="POST" class="shadow p-4 rounded bg-white" style="max-width: 900px; margin: auto;">
 
-            <div class="mb-3">
-                <label class="form-label">Categoria</label>
-                <input type="text" class="form-control" placeholder="Ex: Monitorização">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Localização</label>
-                <select class="form-select">
-                    <option selected disabled>Selecione...</option>
-                    <option>Bloco Operatório</option>
-                    <option>Urgências</option>
-                    <option>Cuidados Intensivos</option>
-                </select>
-            </div>
-
+        <!-- Código Interno -->
         <div class="mb-3">
-                <label class="form-label">Estado</label>
-                <select class="form-select">
-                    <option>Ativo</option>
-                    <option>Inativo</option>
-                    <option>Em Manutenção</option>
-                </select>
-            </div>
+            <label class="form-label fw-bold">Código Interno de Inventário</label>
+            <input type="text" name="codigo_interno" class="form-control" required>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Descrição</label>
-                <textarea class="form-control" rows="4" placeholder="Informações adicionais sobre o equipamento"></textarea>
-            </div>
+        <!-- Designação -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Designação do Equipamento</label>
+            <input type="text" name="designacao" class="form-control" required>
+        </div>
 
-            <button type="submit" class="btn btn-success">
-                <i class="fa-solid fa-check"></i> Guardar
-            </button>
+        <!-- Categoria -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Categoria / Grupo</label>
+            <select name="categoria" class="form-select" required>
+                <option value="">Selecione a categoria</option>
+                <option value="Monitorização">Monitorização</option>
+                <option value="Suporte de vida">Suporte de vida</option>
+                <option value="Terapia">Terapia</option>
+                <option value="Diagnóstico">Diagnóstico</option>
+                <option value="Laboratório">Laboratório</option>
+                <option value="Esterilização">Esterilização</option>
+                <option value="Reabilitação">Reabilitação</option>
+            </select>
+        </div>
 
-            <a href="listar.html" class="btn btn-secondary ms-2">
-                <i class="fa-solid fa-arrow-left"></i> Voltar
-            </a>
-        
-        </form>
-    </main>
+        <!-- Marca -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Marca</label>
+            <input type="text" name="marca" class="form-control" required>
+        </div>
 
+        <!-- Modelo -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Modelo</label>
+            <input type="text" name="modelo" class="form-control" required>
+        </div>
+
+        <!-- Número de Série -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Número de Série</label>
+            <input type="text" name="numero_serie" class="form-control" required>
+        </div>
+
+        <!-- Fabricante -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Fabricante</label>
+            <input type="text" name="fabricante" class="form-control" required>
+        </div>
+
+        <!-- Data de Aquisição -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Data de Aquisição</label>
+            <input type="date" name="data_aquisicao" class="form-control" required>
+        </div>
+
+        <!-- Ano de Fabrico -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Ano de Fabrico</label>
+            <input type="number" name="ano_fabrico" class="form-control" min="1900" max="2100" required>
+        </div>
+
+        <!-- Custo de Aquisição -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Custo de Aquisição (€)</label>
+            <input type="number" name="custo_aquisicao" class="form-control" min="0" required>
+        </div>
+
+        <!-- Tipo de Entrada -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tipo de Entrada</label>
+            <select name="tipo_entrada" class="form-select" required>
+                <option value="">Selecione o tipo</option>
+                <option value="Compra">Compra</option>
+                <option value="Doação">Doação</option>
+                <option value="Aluguer">Aluguer</option>
+                <option value="Empréstimo">Empréstimo</option>
+            </select>
+        </div>
+
+        <!-- Estado Atual -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Estado Atual</label>
+            <select name="estado" class="form-select" required>
+                <option value="">Selecione o estado</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Em manutenção">Em manutenção</option>
+                <option value="Inativo">Inativo</option>
+                <option value="Em calibração">Em calibração</option>
+                <option value="Em quarentena">Em quarentena</option>
+                <option value="Abatido">Abatido</option>
+            </select>
+        </div>
+
+        <!-- Criticidade -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Criticidade</label>
+            <select name="criticidade" class="form-select" required>
+                <option value="">Selecione a criticidade</option>
+                <option value="Baixa">Baixa</option>
+                <option value="Média">Média</option>
+                <option value="Alta">Alta</option>
+                <option value="Suporte de vida">Suporte de vida</option>
+            </select>
+        </div>
+
+        <!-- Observações -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Observações</label>
+            <textarea name="observacoes" class="form-control" rows="4"></textarea>
+        </div>
+
+        <!-- Botão Guardar -->
+        <button type="submit" class="btn btn-success w-100 mt-3">
+            <i class="fa-solid fa-check me-2"></i>Guardar Equipamento
+        </button>
+
+    </form>
+
+</main>
 </body>
 </html>
