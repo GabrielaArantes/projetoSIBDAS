@@ -597,3 +597,38 @@ main {
 .pagprivada .logo-topbar img {
     height: 30px; 
 }
+
+
+.menu-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-box {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 15px;
+    width: 350px;
+    z-index: 20;
+}
+
+.menu-wrapper:hover .menu-box {
+    display: block;
+}
+
+.menu-box label {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.menu-box select,
+.menu-box input {
+    margin-bottom: 12px;
+}
+
+

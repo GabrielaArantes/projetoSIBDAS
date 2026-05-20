@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedStock - Gestão de Equipamentos</title>
 
-     <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/css/estilos.css">
     <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -15,7 +16,7 @@
 <body class="pagprivada">
 
     <aside class="sidebar">
-        
+
         <nav>
             <a href="../index.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="listar.html"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
@@ -37,10 +38,10 @@
             <span>Utilizador</span>
             <i class="fa-solid fa-chevron-down seta"></i>
 
-                <ul class="user-dropdown">
-                    <li><a href="#">Mudar password</a></li>
-                    <li><a href="../public/login.html">Sair</a></li>
-                </ul>
+            <ul class="user-dropdown">
+                <li><a href="#">Mudar password</a></li>
+                <li><a href="../public/login.html">Sair</a></li>
+            </ul>
         </div>
     </header>
 
@@ -51,6 +52,108 @@
                 <i class="fa-solid fa-plus"></i> Adicionar Equipamento
             </a>
         </div>
+
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar..."
+                    name="pesquisa">
+
+                <div class="menu-wrapper">
+                    <button class="btn btn-outline-success">
+                        <i class="fa-solid fa-filter"></i> Filtrar
+                    </button>
+
+                    <div class="menu-box">
+
+                        <div>
+                            <label>Estado</label>
+                            <select class="form-select" name="estado">
+                                <option value="">Todos</option>
+                                <option>Ativo</option>
+                                <option>Inativo</option>
+                                <option>Em manutenção</option>
+                                <option>Abatido</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Categoria</label>
+                            <select class="form-select" name="categoria">
+                                <option value="">Todas</option>
+                                <option>Monitorização</option>
+                                <option>Imagiologia</option>
+                                <option>Laboratório</option>
+                                <option>Cirurgia</option>
+                                <option>Suporte de Vida</option>
+                                <option>Outros</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Localização</label>
+                            <select class="form-select" name="localizacao">
+                                <option value="">Todas</option>
+                                <option>Urgência</option>
+                                <option>Bloco Operatório</option>
+                                <option>UCI</option>
+                                <option>Internamento</option>
+                                <option>Consultas</option>
+                                <option>Armazém</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Criticidade</label>
+                            <select class="form-select" name="criticidade">
+                                <option value="">Todas</option>
+                                <option>Alta</option>
+                                <option>Média</option>
+                                <option>Baixa</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-2">
+                            <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                            <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="menu-wrapper">
+                    <button class="btn btn-outline-primary">
+                        <i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar
+                    </button>
+
+                    <div class="menu-box">
+
+                        <div>
+                            <label>Ordenar por</label>
+                            <select class="form-select" name="ordenar">
+                                <option value="">Selecione...</option>
+                                <option value="ano">Ano de criação</option>
+                                <option value="aquisicao">Data de aquisição</option>
+                                <option value="custo">Custo</option>
+                                <option value="criticidade">Criticidade</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-2">
+                            <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
 
         <table class="table table-striped table-bordered shadow-sm">
             <thead class="table-success">
@@ -63,31 +166,32 @@
                     <th>Ações</th>
                 </tr>
             </thead>
-            
-            <tbody>
-    <tr>
-        <td></td> <!-- ID -->
-        <td></td> <!-- Nome -->
-        <td></td> <!-- Categoria -->
-        <td></td> <!-- Localização -->
-        <td></td> <!-- Estado -->
 
-        <td>
-            <a href="detalhes.html" class="btn btn-primary btn-sm">
-                <i class="fa-solid fa-eye"></i>
-            </a>
-            <a href="editar.html" class="btn btn-warning btn-sm">
-                <i class="fa-solid fa-pen"></i>
-            </a>
-            <a href="eliminar.html" class="btn btn-danger btn-sm">
-                <i class="fa-solid fa-trash"></i>
-            </a>
-        </td>
-    </tr>
-</tbody>
+            <tbody>
+                <tr>
+                    <td></td> <!-- ID -->
+                    <td></td> <!-- Nome -->
+                    <td></td> <!-- Categoria -->
+                    <td></td> <!-- Localização -->
+                    <td></td> <!-- Estado -->
+
+                    <td>
+                        <a href="detalhes.html" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="editar.html" class="btn btn-warning btn-sm">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a href="eliminar.html" class="btn btn-danger btn-sm">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
 
         </table>
     </main>
 
 </body>
+
 </html>
