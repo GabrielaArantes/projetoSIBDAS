@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedStock - Gestão de Fornecedores</title>
 
-     <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/css/estilos.css">
     <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -15,7 +16,7 @@
 <body class="pagprivada">
 
     <aside class="sidebar">
-        
+
         <nav>
             <a href="../index.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="../equipamentos/listar.html"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
@@ -37,10 +38,10 @@
             <span>Utilizador</span>
             <i class="fa-solid fa-chevron-down seta"></i>
 
-                <ul class="user-dropdown">
-                    <li><a href="#">Mudar password</a></li>
-                    <li><a href="../public/login.html">Sair</a></li>
-                </ul>
+            <ul class="user-dropdown">
+                <li><a href="#">Mudar password</a></li>
+                <li><a href="../public/login.html">Sair</a></li>
+            </ul>
         </div>
     </header>
 
@@ -54,6 +55,89 @@
             </a>
         </div>
 
+        <div class="d-flex align-items-center gap-3 mb-4">
+
+            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar fornecedor..."
+                name="pesquisa">
+
+            <div class="menu-wrapper">
+                <button class="btn btn-outline-success">
+                    <i class="fa-solid fa-filter"></i> Filtrar
+                </button>
+
+                <div class="menu-box">
+
+                    <div>
+                        <label>Nome da Empresa</label>
+                        <input type="text" class="form-control" name="nome">
+                    </div>
+
+                    <div>
+                        <label>NIF</label>
+                        <input type="text" class="form-control" name="nif">
+                    </div>
+
+                    <div>
+                        <label>Telefone</label>
+                        <input type="text" class="form-control" name="telefone">
+                    </div>
+
+                    <div>
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="email">
+                    </div>
+
+                    <div>
+                        <label>Tipo de Fornecedor</label>
+                        <select class="form-select" name="tipo">
+                            <option value="">Todos</option>
+                            <option>Fabricante</option>
+                            <option>Distribuidor / Fornecedor Comercial</option>
+                            <option>Assistência Técnica</option>
+                            <option>Fornecedor de Consumíveis</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Pessoa de Contacto</label>
+                        <input type="text" class="form-control" name="pessoa_contacto">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-2">
+                        <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                        <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="menu-wrapper">
+                <button class="btn btn-outline-primary">
+                    <i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar
+                </button>
+
+                <div class="menu-box">
+
+                    <div>
+                        <label>Ordenar por</label>
+                        <select class="form-select" name="ordenar">
+                            <option value="">Selecione...</option>
+                            <option value="nome">Nome</option>
+                            <option value="tipo">Tipo de Fornecedor</option>
+                            <option value="nif">NIF</option>
+                            <option value="equipamentos">Nº de Equipamentos Associados</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-2">
+                        <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
         <table class="table table-striped table-bordered shadow-sm">
             <thead class="table-success">
                 <tr>
@@ -63,18 +147,20 @@
                     <th>Telefone</th>
                     <th>Email</th>
                     <th>Tipo</th>
+                    <th>Pessoa de Contacto</th>
                     <th>Ações</th>
                 </tr>
             </thead>
 
             <tbody>
                 <tr>
-                    <td></td> <!-- ID -->
-                    <td></td> <!-- Nome -->
-                    <td></td> <!-- NIF -->
-                    <td></td> <!-- Telefone -->
-                    <td></td> <!-- Email -->
-                    <td></td> <!-- Tipo -->
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
 
                     <td>
                         <a href="detalhes.html" class="btn btn-primary btn-sm">
@@ -94,4 +180,5 @@
     </main>
 
 </body>
+
 </html>

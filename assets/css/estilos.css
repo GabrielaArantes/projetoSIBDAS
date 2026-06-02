@@ -613,12 +613,15 @@ main {
     border: 1px solid #dcdcdc;
     border-radius: 6px;
     padding: 15px;
-    width: 350px;
+    width: 500px;
     z-index: 20;
+    
+    grid-template-columns: 1fr 1fr;
+    gap:15px;
 }
 
 .menu-wrapper:hover .menu-box {
-    display: block;
+    display: grid;
 }
 
 .menu-box label {
