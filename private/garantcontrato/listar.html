@@ -47,144 +47,139 @@
 
     <main class="conteudo">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Garantias e Contratos</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Garantias e Contratos</h1>
 
-        <a href="inserir.html" class="btn btn-success">
-            <i class="fa-solid fa-plus"></i> Adicionar
-        </a>
-    </div>
-
-    <!-- PESQUISA + FILTRAR + ORDENAR -->
-    <div class="d-flex align-items-center gap-3 mb-4">
-
-        <!-- PESQUISA -->
-        <input type="text" class="form-control" style="width: 250px;"
-               placeholder="Pesquisar garantia / contrato..." name="pesquisa">
-
-        <!-- FILTRAR -->
-        <div class="menu-wrapper">
-            <button class="btn btn-outline-success">
-                <i class="fa-solid fa-filter"></i> Filtrar
-            </button>
-
-            <div class="menu-box">
-
-                <div>
-                    <label>Equipamento</label>
-                    <input type="text" class="form-control" name="equipamento">
-                </div>
-
-                <div>
-                    <label>Fornecedor</label>
-                    <input type="text" class="form-control" name="fornecedor">
-                </div>
-
-                <div>
-                    <label>Tipo</label>
-                    <select class="form-select" name="tipo">
-                        <option value="">Todos</option>
-                        <option>Garantia</option>
-                        <option>Contrato de Manutenção</option>
-                        <option>Assistência Técnica</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>Estado</label>
-                    <select class="form-select" name="estado">
-                        <option value="">Todos</option>
-                        <option>Ativo</option>
-                        <option>Expirado</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>Início (>=)</label>
-                    <input type="date" class="form-control" name="inicio_min">
-                </div>
-
-                <div>
-                    <label>Fim (<=)</label>
-                    <input type="date" class="form-control" name="fim_max">
-                </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-2" style="grid-column: span 2;">
-                    <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
-                    <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
-                </div>
-
-            </div>
+            <a href="inserir.html" class="btn btn-success">
+                <i class="fa-solid fa-plus"></i> Adicionar
+            </a>
         </div>
 
-        <!-- ORDENAR -->
-        <div class="menu-wrapper">
-            <button class="btn btn-outline-primary">
-                <i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar
-            </button>
+        <div class="d-flex align-items-center gap-3 mb-4">
 
-            <div class="menu-box">
+            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar garantia / contrato..."
+                name="pesquisa">
 
-                <div>
-                    <label>Ordenar por</label>
-                    <select class="form-select" name="ordenar">
-                        <option value="">Selecione...</option>
-                        <option value="equipamento">Equipamento</option>
-                        <option value="fornecedor">Fornecedor</option>
-                        <option value="tipo">Tipo</option>
-                        <option value="inicio">Data de Início</option>
-                        <option value="fim">Data de Fim</option>
-                        <option value="estado">Estado</option>
-                    </select>
+            <div class="menu-wrapper">
+                <button class="btn btn-outline-success">
+                    <i class="fa-solid fa-filter"></i> Filtrar
+                </button>
+
+                <div class="menu-box">
+
+                    <div>
+                        <label>Equipamento</label>
+                        <input type="text" class="form-control" name="equipamento">
+                    </div>
+
+                    <div>
+                        <label>Fornecedor</label>
+                        <input type="text" class="form-control" name="fornecedor">
+                    </div>
+
+                    <div>
+                        <label>Tipo</label>
+                        <select class="form-select" name="tipo">
+                            <option value="">Todos</option>
+                            <option>Garantia</option>
+                            <option>Contrato de Manutenção</option>
+                            <option>Assistência Técnica</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Estado</label>
+                        <select class="form-select" name="estado">
+                            <option value="">Todos</option>
+                            <option>Ativo</option>
+                            <option>Expirado</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Início</label>
+                        <input type="date" class="form-control" name="inicio_min">
+                    </div>
+
+                    <div>
+                        <label>Fim </label>
+                        <input type="date" class="form-control" name="fim_max">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-2" style="grid-column: span 2;">
+                        <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                        <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
+                    </div>
+
                 </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-2">
-                    <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
-                </div>
-
             </div>
+
+            <div class="menu-wrapper">
+                <button class="btn btn-outline-primary">
+                    <i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar
+                </button>
+
+                <div class="menu-box">
+
+                    <div>
+                        <label>Ordenar por</label>
+                        <select class="form-select" name="ordenar">
+                            <option value="">Selecione...</option>
+                            <option value="equipamento">Equipamento</option>
+                            <option value="fornecedor">Fornecedor</option>
+                            <option value="tipo">Tipo</option>
+                            <option value="inicio">Data de Início</option>
+                            <option value="fim">Data de Fim</option>
+                            <option value="estado">Estado</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-2">
+                        <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
 
-    </div>
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead class="table-success">
+                <tr>
+                    <th>ID</th>
+                    <th>Equipamento</th>
+                    <th>Fornecedor</th>
+                    <th>Tipo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
 
-    <!-- TABELA -->
-    <table class="table table-striped table-bordered shadow-sm">
-        <thead class="table-success">
-            <tr>
-                <th>ID</th>
-                <th>Equipamento</th>
-                <th>Fornecedor</th>
-                <th>Tipo</th>
-                <th>Início</th>
-                <th>Fim</th>
-                <th>Estado</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
 
-        <tbody>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                    <td>
+                        <a href="detalhes.html" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="editar.html" class="btn btn-warning btn-sm">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a href="eliminar.html" class="btn btn-danger btn-sm">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-                <td>
-                    <a href="detalhes.html" class="btn btn-primary btn-sm">
-                        <i class="fa-solid fa-eye"></i>
-                    </a>
-                    <a href="editar.html" class="btn btn-warning btn-sm">
-                        <i class="fa-solid fa-pen"></i>
-                    </a>
-                    <a href="eliminar.html" class="btn btn-danger btn-sm">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-</main>
+    </main>
