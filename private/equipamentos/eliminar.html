@@ -44,48 +44,30 @@
         </div>
     </header>
 
-    <main class="conteudo p-4">
+    <main class="conteudo">
 
-    <div class="d-flex justify-content-center mt-4">
-        <div class="card w-100 shadow rounded text-center p-4" style="max-width: 700px;">
+        <h1 class="mb-4">Eliminar Equipamento</h1>
 
-            <div class="text-warning display-4 mb-3">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
+        <div class="shadow p-4 rounded" style="max-width: 700px;">
+            <h4 class="mb-3 text-danger">
+                <i class="fa-solid fa-triangle-exclamation"></i> Atenção
+            </h4>
 
-            <p class="mb-2 fs-5">Deseja eliminar o equipamento?</p>
+            <p>Tem a certeza que pretende eliminar este fornecedor?</p>
 
-            <h4 class="mb-4"><strong></strong></h4>
+            <p class="text-muted">Esta ação é irreversível.</p>
 
-            <div class="mb-4">
-                <span class="d-block mb-1">
-                    <i class="fa-solid fa-stethoscope me-2"></i>
-                    <strong>Categoria: </strong>
-                </span>
-
-                <span class="d-block mb-1">
-                    <i class="fa-solid fa-location-dot me-2"></i>
-                    <strong>Localização:</strong>
-                </span>
-
-                <span class="d-block">
-                    <i class="fa-solid fa-circle-info me-2"></i>
-                    <strong>Estado:</strong>
-                </span>
-            </div>
-
-            <div class="d-flex justify-content-center gap-3">
-                <a href="listar.html" class="btn btn-outline-secondary px-4">
-                    <i class="fa-solid fa-xmark me-2"></i>Não
+            <div class="d-flex justify-content-between mt-4">
+                <a href="listar.html" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Cancelar
                 </a>
 
-                <a href="confirmarEliminar.php?id=1" class="btn btn-danger px-4">
-                    <i class="fa-solid fa-check me-2"></i>Sim
-                </a>
+                <button class="btn btn-danger">
+                    <i class="fa-solid fa-trash"></i> Eliminar
+                </button>
             </div>
 
-        </div>
-    </div>
+            </div>
 
     </main>
 
