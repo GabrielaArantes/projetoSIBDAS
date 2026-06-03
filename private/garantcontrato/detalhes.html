@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedStock - Gestão de Equipamentos</title>
+
+    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/estilos.css">
+    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body class="pagprivada">
+
+    <aside class="sidebar">
+
+        <nav>
+            <a href="../index.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="listar.html"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
+            <a href="../fornecedores/listar.html"><i class="fa-solid fa-truck"></i> Fornecedores</a>
+            <a href="../localizacao/listar.html"><i class="fa-solid fa-location-dot"></i> Localização</a>
+            <a href="../garantcontrato/listar.html"><i class="fa-solid fa-file-contract"></i> Garantias/Contratos</a>
+            <a href="../documentacao/listar.html"><i class="fa-solid fa-folder-open"></i> Documentação</a>
+        </nav>
+    </aside>
+
+    <header class="topbar">
+        <div class="logo-topbar">
+            <img src="../../assets/img/logHospital.png" alt="Logo MedStock">
+            <h1>MedStock</h1>
+        </div>
+
+        <div class="user-button">
+            <i class="fa-regular fa-user"></i>
+            <span>Utilizador</span>
+            <i class="fa-solid fa-chevron-down seta"></i>
+
+            <ul class="user-dropdown">
+                <li><a href="#">Mudar password</a></li>
+                <li><a href="../public/login.html">Sair</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="conteudo">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Detalhes da Garantia / Contrato</h1>
+
+            <a href="editar.html" class="btn btn-warning">
+                <i class="fa-solid fa-pen"></i> Editar
+            </a>
+        </div>
+
+        <!-- CARTÃO DE INFORMAÇÕES -->
+        <div class="shadow p-4 rounded mb-4" style="max-width: 900px;">
+
+            <h4 class="mb-3">Informações Gerais</h4>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <strong>Tipo de Contrato:</strong>
+                    <p></p>
+                </div>
+
+                <div class="col">
+                    <strong>Periodicidade:</strong>
+                    <p></p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <strong>Data de Início:</strong>
+                    <p></p>
+                </div>
+
+                <div class="col">
+                    <strong>Data de Fim:</strong>
+                    <p></p>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <strong>Estado:</strong>
+                <p></p>
+            </div>
+
+            <hr>
+
+            <h4 class="mb-3">Entidades Associadas</h4>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <strong>Equipamento:</strong>
+                    <p></p>
+                </div>
+
+                <div class="col">
+                    <strong>Fornecedor:</strong>
+                    <p></p>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <strong>Observações:</strong>
+                <p></p>
+            </div>
+
+        </div>
+
+        <!-- TABELA DE MANUTENÇÕES / INTERVENÇÕES (opcional mas recomendado) -->
+        <div class="shadow p-4 rounded" style="max-width: 900px;">
+            <h4 class="mb-3">Intervenções / Manutenções Associadas</h4>
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-success">
+                    <tr>
+                        <th>ID</th>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a href="#" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <a href="listar.html" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+    </main>
+
+</body>
+
+</html>
