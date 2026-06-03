@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../assets/css/estilos.css">
     <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="../../assets/bootstrap/bootstrap.bundle.min.js"></script>
 
 </head>
 
@@ -180,14 +181,18 @@
                             <label>Ordenar por</label>
                             <select class="form-select" name="ordenar">
                                 <option value="">Selecione...</option>
-                                <option value="codigo">Código Interno</option>
-                                <option value="designacao">Designação</option>
-                                <option value="marca">Marca</option>
-                                <option value="modelo">Modelo</option>
-                                <option value="estado">Estado</option>
-                                <option value="categoria">Categoria</option>
-                                <option value="criticidade">Criticidade</option>
-                                <option value="servico">Serviço</option>
+
+                                <!-- Custo de Aquisição -->
+                                <option value="custo_asc">Custo de aquisição (crescente)</option>
+                                <option value="custo_desc">Custo de aquisição (decrescente)</option>
+
+                                <!-- Data de Aquisição -->
+                                <option value="data_asc">Data de aquisição (crescente)</option>
+                                <option value="data_desc">Data de aquisição (decrescente)</option>
+
+                                <!-- Ano de Fabrico -->
+                                <option value="ano_asc">Ano de fabrico (crescente)</option>
+                                <option value="ano_desc">Ano de fabrico (decrescente)</option>
                             </select>
                         </div>
 
@@ -197,6 +202,7 @@
 
                     </div>
                 </div>
+
 
             </div>
         </div>
@@ -232,14 +238,48 @@
                         <a href="editar.html" class="btn btn-warning btn-sm">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a href="eliminar.html" class="btn btn-danger btn-sm">
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#modalEliminarEquipamento">
                             <i class="fa-solid fa-trash"></i>
-                        </a>
+                        </button>
+
                     </td>
                 </tr>
             </tbody>
 
         </table>
+
+        <div class="modal fade" id="modalEliminarEquipamento" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            Eliminar Equipamento
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Deseja apagar?</p>
+                        <p class="text-muted">Esta ação é irreversível.</p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <a id="btnConfirmarEliminarEquipamento" href="#" class="btn btn-danger">
+                            Eliminar
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </main>
 
 </body>

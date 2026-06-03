@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedStock - Gestão de Equipamentos</title>
+    <title>MedStock - Listar Garantias e Contratos</title>
 
     <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/css/estilos.css">
     <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="../../assets/bootstrap/bootstrap.bundle.min.js"></script>
+
 
 </head>
 
@@ -125,12 +127,14 @@
                         <label>Ordenar por</label>
                         <select class="form-select" name="ordenar">
                             <option value="">Selecione...</option>
-                            <option value="equipamento">Equipamento</option>
-                            <option value="fornecedor">Fornecedor</option>
-                            <option value="tipo">Tipo</option>
-                            <option value="inicio">Data de Início</option>
-                            <option value="fim">Data de Fim</option>
-                            <option value="estado">Estado</option>
+
+                            <!-- DATA DE INÍCIO -->
+                            <option value="inicio_asc">Data de início (crescente)</option>
+                            <option value="inicio_desc">Data de início (decrescente)</option>
+
+                            <!-- DATA DE FIM -->
+                            <option value="fim_asc">Data de fim (crescente)</option>
+                            <option value="fim_desc">Data de fim (decrescente)</option>
                         </select>
                     </div>
 
@@ -140,6 +144,7 @@
 
                 </div>
             </div>
+
 
         </div>
 
@@ -174,12 +179,49 @@
                         <a href="editar.html" class="btn btn-warning btn-sm">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a href="eliminar.html" class="btn btn-danger btn-sm">
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#modalEliminarGarantia">
                             <i class="fa-solid fa-trash"></i>
-                        </a>
+                        </button>
+
                     </td>
                 </tr>
             </tbody>
         </table>
 
+        <div class="modal fade" id="modalEliminarGarantia" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            Eliminar Garantia e Contrato
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Deseja apagar?</p>
+                        <p class="text-muted">Esta ação é irreversível.</p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <a id="btnConfirmarEliminarGarantia" href="#" class="btn btn-danger">
+                            Eliminar
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </main>
+
+</body>
+
+</html>
