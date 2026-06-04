@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedStock - Inserir Garantia e Contrato</title>
+    <title>MedStock - Editar Localização</title>
 
     <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/css/estilos.css">
@@ -45,82 +45,54 @@
         </div>
     </header>
 
-
     <main class="conteudo">
 
-    <h1 class="mb-4">Inserir Garantia e contrato</h1>
+        <h1 class="mb-4">Inserir Garantia / Contrato</h1>
 
-    <form class="shadow p-4 rounded" style="max-width: 850px;">
+        <form class="shadow p-4 rounded" style="max-width: 850px;">
 
-        <div class="row mb-3">
-            <div class="col">
-                <label class="form-label">Equipamento</label>
-                <select class="form-select" name="equipamento">
-                    <option value="">Selecione...</option>
-                    <!-- PHP -->
-                </select>
+            <div class="mb-3">
+                <label class="form-label">Data de início</label>
+                <input type="date" class="form-control" name="inicio">
             </div>
 
-            <div class="col">
-                <label class="form-label">Fornecedor</label>
-                <select class="form-select" name="fornecedor">
-                    <option value="">Selecione...</option>
-                    <!-- PHP -->
-                </select>
+            <div class="mb-3">
+                <label class="form-label">Data de fim</label>
+                <input type="date" class="form-control" name="fim">
             </div>
-        </div>
 
-        <div class="row mb-3">
-            <div class="col">
-                <label class="form-label">Tipo de Contrato</label>
+            <div class="mb-3">
+                <label class="form-label">Tipo de contrato</label>
                 <select class="form-select" name="tipo">
-                    <option value="">Selecione...</option>
                     <option>Garantia</option>
                     <option>Contrato de Manutenção</option>
                     <option>Assistência Técnica</option>
                 </select>
             </div>
 
-            <div class="col">
+            <div class="mb-3">
+                <label class="form-label">Entidade responsável</label>
+                <input type="text" class="form-control" name="entidade">
+            </div>
+
+            <div class="mb-3">
                 <label class="form-label">Periodicidade</label>
                 <select class="form-select" name="periodicidade">
-                    <option value="">Selecione...</option>
                     <option>Mensal</option>
                     <option>Trimestral</option>
                     <option>Semestral</option>
                     <option>Anual</option>
                 </select>
             </div>
-        </div>
 
-        <div class="row mb-3">
-            <div class="col">
-                <label class="form-label">Data de Início</label>
-                <input type="date" class="form-control" name="data_inicio">
+            <div class="d-flex justify-content-between mt-4">
+                <a href="listar.html" class="btn btn-secondary">Cancelar</a>
+                <button class="btn btn-success">Guardar</button>
             </div>
 
-            <div class="col">
-                <label class="form-label">Data de Fim</label>
-                <input type="date" class="form-control" name="data_fim">
-            </div>
-        </div>
+        </form>
 
-        <div class="mb-3">
-            <label class="form-label">Observações</label>
-            <textarea class="form-control" rows="4" name="observacoes"></textarea>
-        </div>
+    </main>
 
-        
-        <div class="d-flex justify-content-between mt-4">
-            <a href="listar.html" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left"></i> Voltar
-            </a>
-
-            <button type="submit" class="btn btn-success">
-                <i class="fa-solid fa-check"></i> Guardar
-            </button>
-        </div>
-
-    </form>
-
-</main>
+</body>
+</html>
