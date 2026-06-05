@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedStock - Dashboard</title>
+
+    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/estilos.css">
+    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="../../assets/bootstrap/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body class="pagprivada">
+
+    <aside class="sidebar">
+        <nav>
+            <a href="../dashboard/dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="../equipamentos/listar.html"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
+            <a href="../fornecedores/listar.html"><i class="fa-solid fa-truck"></i> Fornecedores</a>
+            <a href="../localizacao/listar.html"><i class="fa-solid fa-location-dot"></i> Localização</a>
+            <a href="../garantcontrato/listar.html"><i class="fa-solid fa-file-contract"></i> Garantias/Contratos</a>
+            <a href="../documentacao/listar.html" class="active"><i class="fa-solid fa-folder-open"></i>
+                Documentação</a>
+        </nav>
+    </aside>
+
+    <header class="topbar">
+        <div class="logo-topbar">
+            <img src="../../assets/img/logHospital.png" alt="Logo MedStock">
+            <h1>MedStock</h1>
+        </div>
+
+        <div class="user-button">
+            <i class="fa-regular fa-user"></i>
+            <span>Utilizador</span>
+            <i class="fa-solid fa-chevron-down seta"></i>
+
+            <ul class="user-dropdown">
+                <li><a href="#">Mudar password</a></li>
+                <li><a href="../public/login.html">Sair</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="conteudo p-4">
+
+        <h1 class="mb-4">Dashboard</h1>
+
+        <div id="cardsDashboard"></div>
+
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Equipamentos por Estado</h5>
+                        <div style="position: relative; height: 250px;">
+                            <canvas id="graficoEstado"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Número de Equipamentos por Serviço</h5>
+                        <div style="position: relative; height: 250px;">
+                            <canvas id="graficoServico"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Distribuição por Categoria</h5>
+                <div style="position: relative; height: 250px;">
+                    <canvas id="graficoCategoria"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../assets/js/1241094.js"></script>
+    
+</body>
+
+</html>

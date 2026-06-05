@@ -634,4 +634,43 @@ main {
     margin-bottom: 12px;
 }
 
-
+/* --- Dashboard Stat Cards --- */
+.stat-card {
+    border: none;
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    transition: transform 0.15s, box-shadow 0.15s;
+    background: #fff;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+.stat-info h6 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin: 0 0 4px 0;
+}
+.stat-info h3 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1;
+}
