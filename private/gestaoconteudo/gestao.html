@@ -46,96 +46,156 @@
 
         <h1 class="mb-4">Gestão de Conteúdos Públicos</h1>
 
-        <div class="card section-card">
-            <div class="card-header">
-                <i class="fa-solid fa-image"></i> Secção Início
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label">Título principal</label>
-                    <input type="text" class="form-control" id="heroTitulo" value="Gestão inteligente do inventário hospitalar">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Subtítulo</label>
-                    <input type="text" class="form-control" id="heroSubtitulo" value="Organização, controlo e eficiência num único sistema.">
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn-guardar" onclick="guardarHero()">
-                        <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
-                    </button>
-                    <button class="btn-repor" onclick="reporHero()">Repor original</button>
-                </div>
-            </div>
-        </div>
+        <div class="accordion" id="accordionConteudos">
 
-        <div class="card section-card">
-            <div class="card-header">
-                <i class="fa-solid fa-circle-info"></i> Secção Sobre
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label">Título</label>
-                    <input type="text" class="form-control" id="sobreTitulo" value="Sobre o MedStock">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Descrição</label>
-                    <textarea class="form-control" id="sobreDescricao" rows="4">O MedStock é um sistema inovador para a gestão do inventário de equipamentos hospitalares, projetado para otimizar a organização, controlo e eficiência dos recursos médicos. Com uma interface intuitiva e funcionalidades avançadas, o MedStock permite aos hospitais monitorizar e gerir os seus equipamentos de forma eficaz, garantindo que os recursos estejam sempre disponíveis quando necessários.</textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Vantagem 1</label>
-                    <input type="text" class="form-control" id="van1" value="Otimização dos processos internos e redução de falhas humanas.">
-                    <label class="form-label mt-2">Vantagem 2</label>
-                    <input type="text" class="form-control" id="van2" value="Maior segurança operacional através de registos consistentes.">
-                    <label class="form-label mt-2">Vantagem 3</label>
-                    <input type="text" class="form-control" id="van3" value="Transparência total sobre o ciclo de vida dos equipamentos.">
-                    <label class="form-label mt-2">Vantagem 4</label>
-                    <input type="text" class="form-control" id="van4" value="Melhoria da tomada de decisão com dados atualizados.">
-                    <label class="form-label mt-2">Vantagem 5</label>
-                    <input type="text" class="form-control" id="van5" value="Redução de custos associados a perdas e duplicação de material.">
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn-guardar" onclick="guardarSobre()">
-                        <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHero">
+                        <i class="fa-solid fa-image me-2"></i> Secção Início 
                     </button>
-                    <button class="btn-repor" onclick="reporSobre()">Repor original</button>
+                </h2>
+                <div id="collapseHero" class="accordion-collapse collapse show" data-bs-parent="#accordionConteudos">
+                    <div class="accordion-body">
+                        <div class="mb-3">
+                            <label class="form-label">Título principal</label>
+                            <input type="text" class="form-control" id="heroTitulo" value="Gestão inteligente do inventário hospitalar">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Subtítulo</label>
+                            <input type="text" class="form-control" id="heroSubtitulo" value="Organização, controlo e eficiência num único sistema.">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn-guardar" onclick="guardarHero()">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+                            </button>
+                            <button class="btn-repor" onclick="reporHero()">Repor original</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card section-card">
-            <div class="card-header">
-                <i class="fa-solid fa-address-card"></i> Rodapé (Contactos e Localização)
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Morada</label>
-                        <input type="text" class="form-control" id="footerMorada" value="Morada">
-                        <label class="form-label mt-2">Código Postal</label>
-                        <input type="text" class="form-control" id="footerCodPostal" value="codigopostal, Porto">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Horário semana (2ª a 6ª)</label>
-                        <input type="text" class="form-control" id="footerHorarioSemana" value="2ª a 6ª Feira: 7h - 21h">
-                        <label class="form-label mt-2">Horário sábado/feriados</label>
-                        <input type="text" class="form-control" id="footerHorarioSabado" value="Sábado e Feriados: 9h - 15h">
-                        <label class="form-label mt-2">Horário domingos</label>
-                        <input type="text" class="form-control" id="footerHorarioDomingo" value="Domingos: Encerrados">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="footerEmail" value="geral@medstock.pt">
-                        <label class="form-label mt-2">Telefone</label>
-                        <input type="text" class="form-control" id="footerTelefone" value="+351 9xx xxx xxx">
-                    </div>
-                </div>
-                <div class="d-flex gap-2 mt-3">
-                    <button class="btn-guardar" onclick="guardarFooter()">
-                        <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSobre">
+                        <i class="fa-solid fa-circle-info me-2"></i> Secção Sobre
                     </button>
-                    <button class="btn-repor" onclick="reporFooter()">Repor original</button>
+                </h2>
+                <div id="collapseSobre" class="accordion-collapse collapse" data-bs-parent="#accordionConteudos">
+                    <div class="accordion-body">
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" class="form-control" id="sobreTitulo" value="Sobre o MedStock">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <textarea class="form-control" id="sobreDescricao" rows="4">O MedStock é um sistema inovador para a gestão do inventário de equipamentos hospitalares, projetado para otimizar a organização, controlo e eficiência dos recursos médicos. Com uma interface intuitiva e funcionalidades avançadas, o MedStock permite aos hospitais monitorizar e gerir os seus equipamentos de forma eficaz, garantindo que os recursos estejam sempre disponíveis quando necessários.</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Vantagem 1</label>
+                            <input type="text" class="form-control" id="van1" value="Otimização dos processos internos e redução de falhas humanas.">
+                            <label class="form-label mt-2">Vantagem 2</label>
+                            <input type="text" class="form-control" id="van2" value="Maior segurança operacional através de registos consistentes.">
+                            <label class="form-label mt-2">Vantagem 3</label>
+                            <input type="text" class="form-control" id="van3" value="Transparência total sobre o ciclo de vida dos equipamentos.">
+                            <label class="form-label mt-2">Vantagem 4</label>
+                            <input type="text" class="form-control" id="van4" value="Melhoria da tomada de decisão com dados atualizados.">
+                            <label class="form-label mt-2">Vantagem 5</label>
+                            <input type="text" class="form-control" id="van5" value="Redução de custos associados a perdas e duplicação de material.">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn-guardar" onclick="guardarSobre()">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+                            </button>
+                            <button class="btn-repor" onclick="reporSobre()">Repor original</button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFun">
+                        <i class="fa-solid fa-star me-2"></i> Secção Funcionalidades
+                    </button>
+                </h2>
+                <div id="collapseFun" class="accordion-collapse collapse" data-bs-parent="#accordionConteudos">
+                    <div class="accordion-body">
+                        <div class="mb-3">
+                            <label class="form-label">Título da secção</label>
+                            <input type="text" class="form-control" id="funTitulo" value="Funcionalidades">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <textarea class="form-control" id="funDescricao" rows="3">O MedStock oferece um conjunto de funcionalidades essenciais para garantir uma gestão eficiente do inventário hospitalar, permitindo um controlo rigoroso e atualizado dos equipamentos médicos.</textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Funcionalidade 1</label>
+                                <input type="text" class="form-control" id="fun1" value="Registro inteligente">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Funcionalidade 2</label>
+                                <input type="text" class="form-control" id="fun2" value="Gestão de fornecedores e categorias">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Funcionalidade 3</label>
+                                <input type="text" class="form-control" id="fun3" value="Localização e estado dos dispositivos">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Funcionalidade 4</label>
+                                <input type="text" class="form-control" id="fun4" value="Alertas de manutenção e avarias">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <button class="btn-guardar" onclick="guardarFuncionalidades()">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+                            </button>
+                            <button class="btn-repor" onclick="reporFuncionalidades()">Repor original</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFooter">
+                        <i class="fa-solid fa-address-card me-2"></i> Rodapé (Contactos, Horários e Localização)
+                    </button>
+                </h2>
+                <div id="collapseFooter" class="accordion-collapse collapse" data-bs-parent="#accordionConteudos">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Morada</label>
+                                <input type="text" class="form-control" id="footerMorada" value="Morada">
+                                <label class="form-label mt-2">Código Postal</label>
+                                <input type="text" class="form-control" id="footerCodPostal" value="codigopostal, Porto">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Horário semana (2ª a 6ª)</label>
+                                <input type="text" class="form-control" id="footerHorarioSemana" value="2ª a 6ª Feira: 7h - 21h">
+                                <label class="form-label mt-2">Horário sábado/feriados</label>
+                                <input type="text" class="form-control" id="footerHorarioSabado" value="Sábado e Feriados: 9h - 15h">
+                                <label class="form-label mt-2">Horário domingos</label>
+                                <input type="text" class="form-control" id="footerHorarioDomingo" value="Domingos: Encerrados">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="footerEmail" value="geral@medstock.pt">
+                                <label class="form-label mt-2">Telefone</label>
+                                <input type="text" class="form-control" id="footerTelefone" value="+351 9xx xxx xxx">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <button class="btn-guardar" onclick="guardarFooter()">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+                            </button>
+                            <button class="btn-repor" onclick="reporFooter()">Repor original</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div id="msgSucesso" style="display:none;" class="alert alert-success mt-3">
@@ -174,6 +234,20 @@
             document.getElementById("van3").value = "Transparência total sobre o ciclo de vida dos equipamentos.";
             document.getElementById("van4").value = "Melhoria da tomada de decisão com dados atualizados.";
             document.getElementById("van5").value = "Redução de custos associados a perdas e duplicação de material.";
+            mostrarSucesso();
+        }
+
+        function guardarFuncionalidades() {
+            mostrarSucesso();
+        }
+
+        function reporFuncionalidades() {
+            document.getElementById("funTitulo").value = "Funcionalidades";
+            document.getElementById("funDescricao").value = "O MedStock oferece um conjunto de funcionalidades essenciais para garantir uma gestão eficiente do inventário hospitalar, permitindo um controlo rigoroso e atualizado dos equipamentos médicos.";
+            document.getElementById("fun1").value = "Registro inteligente";
+            document.getElementById("fun2").value = "Gestão de fornecedores e categorias";
+            document.getElementById("fun3").value = "Localização e estado dos dispositivos";
+            document.getElementById("fun4").value = "Alertas de manutenção e avarias";
             mostrarSucesso();
         }
 
