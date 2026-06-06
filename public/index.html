@@ -1,20 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Gestão do inventário de equipamentos hospitalares</title>
-
-    <!-- Descrição da página -->
     <meta name="description" content="Sistema para gestão inteligente do inventário de equipamentos hospitalares">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
-    
-    <!-- Logo da aplicação -->
-    <link rel="icon" type="image/png" href="../assets/img/logHospital.png" >
 
-    <!-- estilos -->
+    <link rel="icon" type="image/png" href="../assets/img/logHospital.png">
     <link rel="stylesheet" href="../assets/css/estilos.css">
 </head>
 
@@ -25,7 +21,6 @@
             <img src="../assets/img/logHospital.png" alt="Logo do sistema">
             <h1>MedStock</h1>
         </div>
-
         <nav class="menu">
             <a href="#inicio">Início</a>
             <a href="#sobre">Sobre</a>
@@ -35,32 +30,30 @@
         </nav>
     </header>
 
-
     <main>
-        
-        <div  id="inicio"class="imagem">
+
+        <div id="inicio" class="imagem">
             <img src="../assets/img/maqhospitalar.png" alt="Equipamentos Hospitalares">
             <div class="intro">
-                <h2>Gestão inteligente do inventário hospitalar</h2>
-                <p>Organização, controlo e eficiência num único sistema.</p>
+                <h2 id="heroTitulo">Gestão inteligente do inventário hospitalar</h2>
+                <p id="heroSubtitulo">Organização, controlo e eficiência num único sistema.</p>
             </div>
         </div>
 
         <section id="sobre">
             <div class="sobre-container">
                 <div class="sobre-content">
-                    <h2>Sobre o MedStock</h2>
-                    <p>O MedStock é um sistema inovador para a gestão do inventário de equipamentos hospitalares, projetado para otimizar a organização, controlo e eficiência dos recursos médicos. Com uma interface intuitiva e funcionalidades avançadas, o MedStock permite aos hospitais monitorizar e gerir os seus equipamentos de forma eficaz, garantindo que os recursos estejam sempre disponíveis quando necessários.</p>
+                    <h2 id="sobreTitulo">Sobre o MedStock</h2>
+                    <p id="sobreDescricao">O MedStock é um sistema inovador para a gestão do inventário de equipamentos hospitalares, projetado para otimizar a organização, controlo e eficiência dos recursos médicos. Com uma interface intuitiva e funcionalidades avançadas, o MedStock permite aos hospitais monitorizar e gerir os seus equipamentos de forma eficaz, garantindo que os recursos estejam sempre disponíveis quando necessários.</p>
                 </div>
-
                 <div class="sobre-vantagens">
                     <h3>Vantagens do MedStock</h3>
-                    <ul>
-                        <li> Otimização dos processos internos e redução de falhas humanas.</li>
-                        <li> Maior segurança operacional através de registos consistentes.</li>
-                        <li> Transparência total sobre o ciclo de vida dos equipamentos.</li>
-                        <li> Melhoria da tomada de decisão com dados atualizados.</li>
-                        <li> Redução de custos associados a perdas e duplicação de material.</li>
+                    <ul id="sobreVantagens">
+                        <li>Otimização dos processos internos e redução de falhas humanas.</li>
+                        <li>Maior segurança operacional através de registos consistentes.</li>
+                        <li>Transparência total sobre o ciclo de vida dos equipamentos.</li>
+                        <li>Melhoria da tomada de decisão com dados atualizados.</li>
+                        <li>Redução de custos associados a perdas e duplicação de material.</li>
                     </ul>
                 </div>
             </div>
@@ -72,12 +65,9 @@
             <div class="funcontainer">
                 <div class="funcontent">
                     <h2>Funcionalidades</h2>
-                    <p> 
-                        O MedStock oferece um conjunto de funcionalidades essenciais para garantir uma gestão eficiente
-                        do inventário hospitalar, permitindo um controlo rigoroso e atualizado dos equipamentos médicos.  
-                    </p>
-            </div>
-            <div class="funlista">
+                    <p>O MedStock oferece um conjunto de funcionalidades essenciais para garantir uma gestão eficiente do inventário hospitalar, permitindo um controlo rigoroso e atualizado dos equipamentos médicos.</p>
+                </div>
+                <div class="funlista">
                     <h3>Funcionalidades Principais</h3>
                     <div class="funicon">
                         <img src="../assets/img/iconebloco.png" alt="Registro">
@@ -95,9 +85,8 @@
                         <img src="../assets/img/iconealerta.png" alt="Alertas">
                         <p>Alertas de manutenção e avarias</p>
                     </div>
+                </div>
             </div>
-                
-
         </section>
 
         <hr class="separador">
@@ -111,41 +100,36 @@
                 <form class="contactosform">
                     <label for="nome">Nome:</label>
                     <input type="text" id="nome" name="nome" required>
-
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
-
                     <label for="telemovel">Telemovel:</label>
                     <input type="tel" id="telemovel" name="telemovel" required>
-
                     <button type="submit">Enviar</button>
                 </form>
             </div>
         </section>
+
     </main>
 
-    
     <footer class="footercontainer">
-        
         <div class="footersection">
             <strong>LOCALIZAÇÃO</strong>
-            <p> Morada </p>
-            <p> codigopostal, Porto </p>
-            <p> Portugal </p>
+            <p id="footerMorada">Morada</p>
+            <p id="footerCodPostal">codigopostal, Porto</p>
+            <p>Portugal</p>
         </div>
         <div class="footersection">
             <strong>HORÁRIO</strong>
-            <p>2ª a 6ª Feira: 7h- 21h</p>
-            <p>Sábado e Feriados: 9h- 15h</p>
-            <p>Domingos: Encerrados</p>
+            <p id="footerHorarioSemana">2ª a 6ª Feira: 7h - 21h</p>
+            <p id="footerHorarioSabado">Sábado e Feriados: 9h - 15h</p>
+            <p id="footerHorarioDomingo">Domingos: Encerrados</p>
         </div>
         <div class="footersection">
             <strong>CONTACTOS</strong>
-            <p>Email: geral@medstock.pt</p>
-            <p>Telefone: +351 9xx xxx xxx</p>
+            <p id="footerEmail">Email: geral@medstock.pt</p>
+            <p id="footerTelefone">Telefone: +351 9xx xxx xxx</p>
         </div>
-   
     </footer>
 
-           
 </body>
+</html>

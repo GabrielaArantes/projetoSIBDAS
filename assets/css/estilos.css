@@ -674,3 +674,97 @@ main {
     margin: 0;
     line-height: 1;
 }
+
+/* --- Backoffice Conteúdos Públicos --- */
+.section-card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+}
+.section-card .card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 14px 14px 0 0 !important;
+    padding: 14px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.section-card .card-header i {
+    color: #6c9e6e;
+    font-size: 1rem;
+}
+.section-card .card-body {
+    padding: 20px;
+}
+.btn-guardar {
+    background: #6c9e6e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 22px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.15s;
+    cursor: pointer;
+}
+.btn-guardar:hover {
+    background: #557a57;
+    color: #fff;
+}
+.btn-repor {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    transition: background 0.15s;
+    cursor: pointer;
+}
+.btn-repor:hover {
+    background: #e9ecef;
+}
+.vantagem-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.vantagem-row input {
+    flex: 1;
+}
+.btn-remover-van {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1rem;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+.btn-adicionar-van {
+    background: none;
+    border: 1px dashed #6c9e6e;
+    color: #6c9e6e;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.15s;
+}
+.btn-adicionar-van:hover {
+    background: #f0f7f0;
+}
+.preview-link {
+    font-size: 0.82rem;
+    color: #6c9e6e;
+    text-decoration: none;
+}
+.preview-link:hover {
+    text-decoration: underline;
+}
