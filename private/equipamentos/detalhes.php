@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../config/config.php';
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Detalhes do Equipamento</h1>
-            <a href="listar.html" class="btn btn-secondary">
+            <a href="listar.php" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left me-2"></i>Voltar
             </a>
         </div>

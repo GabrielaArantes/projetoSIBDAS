@@ -14,7 +14,7 @@ require_once __DIR__ . '/../../config/config.php';
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Detalhes do Fornecedor</h1>
 
-            <a href="editar.html" class="btn btn-warning">
+            <a href="editar.php" class="btn btn-warning">
                 <i class="fa-solid fa-pen"></i> Editar
             </a>
         </div>

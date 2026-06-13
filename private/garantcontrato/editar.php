@@ -53,7 +53,7 @@ require_once __DIR__ . '/../../config/config.php';
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="listar.html" class="btn btn-secondary">Cancelar</a>
+                <a href="listar.php" class="btn btn-secondary">Cancelar</a>
                 <button class="btn btn-success">Guardar alterações</button>
             </div>
 

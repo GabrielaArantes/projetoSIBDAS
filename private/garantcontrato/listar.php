@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../config/config.php';
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Garantias e Contratos</h1>
-            <a href="inserir.html" class="btn btn-success">
+            <a href="inserir.php" class="btn btn-success">
                 <i class="fa-solid fa-plus"></i> Adicionar
             </a>
         </div>
@@ -121,10 +121,10 @@ require_once __DIR__ . '/../../config/config.php';
                     <td></td>
 
                     <td>
-                        <a href="detalhes.html" class="btn btn-primary btn-sm">
+                        <a href="detalhes.php" class="btn btn-primary btn-sm">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a href="editar.html" class="btn btn-warning btn-sm">
+                        <a href="editar.php" class="btn btn-warning btn-sm">
                             <i class="fa-solid fa-pen"></i>
                         </a>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar">

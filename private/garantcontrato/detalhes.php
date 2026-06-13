@@ -38,8 +38,8 @@ require_once __DIR__ . '/../../config/config.php';
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="listar.html" class="btn btn-secondary">Voltar</a>
-                <a href="editar.html" class="btn btn-warning">Editar</a>
+                <a href="listar.php" class="btn btn-secondary">Voltar</a>
+                <a href="editar.php" class="btn btn-warning">Editar</a>
             </div>
 
         </div>

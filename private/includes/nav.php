@@ -24,7 +24,7 @@
 
             <ul class="user-dropdown">
                 <li><a href="#">Mudar password</a></li>
-                <li><a href="../public/login.html">Sair</a></li>
+                <li><a href="/projetoSIBDAS/public/login.php">Sair</a></li>
             </ul>
         </div>
     </header>

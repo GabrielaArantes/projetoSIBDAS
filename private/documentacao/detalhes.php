@@ -13,11 +13,11 @@ require_once __DIR__ . '/../../config/config.php';
             <h1>Detalhes da Documentação</h1>
 
             <div class="d-flex gap-2">
-                <a href="listar.html" class="btn btn-secondary">
+                <a href="listar.php" class="btn btn-secondary">
                     <i class="fa-solid fa-arrow-left"></i> Voltar
                 </a>
 
-                <a href="editar.html" class="btn btn-warning">
+                <a href="editar.php" class="btn btn-warning">
                     <i class="fa-solid fa-pen"></i> Editar
                 </a>
             </div>
