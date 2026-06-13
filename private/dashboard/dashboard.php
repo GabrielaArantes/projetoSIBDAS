@@ -1,4 +1,3 @@
-
 <?php
 require_once __DIR__ . '/../../config/config.php';
 ?>
@@ -78,9 +77,4 @@ require_once __DIR__ . '/../../config/config.php';
 
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../../assets/js/1241094.js"></script>
-    
-</body>
-
-</html>
+    <?php include __DIR__ . '/../includes/footer.php'; ?>

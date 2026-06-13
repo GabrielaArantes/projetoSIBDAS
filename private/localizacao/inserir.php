@@ -38,47 +38,48 @@ require_once __DIR__ . '/../../config/config.php';
 
     <main class="conteudo">
 
-    <h1 class="mb-4">Inserir Localização</h1>
+        <h1 class="mb-4">Inserir Localização</h1>
 
-    <form class="shadow p-4 rounded" style="max-width: 850px;">
+        <form class="shadow p-4 rounded" style="max-width: 850px;">
 
-        <div class="row mb-3">
-            <div class="col">
-                <label class="form-label">Edifício</label>
-                <input type="text" class="form-control" name="edificio" placeholder="Ex: Edifício A">
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Edifício</label>
+                    <input type="text" class="form-control" name="edificio" placeholder="Ex: Edifício A">
+                </div>
+
+                <div class="col">
+                    <label class="form-label">Piso</label>
+                    <input type="text" class="form-control" name="piso" placeholder="Ex: Piso 2">
+                </div>
             </div>
 
-            <div class="col">
-                <label class="form-label">Piso</label>
-                <input type="text" class="form-control" name="piso" placeholder="Ex: Piso 2">
+            <div class="mb-3">
+                <label class="form-label">Serviço / Departamento</label>
+                <input type="text" class="form-control" name="servico" placeholder="Ex: Cardiologia">
             </div>
-        </div>
 
-        <div class="mb-3">
-            <label class="form-label">Serviço / Departamento</label>
-            <input type="text" class="form-control" name="servico" placeholder="Ex: Cardiologia">
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Sala / Gabinete</label>
+                <input type="text" class="form-control" name="sala" placeholder="Ex: Sala 203">
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Sala / Gabinete</label>
-            <input type="text" class="form-control" name="sala" placeholder="Ex: Sala 203">
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Observações</label>
+                <textarea class="form-control" rows="3" name="observacoes"></textarea>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Observações</label>
-            <textarea class="form-control" rows="3" name="observacoes"></textarea>
-        </div>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="listar.html" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar
+                </a>
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="listar.html" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left"></i> Voltar
-            </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa-solid fa-check"></i> Guardar
+                </button>
+            </div>
 
-            <button type="submit" class="btn btn-success">
-                <i class="fa-solid fa-check"></i> Guardar
-            </button>
-        </div>
+        </form>
 
-    </form>
-
-</main>
+    </main>
+    <?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -195,6 +195,7 @@ require_once __DIR__ . '/../../config/config.php';
 
     </main>
 
+
     <script>
         function mostrarSucesso() {
             document.getElementById("msgSucesso").style.display = "block";
@@ -257,6 +258,4 @@ require_once __DIR__ . '/../../config/config.php';
             mostrarSucesso();
         }
     </script>
-
-</body>
-</html>
+    <?php include __DIR__ . '/../includes/footer.php'; ?>

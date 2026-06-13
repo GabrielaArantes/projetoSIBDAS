@@ -167,8 +167,4 @@ require_once __DIR__ . '/../../config/config.php';
         </div>
 
     </main>
-
-
-</body>
-
-</html>
+    <?php include __DIR__ . '/../includes/footer.php'; ?>
