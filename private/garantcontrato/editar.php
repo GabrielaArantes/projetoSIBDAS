@@ -1,21 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/config.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="pt">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo APP_NAME; ?> - Editar Garantia / Contrato</title>
-
-    <link rel="stylesheet" href="../../assets/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/css/1241094.css">
-    <link rel="stylesheet" href="../../assets/fontawesome/all.min.css">
-    <link rel="icon" type="image/png" href="../../assets/img/logHospital.png">
-
-</head>
+<?php include __DIR__ . '/../includes/header.php'; ?>
 
 <body class="pagprivada">
 
