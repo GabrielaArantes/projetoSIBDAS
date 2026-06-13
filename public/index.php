@@ -1,9 +1,13 @@
+<?php
+require_once __DIR__ . '/../config/config.php';
+?>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão do inventário de equipamentos hospitalares</title>
+    <title><?php echo APP_NAME; ?> - Gestão do inventário de equipamentos hospitalares</title>
     <meta name="description" content="Sistema para gestão inteligente do inventário de equipamentos hospitalares">
 
     <link rel="icon" type="image/png" href="../assets/img/logHospital.png">
