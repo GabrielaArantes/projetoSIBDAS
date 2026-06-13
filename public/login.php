@@ -2,18 +2,7 @@
 require_once __DIR__ . '/../config/config.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo APP_NAME; ?> - Iniciar Sessão</title>
-
-    <link rel="stylesheet" href="../assets/css/1241094.css">
-    <link rel="shortcut icon" href="../assets/img/logHospital.png" type="image/png">
-    
-</head>
+<?php include __DIR__ . '/../private/includes/header.php'; ?>
 
 <body class="login-page">
 
@@ -26,7 +15,7 @@ require_once __DIR__ . '/../config/config.php';
 
             <label for="email">Utilizador</label>
             <input type="email" id="email" required>
-             <label for="password">Password</label>
+            <label for="password">Password</label>
             <input type="password" id="password" required>
 
             <button type="submit">
@@ -37,5 +26,4 @@ require_once __DIR__ . '/../config/config.php';
 
     </div>
 
-</body>
-</html>
+    <?php include __DIR__ . '/../private/includes/footer.php'; ?>
