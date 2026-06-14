@@ -28,3 +28,13 @@ if (!empty($validation_errors)) {
     header('Location: ../public/login.php');
     return;
 }
+
+$result['status'] = 1;
+
+if (!$result['status']) {
+    $_SESSION['server_error'] = 'Login inválido';
+    header('Location: ../public/login.php');
+    return;
+}
+
+$_SESSION['utilizador'] = $username;
