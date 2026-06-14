@@ -106,7 +106,7 @@ start_session();
                         <td></td>
                         <td></td>
                         <td>
-                            <a href="../equipamentos/detalhes.html" class="btn btn-primary btn-sm">
+                            <a href="../equipamentos/detalhes.php" class="btn btn-primary btn-sm">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                         </td>
@@ -118,7 +118,7 @@ start_session();
         </div>
 
         <div class="mt-4">
-            <a href="listar.html" class="btn btn-secondary">
+            <a href="listar.php" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> Voltar
             </a>
         </div>

@@ -18,36 +18,32 @@ start_session();
             </a>
         </div>
 
-        <div class="shadow p-4 rounded bg-white" style="max-width: 900px; margin: auto;">
+        <form method="POST" action="#" class="shadow p-4 rounded bg-white" style="max-width: 900px; margin: auto;">
 
             <!-- NAV TABS -->
             <ul class="nav nav-tabs mb-4" id="equipTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dados" role="tab">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dados" role="tab" type="button">
                         Dados
                     </button>
                 </li>
-
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fornecedor" role="tab">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fornecedor" role="tab" type="button">
                         Fornecedor
                     </button>
                 </li>
-
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#localizacao" role="tab">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#localizacao" role="tab" type="button">
                         Localização
                     </button>
                 </li>
-
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#garantia" role="tab">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#garantia" role="tab" type="button">
                         Garantia / Contrato
                     </button>
                 </li>
-
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#docs" role="tab">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#docs" role="tab" type="button">
                         Documentação
                     </button>
                 </li>
@@ -62,47 +58,47 @@ start_session();
 
                         <h5 class="fw-bold mb-3">Dados do Equipamento</h5>
 
-                        <label>Código Interno</label>
-                        <input type="text" class="form-control mb-2" id="codigo_interno">
+                        <label>Código Interno <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="codigo_interno" id="codigo_interno" required>
 
-                        <label>Designação</label>
-                        <input type="text" class="form-control mb-2" id="designacao">
+                        <label>Designação <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="designacao" id="designacao" required>
 
-                        <label>Categoria / Grupo</label>
-                        <input type="text" class="form-control mb-2" id="categoria">
+                        <label>Categoria / Grupo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="categoria" id="categoria" required>
 
-                        <label>Marca</label>
-                        <input type="text" class="form-control mb-2" id="marca">
+                        <label>Marca <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="marca" id="marca" required>
 
-                        <label>Modelo</label>
-                        <input type="text" class="form-control mb-2" id="modelo">
+                        <label>Modelo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="modelo" id="modelo" required>
 
-                        <label>Número de Série</label>
-                        <input type="text" class="form-control mb-2" id="numero_serie">
+                        <label>Número de Série <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="numero_serie" id="numero_serie" required>
 
-                        <label>Fabricante</label>
-                        <input type="text" class="form-control mb-2" id="fabricante">
+                        <label>Fabricante <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="fabricante" id="fabricante" required>
 
-                        <label>Data de Aquisição</label>
-                        <input type="date" class="form-control mb-2" id="data_aquisicao">
+                        <label>Data de Aquisição <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control mb-2" name="data_aquisicao" id="data_aquisicao" required>
 
-                        <label>Ano de Fabrico</label>
-                        <input type="number" class="form-control mb-2" id="ano_fabrico">
+                        <label>Ano de Fabrico <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control mb-2" name="ano_fabrico" id="ano_fabrico" min="1900" max="2100" required>
 
-                        <label>Custo de Aquisição</label>
-                        <input type="number" class="form-control mb-2" id="custo_aquisicao">
+                        <label>Custo de Aquisição (€)</label>
+                        <input type="number" class="form-control mb-2" name="custo_aquisicao" id="custo_aquisicao" min="0">
 
-                        <label>Tipo de Entrada</label>
-                        <input type="text" class="form-control mb-2" id="tipo_entrada">
+                        <label>Tipo de Entrada <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="tipo_entrada" id="tipo_entrada" required>
 
-                        <label>Estado Atual</label>
-                        <input type="text" class="form-control mb-2" id="estado">
+                        <label>Estado Atual <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="estado" id="estado" required>
 
-                        <label>Criticidade</label>
-                        <input type="text" class="form-control mb-2" id="criticidade">
+                        <label>Criticidade <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mb-2" name="criticidade" id="criticidade" required>
 
                         <label>Observações</label>
-                        <textarea class="form-control mb-2" id="observacoes"></textarea>
+                        <textarea class="form-control mb-2" name="observacoes" id="observacoes"></textarea>
 
                     </div>
                 </div>
@@ -114,19 +110,19 @@ start_session();
                         <h5 class="fw-bold mb-3">Fornecedor</h5>
 
                         <label>Nome</label>
-                        <input type="text" class="form-control mb-2" id="fornecedor_nome">
+                        <input type="text" class="form-control mb-2" name="fornecedor_nome" id="fornecedor_nome">
 
                         <label>Email</label>
-                        <input type="email" class="form-control mb-2" id="fornecedor_email">
+                        <input type="email" class="form-control mb-2" name="fornecedor_email" id="fornecedor_email">
 
                         <label>Telefone</label>
-                        <input type="text" class="form-control mb-2" id="fornecedor_telefone">
+                        <input type="text" class="form-control mb-2" name="fornecedor_telefone" id="fornecedor_telefone">
 
                         <label>Morada</label>
-                        <input type="text" class="form-control mb-2" id="fornecedor_morada">
+                        <input type="text" class="form-control mb-2" name="fornecedor_morada" id="fornecedor_morada">
 
                         <label>Observações</label>
-                        <textarea class="form-control mb-2" id="fornecedor_observacoes"></textarea>
+                        <textarea class="form-control mb-2" name="fornecedor_observacoes" id="fornecedor_observacoes"></textarea>
 
                     </div>
                 </div>
@@ -138,19 +134,19 @@ start_session();
                         <h5 class="fw-bold mb-3">Localização</h5>
 
                         <label>Edifício</label>
-                        <input type="text" class="form-control mb-2" id="local_edificio">
+                        <input type="text" class="form-control mb-2" name="local_edificio" id="local_edificio">
 
                         <label>Piso</label>
-                        <input type="text" class="form-control mb-2" id="local_piso">
+                        <input type="text" class="form-control mb-2" name="local_piso" id="local_piso">
 
                         <label>Serviço / Departamento</label>
-                        <input type="text" class="form-control mb-2" id="local_servico">
+                        <input type="text" class="form-control mb-2" name="local_servico" id="local_servico">
 
                         <label>Sala / Gabinete</label>
-                        <input type="text" class="form-control mb-2" id="local_sala">
+                        <input type="text" class="form-control mb-2" name="local_sala" id="local_sala">
 
                         <label>Observações</label>
-                        <textarea class="form-control mb-2" id="local_observacoes"></textarea>
+                        <textarea class="form-control mb-2" name="local_observacoes" id="local_observacoes"></textarea>
 
                     </div>
                 </div>
@@ -162,22 +158,22 @@ start_session();
                         <h5 class="fw-bold mb-3">Garantia / Contrato</h5>
 
                         <label>Data de início</label>
-                        <input type="date" class="form-control mb-2" id="garantia_inicio">
+                        <input type="date" class="form-control mb-2" name="garantia_inicio" id="garantia_inicio">
 
                         <label>Data de fim</label>
-                        <input type="date" class="form-control mb-2" id="garantia_fim">
+                        <input type="date" class="form-control mb-2" name="garantia_fim" id="garantia_fim">
 
                         <label>Tipo de contrato</label>
-                        <input type="text" class="form-control mb-2" id="garantia_tipo">
+                        <input type="text" class="form-control mb-2" name="garantia_tipo" id="garantia_tipo">
 
                         <label>Entidade responsável</label>
-                        <input type="text" class="form-control mb-2" id="garantia_entidade">
+                        <input type="text" class="form-control mb-2" name="garantia_entidade" id="garantia_entidade">
 
                         <label>Periodicidade</label>
-                        <input type="text" class="form-control mb-2" id="garantia_periodicidade">
+                        <input type="text" class="form-control mb-2" name="garantia_periodicidade" id="garantia_periodicidade">
 
                         <label>Observações</label>
-                        <textarea class="form-control mb-2" id="garantia_observacoes"></textarea>
+                        <textarea class="form-control mb-2" name="garantia_observacoes" id="garantia_observacoes"></textarea>
 
                     </div>
                 </div>
@@ -189,28 +185,29 @@ start_session();
                         <h5 class="fw-bold mb-3">Documentação</h5>
 
                         <label>Tipo</label>
-                        <input type="text" class="form-control mb-2" id="doc_tipo">
+                        <input type="text" class="form-control mb-2" name="doc_tipo" id="doc_tipo">
 
                         <label>Descrição</label>
-                        <input type="text" class="form-control mb-2" id="doc_descricao">
+                        <input type="text" class="form-control mb-2" name="doc_descricao" id="doc_descricao">
 
                         <label>Observações</label>
-                        <textarea class="form-control mb-2" id="doc_observacoes"></textarea>
+                        <textarea class="form-control mb-2" name="doc_observacoes" id="doc_observacoes"></textarea>
 
                         <label>Ficheiros</label>
-                        <input type="file" class="form-control mb-2" multiple>
+                        <input type="file" class="form-control mb-2" name="documentos[]" multiple>
 
                     </div>
                 </div>
 
             </div>
 
-        </div>
-        <div class="d-flex justify-content-end mt-4">
-            <button class="btn btn-success px-4" id="guardarEquipamento">
-                <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Alterações
-            </button>
-        </div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Alterações
+                </button>
+            </div>
+
+        </form>
 
     </main>
     <?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -19,14 +19,14 @@ require_once __DIR__ . '/../config/config.php';
     <header class="navbar">
         <div class="logo">
             <img src="../assets/img/logHospital.png" alt="Logo do sistema">
-            <h1>MedStock</h1>
+            <h1><?php echo APP_NAME; ?></h1>
         </div>
         <nav class="menu">
             <a href="#inicio">Início</a>
             <a href="#sobre">Sobre</a>
             <a href="#funcionalidades">Funcionalidades</a>
             <a href="#contacto">Contacto</a>
-            <a href="../login/login.html" class="btn-login">Iniciar Sessão</a>
+            <a href="../login/login.php" class="btn-login">Iniciar Sessão</a>
         </nav>
     </header>
 
