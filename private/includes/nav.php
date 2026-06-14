@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/funcoes.php';
+redirect_if_not_logged();
+start_session();
+$nome = $_SESSION['utilizador'];
+?>
+
 <aside class="sidebar">
         <nav>
             <a href="/projetoSIBDAS/private/dashboard/dashboard.php" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
@@ -19,12 +26,12 @@
 
         <div class="user-button">
             <i class="fa-regular fa-user"></i>
-            <span>Utilizador</span>
+            <span><?=  htmlspecialchars($nome) ?></span>
             <i class="fa-solid fa-chevron-down seta"></i>
 
             <ul class="user-dropdown">
                 <li><a href="#">Mudar password</a></li>
-                <li><a href="/projetoSIBDAS/public/login.php">Sair</a></li>
+                <li><a href="/projetoSIBDAS/public/logout.php">Sair</a></li>
             </ul>
         </div>
     </header>
