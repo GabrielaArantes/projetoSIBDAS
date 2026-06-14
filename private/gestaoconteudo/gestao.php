@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../private/includes/funcoes.php';
+redirect_if_not_logged();
+start_session();
 ?>
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
