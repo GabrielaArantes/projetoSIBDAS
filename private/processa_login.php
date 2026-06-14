@@ -38,3 +38,6 @@ if (!$result['status']) {
 }
 
 $_SESSION['utilizador'] = $username;
+
+header('Location: home.php');
+exit;
