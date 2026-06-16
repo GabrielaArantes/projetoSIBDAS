@@ -2,6 +2,53 @@
 require_once __DIR__ . '/../config/config.php';
 ?>
 
+<?php
+$conteudos = [
+    'hero_titulo' => 'Gestão inteligente do inventário hospitalar',
+    'hero_subtitulo' => 'Organização, controlo e eficiência num único sistema.',
+    'sobre_titulo' => 'Sobre o MedStock',
+    'sobre_descricao' => 'O MedStock é um sistema inovador para a gestão do inventário de equipamentos hospitalares.',
+    'sobre_van1' => 'Otimização dos processos internos e redução de falhas humanas.',
+    'sobre_van2' => 'Maior segurança operacional através de registos consistentes.',
+    'sobre_van3' => 'Transparência total sobre o ciclo de vida dos equipamentos.',
+    'sobre_van4' => 'Melhoria da tomada de decisão com dados atualizados.',
+    'sobre_van5' => 'Redução de custos associados a perdas e duplicação de material.',
+    'fun_titulo' => 'Funcionalidades',
+    'fun_descricao' => 'O MedStock oferece um conjunto de funcionalidades essenciais para garantir uma gestão eficiente do inventário hospitalar.',
+    'fun1' => 'Registro inteligente',
+    'fun2' => 'Gestão de fornecedores e categorias',
+    'fun3' => 'Localização e estado dos dispositivos',
+    'fun4' => 'Alertas de manutenção e avarias',
+    'footer_morada' => 'Morada',
+    'footer_cod_postal' => 'codigopostal, Porto',
+    'footer_horario_semana' => '2ª a 6ª Feira: 7h - 21h',
+    'footer_horario_sabado' => 'Sábado e Feriados: 9h - 15h',
+    'footer_horario_domingo' => 'Domingos: Encerrados',
+    'footer_email' => 'geral@medstock.pt',
+    'footer_telefone' => '+351 9xx xxx xxx',
+];
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $rows = $ligacao->query("SELECT chave, valor FROM gestao_site")->fetchAll(PDO::FETCH_OBJ);
+    foreach ($rows as $row) {
+        $conteudos[$row->chave] = $row->valor;
+    }
+    $ligacao = null;
+} catch (PDOException $err) {
+    // usa os valores por defeito
+}
+
+function c($conteudos, $chave) {
+    return htmlspecialchars($conteudos[$chave] ?? '');
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -9,10 +56,9 @@ require_once __DIR__ . '/../config/config.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo APP_NAME; ?> - Gestão do inventário de equipamentos hospitalares</title>
     <meta name="description" content="Sistema para gestão inteligente do inventário de equipamentos hospitalares">
-
     <link rel="icon" type="image/png" href="../assets/img/logHospital.png">
     <link rel="stylesheet" href="../assets/css/1241094.css">
-        <link rel="stylesheet" href="../assets/fontawesome/all.min.css">
+    <link rel="stylesheet" href="../assets/fontawesome/all.min.css">
 </head>
 
 <body>
@@ -35,25 +81,25 @@ require_once __DIR__ . '/../config/config.php';
         <div id="inicio" class="imagem">
             <img src="../assets/img/maqhospitalar.png" alt="Equipamentos Hospitalares">
             <div class="intro">
-                <h2 id="heroTitulo">Gestão inteligente do inventário hospitalar</h2>
-                <p id="heroSubtitulo">Organização, controlo e eficiência num único sistema.</p>
+                <h2><?= c($conteudos, 'hero_titulo') ?></h2>
+                <p><?= c($conteudos, 'hero_subtitulo') ?></p>
             </div>
         </div>
 
         <section id="sobre">
             <div class="sobre-container">
                 <div class="sobre-content">
-                    <h2 id="sobreTitulo">Sobre o MedStock</h2>
-                    <p id="sobreDescricao">O MedStock é um sistema inovador para a gestão do inventário de equipamentos hospitalares, projetado para otimizar a organização, controlo e eficiência dos recursos médicos. Com uma interface intuitiva e funcionalidades avançadas, o MedStock permite aos hospitais monitorizar e gerir os seus equipamentos de forma eficaz, garantindo que os recursos estejam sempre disponíveis quando necessários.</p>
+                    <h2><?= c($conteudos, 'sobre_titulo') ?></h2>
+                    <p><?= c($conteudos, 'sobre_descricao') ?></p>
                 </div>
                 <div class="sobre-vantagens">
                     <h3>Vantagens do MedStock</h3>
                     <ul>
-                        <li id="van1">Otimização dos processos internos e redução de falhas humanas.</li>
-                        <li id="van2">Maior segurança operacional através de registos consistentes.</li>
-                        <li id="van3">Transparência total sobre o ciclo de vida dos equipamentos.</li>
-                        <li id="van4">Melhoria da tomada de decisão com dados atualizados.</li>
-                        <li id="van5">Redução de custos associados a perdas e duplicação de material.</li>
+                        <li><?= c($conteudos, 'sobre_van1') ?></li>
+                        <li><?= c($conteudos, 'sobre_van2') ?></li>
+                        <li><?= c($conteudos, 'sobre_van3') ?></li>
+                        <li><?= c($conteudos, 'sobre_van4') ?></li>
+                        <li><?= c($conteudos, 'sobre_van5') ?></li>
                     </ul>
                 </div>
             </div>
@@ -64,26 +110,26 @@ require_once __DIR__ . '/../config/config.php';
         <section id="funcionalidades">
             <div class="funcontainer">
                 <div class="funcontent">
-                    <h2 id="funTitulo">Funcionalidades</h2>
-                    <p id="funDescricao">O MedStock oferece um conjunto de funcionalidades essenciais para garantir uma gestão eficiente do inventário hospitalar, permitindo um controlo rigoroso e atualizado dos equipamentos médicos.</p>
+                    <h2><?= c($conteudos, 'fun_titulo') ?></h2>
+                    <p><?= c($conteudos, 'fun_descricao') ?></p>
                 </div>
                 <div class="funlista">
                     <h3>Funcionalidades Principais</h3>
                     <div class="funicon">
                         <img src="../assets/img/iconebloco.png" alt="Registro">
-                        <p id="fun1">Registro inteligente</p>
+                        <p><?= c($conteudos, 'fun1') ?></p>
                     </div>
                     <div class="funicon">
                         <img src="../assets/img/iconelogis.png" alt="Gestão de fornecedores">
-                        <p id="fun2">Gestão de fornecedores e categorias</p>
+                        <p><?= c($conteudos, 'fun2') ?></p>
                     </div>
                     <div class="funicon">
                         <img src="../assets/img/iconeloc.png" alt="Localização">
-                        <p id="fun3">Localização e estado dos dispositivos</p>
+                        <p><?= c($conteudos, 'fun3') ?></p>
                     </div>
                     <div class="funicon">
                         <img src="../assets/img/iconealerta.png" alt="Alertas">
-                        <p id="fun4">Alertas de manutenção e avarias</p>
+                        <p><?= c($conteudos, 'fun4') ?></p>
                     </div>
                 </div>
             </div>
@@ -102,7 +148,7 @@ require_once __DIR__ . '/../config/config.php';
                     <input type="text" id="nome" name="nome" required>
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
-                    <label for="telemovel">Telemovel:</label>
+                    <label for="telemovel">Telemóvel:</label>
                     <input type="tel" id="telemovel" name="telemovel" required>
                     <button type="submit">Enviar</button>
                 </form>
@@ -114,20 +160,20 @@ require_once __DIR__ . '/../config/config.php';
     <footer class="footercontainer">
         <div class="footersection">
             <strong>LOCALIZAÇÃO</strong>
-            <p id="footerMorada">Morada</p>
-            <p id="footerCodPostal">codigopostal, Porto</p>
+            <p><?= c($conteudos, 'footer_morada') ?></p>
+            <p><?= c($conteudos, 'footer_cod_postal') ?></p>
             <p>Portugal</p>
         </div>
         <div class="footersection">
             <strong>HORÁRIO</strong>
-            <p id="footerHorarioSemana">2ª a 6ª Feira: 7h - 21h</p>
-            <p id="footerHorarioSabado">Sábado e Feriados: 9h - 15h</p>
-            <p id="footerHorarioDomingo">Domingos: Encerrados</p>
+            <p><?= c($conteudos, 'footer_horario_semana') ?></p>
+            <p><?= c($conteudos, 'footer_horario_sabado') ?></p>
+            <p><?= c($conteudos, 'footer_horario_domingo') ?></p>
         </div>
         <div class="footersection">
             <strong>CONTACTOS</strong>
-            <p id="footerEmail">Email: geral@medstock.pt</p>
-            <p id="footerTelefone">Telefone: +351 9xx xxx xxx</p>
+            <p>Email: <?= c($conteudos, 'footer_email') ?></p>
+            <p>Telefone: <?= c($conteudos, 'footer_telefone') ?></p>
         </div>
     </footer>
 
