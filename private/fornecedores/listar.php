@@ -3,6 +3,24 @@ require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
 ?>
+
+<?php
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $resultados = $ligacao->query("SELECT * FROM fornecedor")->fetchAll(PDO::FETCH_OBJ);
+    $erro = '';
+} catch (PDOException $err) {
+    $erro = "Aconteceu um erro na ligação à base de dados.";
+    $resultados = [];
+}
+$ligacao = null;
+?>
+
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
 <body class="pagprivada">
@@ -13,44 +31,35 @@ start_session();
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Fornecedores</h1>
-
             <a href="inserir.php" class="btn btn-success">
                 <i class="fa-solid fa-plus"></i> Adicionar Fornecedor
             </a>
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
-
-            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar fornecedor..."
-                name="pesquisa">
+            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar fornecedor..." name="pesquisa">
 
             <div class="menu-wrapper">
                 <button class="btn btn-outline-success">
                     <i class="fa-solid fa-filter"></i> Filtrar
                 </button>
-
                 <div class="menu-box">
-
                     <div>
                         <label>Nome da Empresa</label>
                         <input type="text" class="form-control" name="nome">
                     </div>
-
                     <div>
                         <label>NIF</label>
                         <input type="text" class="form-control" name="nif">
                     </div>
-
                     <div>
                         <label>Telefone</label>
                         <input type="text" class="form-control" name="telefone">
                     </div>
-
                     <div>
                         <label>Email</label>
                         <input type="email" class="form-control" name="email">
                     </div>
-
                     <div>
                         <label>Tipo de Fornecedor</label>
                         <select class="form-select" name="tipo">
@@ -61,68 +70,71 @@ start_session();
                             <option>Fornecedor de Consumíveis</option>
                         </select>
                     </div>
-
                     <div>
                         <label>Pessoa de Contacto</label>
                         <input type="text" class="form-control" name="pessoa_contacto">
                     </div>
-
                     <div class="d-flex justify-content-end gap-2 mt-2">
                         <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
                         <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
                     </div>
-
                 </div>
             </div>
-
-
         </div>
 
-        <table class="table table-striped table-bordered shadow-sm">
-            <thead class="table-success">
-                <tr>
-                    <th>ID</th>
-                    <th>Nome da Empresa</th>
-                    <th>NIF</th>
-                    <th>Telefone</th>
-                    <th>Email</th>
-                    <th>Tipo</th>
-                    <th>Pessoa de Contacto</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
+        <?php if (!empty($erro)) : ?>
+            <p class="text-center text-danger"><?= $erro ?></p>
+        <?php elseif (count($resultados) == 0) : ?>
+            <p class="text-muted">Não existem fornecedores registados.</p>
+        <?php else : ?>
+            <table class="table table-striped table-bordered shadow-sm">
+                <thead class="table-success">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>NIF</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Tipo</th>
+                        <th>Pessoa de Contacto</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($resultados as $forn) : ?>
+                    <tr>
+                        <td><?= $forn->id ?></td>
+                        <td><?= $forn->nome ?></td>
+                        <td><?= $forn->nif ?></td>
+                        <td><?= $forn->telefone ?></td>
+                        <td><?= $forn->email ?></td>
+                        <td><?= $forn->tipo ?></td>
+                        <td><?= $forn->pessoa_contacto ?></td>
+                        <td>
+                            <a href="detalhes.php" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="editar.php" class="btn btn-warning btn-sm">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarFornecedor">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
 
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-
-                    <td>
-                        <a href="detalhes.php" class="btn btn-primary btn-sm">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-                        <a href="editar.php" class="btn btn-warning btn-sm">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#modalEliminarFornecedor">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="col">
+            <p class="mb-5">Total: <strong><?= count($resultados) ?></strong></p>
+        </div>
 
         <div class="modal fade" id="modalEliminarFornecedor" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title">
                             <i class="fa-solid fa-triangle-exclamation me-2"></i>
@@ -130,22 +142,14 @@ start_session();
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
-
                     <div class="modal-body">
                         <p>Deseja apagar?</p>
                         <p class="text-muted">Esta ação é irreversível.</p>
                     </div>
-
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
-
-                        <a id="btnConfirmarEliminarFornecedor" href="#" class="btn btn-danger">
-                            Eliminar
-                        </a>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <a id="btnConfirmarEliminarFornecedor" href="#" class="btn btn-danger">Eliminar</a>
                     </div>
-
                 </div>
             </div>
         </div>

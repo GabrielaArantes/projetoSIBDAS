@@ -4,8 +4,24 @@ redirect_if_not_logged();
 start_session();
 ?>
 
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<?php
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $resultados = $ligacao->query("SELECT * FROM equipamento")->fetchAll(PDO::FETCH_OBJ);
+    $erro = '';
+} catch (PDOException $err) {
+    $erro = "Aconteceu um erro na ligação à base de dados.";
+    $resultados = [];
+}
+$ligacao = null;
+?>
 
+<?php include __DIR__ . '/../includes/header.php'; ?>
 
 <body class="pagprivada">
 
@@ -19,46 +35,36 @@ start_session();
             </a>
         </div>
 
-
         <div class="d-flex justify-content-between align-items-center mb-4">
-
             <div class="d-flex align-items-center gap-3">
 
-                <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar..."
-                    name="pesquisa">
+                <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar..." name="pesquisa">
 
                 <div class="menu-wrapper">
                     <button class="btn btn-outline-success">
                         <i class="fa-solid fa-filter"></i> Filtrar
                     </button>
-
                     <div class="menu-box">
-
                         <div>
                             <label>Código Interno</label>
                             <input type="text" class="form-control" name="codigo_interno">
                         </div>
-
                         <div>
                             <label>Designação</label>
                             <input type="text" class="form-control" name="designacao">
                         </div>
-
                         <div>
                             <label>Marca</label>
                             <input type="text" class="form-control" name="marca">
                         </div>
-
                         <div>
                             <label>Modelo</label>
                             <input type="text" class="form-control" name="modelo">
                         </div>
-
                         <div>
                             <label>Número de Série</label>
                             <input type="text" class="form-control" name="num_serie">
                         </div>
-
                         <div>
                             <label>Serviço</label>
                             <select class="form-select" name="servico">
@@ -71,7 +77,6 @@ start_session();
                                 <option>Armazém</option>
                             </select>
                         </div>
-
                         <div>
                             <label>Estado</label>
                             <select class="form-select" name="estado">
@@ -82,15 +87,12 @@ start_session();
                                 <option>Abatido</option>
                             </select>
                         </div>
-
                         <div>
                             <label>Fornecedor</label>
                             <select class="form-select" name="fornecedor">
                                 <option value="">Todos</option>
-                                <!-- php -->
                             </select>
                         </div>
-
                         <div>
                             <label>Categoria</label>
                             <select class="form-select" name="categoria">
@@ -103,7 +105,6 @@ start_session();
                                 <option>Outros</option>
                             </select>
                         </div>
-
                         <div>
                             <label>Localização</label>
                             <select class="form-select" name="localizacao">
@@ -116,7 +117,6 @@ start_session();
                                 <option>Armazém</option>
                             </select>
                         </div>
-
                         <div>
                             <label>Criticidade</label>
                             <select class="form-select" name="criticidade">
@@ -126,12 +126,10 @@ start_session();
                                 <option>Baixa</option>
                             </select>
                         </div>
-
                         <div class="d-flex justify-content-end gap-2 mt-2">
                             <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
                             <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
                         </div>
-
                     </div>
                 </div>
 
@@ -139,85 +137,79 @@ start_session();
                     <button class="btn btn-outline-primary">
                         <i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar
                     </button>
-
                     <div class="menu-box">
-
                         <div>
                             <label>Ordenar por</label>
                             <select class="form-select" name="ordenar">
                                 <option value="">Selecione...</option>
-
-                                <!-- Custo de Aquisição -->
                                 <option value="custo_asc">Custo de aquisição (crescente)</option>
                                 <option value="custo_desc">Custo de aquisição (decrescente)</option>
-
-                                <!-- Data de Aquisição -->
                                 <option value="data_asc">Data de aquisição (crescente)</option>
                                 <option value="data_desc">Data de aquisição (decrescente)</option>
-
-                                <!-- Ano de Fabrico -->
                                 <option value="ano_asc">Ano de fabrico (crescente)</option>
                                 <option value="ano_desc">Ano de fabrico (decrescente)</option>
                             </select>
                         </div>
-
                         <div class="d-flex justify-content-end gap-2 mt-2">
                             <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
                         </div>
-
                     </div>
                 </div>
-
 
             </div>
         </div>
 
+        <?php if (!empty($erro)) : ?>
+            <p class="text-center text-danger"><?= $erro ?></p>
+        <?php elseif (count($resultados) == 0) : ?>
+            <p class="text-muted">Não existem equipamentos registados.</p>
+        <?php else : ?>
 
+            <table class="table table-striped table-bordered shadow-sm">
+                <thead class="table-success">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Localização</th>
+                        <th>Estado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($resultados as $eq) : ?>
+                    <tr>
+                        <td><?= $eq->id ?></td>
+                        <td><?= $eq->nome ?></td>
+                        <td><?= $eq->categoria ?></td>
+                        <td><?= $eq->localizacao ?></td>
+                        <td><?= $eq->estado ?></td>
+                        <td>
+                            <a href="detalhes.php" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="editar.php" class="btn btn-warning btn-sm">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarEquipamento">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
 
+        <?php endif; ?>
 
-
-        <table class="table table-striped table-bordered shadow-sm">
-            <thead class="table-success">
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Categoria</th>
-                    <th>Localização</th>
-                    <th>Estado</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td></td> <!-- ID -->
-                    <td></td> <!-- Nome -->
-                    <td></td> <!-- Categoria -->
-                    <td></td> <!-- Localização -->
-                    <td></td> <!-- Estado -->
-
-                    <td>
-                        <a href="detalhes.php" class="btn btn-primary btn-sm">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-                        <a href="editar.php" class="btn btn-warning btn-sm">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#modalEliminarEquipamento">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-
-                    </td>
-                </tr>
-            </tbody>
-
-        </table>
+        <div class="col">
+            <p class="mb-5">Total: <strong><?= count($resultados) ?></strong></p>
+        </div>
 
         <div class="modal fade" id="modalEliminarEquipamento" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title">
                             <i class="fa-solid fa-triangle-exclamation me-2"></i>
@@ -225,25 +217,22 @@ start_session();
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
-
                     <div class="modal-body">
                         <p>Deseja apagar?</p>
                         <p class="text-muted">Esta ação é irreversível.</p>
                     </div>
-
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">
                             Cancelar
                         </button>
-
                         <a id="btnConfirmarEliminarEquipamento" href="#" class="btn btn-danger">
                             Eliminar
                         </a>
                     </div>
-
                 </div>
             </div>
         </div>
 
     </main>
+
     <?php include __DIR__ . '/../includes/footer.php'; ?>
