@@ -5,6 +5,26 @@ start_session();
 ?>
 
 <?php
+if (isset($_GET['apagar'])) {
+    $id_apagar = (int)$_GET['apagar'];
+    try {
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $ligacao->prepare("DELETE FROM garantia_contrato WHERE id = ?");
+        $stmt->execute([$id_apagar]);
+        $ligacao = null;
+    } catch (PDOException $err) {
+    }
+    header("Location: listar.php");
+    exit;
+}
+?>
+
+<?php
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -112,7 +132,6 @@ $ligacao = null;
             <table class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
-                        <th>ID</th>
                         <th>Equipamento</th>
                         <th>Tipo</th>
                         <th>Entidade</th>
@@ -125,7 +144,6 @@ $ligacao = null;
                 <tbody>
                     <?php foreach ($resultados as $gc) : ?>
                     <tr>
-                        <td><?= $gc->id ?></td>
                         <td><?= $gc->nome_equipamento ?></td>
                         <td><?= $gc->tipo_contrato ?></td>
                         <td><?= $gc->entidade_responsavel ?></td>
@@ -133,13 +151,16 @@ $ligacao = null;
                         <td><?= $gc->data_inicio ?></td>
                         <td><?= $gc->data_fim ?></td>
                         <td>
-                            <a href="detalhes.php" class="btn btn-primary btn-sm">
+                            <a href="detalhes.php?id=<?= $gc->id ?>" class="btn btn-primary btn-sm">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                             <a href="editar.php?id=<?= $gc->id ?>" class="btn btn-warning btn-sm">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar">
+                            <button class="btn btn-danger btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEliminar"
+                                data-id="<?= $gc->id ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>
@@ -161,16 +182,28 @@ $ligacao = null;
                         <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Deseja apagar?</p>
+                        <p>Deseja apagar esta garantia/contrato?</p>
                         <p class="text-muted">Esta ação é irreversível.</p>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <a href="#" class="btn btn-danger">Eliminar</a>
+                        <a id="btnConfirmarEliminar" href="#" class="btn btn-danger">Eliminar</a>
                     </div>
                 </div>
             </div>
         </div>
 
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('modalEliminar');
+            modal.addEventListener('show.bs.modal', function (event) {
+                const btn = event.relatedTarget;
+                const id = btn.getAttribute('data-id');
+                document.getElementById('btnConfirmarEliminar').href = 'listar.php?apagar=' + id;
+            });
+        });
+    </script>
+
     <?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -5,6 +5,26 @@ start_session();
 ?>
 
 <?php
+if (isset($_GET['apagar'])) {
+    $id_apagar = (int)$_GET['apagar'];
+    try {
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $ligacao->prepare("DELETE FROM fornecedor WHERE id = ?");
+        $stmt->execute([$id_apagar]);
+        $ligacao = null;
+    } catch (PDOException $err) {
+    }
+    header("Location: listar.php");
+    exit;
+}
+?>
+
+<?php
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -90,7 +110,6 @@ $ligacao = null;
             <table class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>NIF</th>
                         <th>Telefone</th>
@@ -103,7 +122,6 @@ $ligacao = null;
                 <tbody>
                     <?php foreach ($resultados as $forn) : ?>
                     <tr>
-                        <td><?= $forn->id ?></td>
                         <td><?= $forn->nome ?></td>
                         <td><?= $forn->nif ?></td>
                         <td><?= $forn->telefone ?></td>
@@ -111,14 +129,16 @@ $ligacao = null;
                         <td><?= $forn->tipo ?></td>
                         <td><?= $forn->pessoa_contacto ?></td>
                         <td>
-                            <a href="detalhes.php" class="btn btn-primary btn-sm">
+                            <a href="detalhes.php?id=<?= $forn->id ?>" class="btn btn-primary btn-sm">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                             <a href="editar.php?id=<?= $forn->id ?>" class="btn btn-warning btn-sm">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#modalEliminarFornecedor">
+                            <button class="btn btn-danger btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarFornecedor"
+                                data-id="<?= $forn->id ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>
@@ -143,7 +163,7 @@ $ligacao = null;
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Deseja apagar?</p>
+                        <p>Deseja apagar este fornecedor?</p>
                         <p class="text-muted">Esta ação é irreversível.</p>
                     </div>
                     <div class="modal-footer">
@@ -155,4 +175,16 @@ $ligacao = null;
         </div>
 
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('modalEliminarFornecedor');
+            modal.addEventListener('show.bs.modal', function (event) {
+                const btn = event.relatedTarget;
+                const id = btn.getAttribute('data-id');
+                document.getElementById('btnConfirmarEliminarFornecedor').href = 'listar.php?apagar=' + id;
+            });
+        });
+    </script>
+
     <?php include __DIR__ . '/../includes/footer.php'; ?>

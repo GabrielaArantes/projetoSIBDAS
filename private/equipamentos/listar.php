@@ -5,6 +5,26 @@ start_session();
 ?>
 
 <?php
+if (isset($_GET['apagar'])) {
+    $id_apagar = (int)$_GET['apagar'];
+    try {
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $ligacao->prepare("DELETE FROM equipamento WHERE id = ?");
+        $stmt->execute([$id_apagar]);
+        $ligacao = null;
+    } catch (PDOException $err) {
+    }
+    header("Location: listar.php");
+    exit;
+}
+?>
+
+<?php
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -183,14 +203,16 @@ $ligacao = null;
                         <td><?= $eq->servico ?></td>
                         <td><?= $eq->estado ?></td>
                         <td>
-                            <a href="detalhes.php" class="btn btn-primary btn-sm">
+                            <a href="detalhes.php?id=<?= $eq->id ?>" class="btn btn-primary btn-sm">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                             <a href="editar.php?id=<?= $eq->id ?>" class="btn btn-warning btn-sm">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#modalEliminarEquipamento">
+                            <button class="btn btn-danger btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarEquipamento"
+                                data-id="<?= $eq->id ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>
@@ -216,21 +238,28 @@ $ligacao = null;
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Deseja apagar?</p>
+                        <p>Deseja apagar este equipamento?</p>
                         <p class="text-muted">Esta ação é irreversível.</p>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
-                        <a id="btnConfirmarEliminarEquipamento" href="#" class="btn btn-danger">
-                            Eliminar
-                        </a>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <a id="btnConfirmarEliminarEquipamento" href="#" class="btn btn-danger">Eliminar</a>
                     </div>
                 </div>
             </div>
         </div>
 
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('modalEliminarEquipamento');
+            modal.addEventListener('show.bs.modal', function (event) {
+                const btn = event.relatedTarget;
+                const id = btn.getAttribute('data-id');
+                document.getElementById('btnConfirmarEliminarEquipamento').href = 'listar.php?apagar=' + id;
+            });
+        });
+    </script>
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
