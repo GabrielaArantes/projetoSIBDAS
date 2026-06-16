@@ -86,24 +86,24 @@ $ligacao = null;
                 </thead>
                 <tbody>
                     <?php foreach ($resultados as $loc) : ?>
-                    <tr>
-                        <td><?= $loc->id ?></td>
-                        <td><?= $loc->edificio ?></td>
-                        <td><?= $loc->piso ?></td>
-                        <td><?= $loc->servico ?></td>
-                        <td><?= $loc->sala ?></td>
-                        <td>
-                            <a href="detalhes.php" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-eye"></i>
-                            </a>
-                            <a href="editar.php" class="btn btn-warning btn-sm">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?= $loc->id ?></td>
+                            <td><?= $loc->edificio ?></td>
+                            <td><?= $loc->piso ?></td>
+                            <td><?= $loc->servico ?></td>
+                            <td><?= $loc->sala ?></td>
+                            <td>
+                                <a href="detalhes.php" class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="editar.php?id=<?= $loc->id ?>" class="btn btn-warning btn-sm">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>

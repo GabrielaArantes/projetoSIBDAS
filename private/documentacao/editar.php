@@ -3,6 +3,79 @@ require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
 ?>
+
+<?php
+$sucesso = '';
+$erro = '';
+$documento = null;
+$equipamentos = [];
+
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if ($id === 0) {
+    header("Location: listar.php");
+    exit;
+}
+
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmt = $ligacao->prepare("SELECT * FROM documento WHERE id = ?");
+    $stmt->execute([$id]);
+    $documento = $stmt->fetch(PDO::FETCH_OBJ);
+    $equipamentos = $ligacao->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    $ligacao = null;
+
+    if (!$documento) {
+        header("Location: listar.php");
+        exit;
+    }
+} catch (PDOException $err) {
+    $erro = "Erro ao carregar documento.";
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $stmt = $ligacao->prepare("UPDATE documento SET tipo=?, nome=?, data_documento=?, data_validade=?, id_equipamento=? WHERE id=?");
+        $stmt->execute([
+            $_POST['tipo'],
+            $_POST['nome'],
+            $_POST['data'],
+            $_POST['validade'] ?: null,
+            $_POST['equipamento'],
+            $id
+        ]);
+
+        $ligacao = null;
+        $sucesso = "Documento atualizado com sucesso!";
+
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $stmt = $ligacao->prepare("SELECT * FROM documento WHERE id = ?");
+        $stmt->execute([$id]);
+        $documento = $stmt->fetch(PDO::FETCH_OBJ);
+        $ligacao = null;
+
+    } catch (PDOException $err) {
+        $erro = "Erro ao atualizar: " . $err->getMessage();
+    }
+}
+?>
+
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
 <body class="pagprivada">
@@ -13,49 +86,58 @@ start_session();
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Editar Documentação</h1>
-
             <a href="listar.php" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> Voltar
             </a>
         </div>
 
+        <?php if (!empty($sucesso)) : ?>
+            <div class="alert alert-success"><?= $sucesso ?></div>
+        <?php endif; ?>
+        <?php if (!empty($erro)) : ?>
+            <div class="alert alert-danger"><?= $erro ?></div>
+        <?php endif; ?>
+
         <div class="shadow p-4 rounded bg-white" style="max-width: 700px; margin: auto;">
 
-            <form id="formEditarDoc" enctype="multipart/form-data">
-
-                <input type="hidden" name="id" id="doc_id">
+            <form method="POST" action="editar.php?id=<?= $id ?>" enctype="multipart/form-data">
 
                 <div class="mb-3">
-                    <label class="form-label">Tipo de Documento *</label>
-                    <input type="text" class="form-control" name="tipo" id="tipo" required>
+                    <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="tipo" value="<?= $documento->tipo ?? '' ?>" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Nome do Documento *</label>
-                    <input type="text" class="form-control" name="nome" id="nome" required>
+                    <label class="form-label">Nome do Documento <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="nome" value="<?= $documento->nome ?? '' ?>" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Data do Documento *</label>
-                    <input type="date" class="form-control" name="data" id="data" required>
+                    <label class="form-label">Data do Documento <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="data" value="<?= $documento->data_documento ?? '' ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Data de Validade (opcional)</label>
-                    <input type="date" class="form-control" name="validade" id="validade">
+                    <input type="date" class="form-control" name="validade" value="<?= $documento->data_validade ?? '' ?>">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Equipamento Associado *</label>
-                    <select class="form-select" name="equipamento" id="equipamento" required>
+                    <label class="form-label">Equipamento Associado <span class="text-danger">*</span></label>
+                    <select class="form-select" name="equipamento" required>
                         <option value="">Selecione...</option>
+                        <?php foreach ($equipamentos as $eq) : ?>
+                            <option value="<?= $eq->id ?>" <?= ($documento->id_equipamento ?? '') == $eq->id ? 'selected' : '' ?>><?= $eq->nome ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
+                <?php if (!empty($documento->ficheiro)) : ?>
                 <div class="mb-3">
                     <label class="form-label">Ficheiro Atual</label>
-                    <p id="ficheiroAtual" class="text-muted"></p>
+                    <p class="text-muted"><?= $documento->ficheiro ?></p>
                 </div>
+                <?php endif; ?>
 
                 <div class="mb-3">
                     <label class="form-label">Substituir Ficheiro (opcional)</label>
@@ -63,7 +145,7 @@ start_session();
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-success px-4">
+                    <button type="submit" class="btn btn-warning px-4">
                         <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Alterações
                     </button>
                 </div>
@@ -73,5 +155,4 @@ start_session();
         </div>
 
     </main>
-
     <?php include __DIR__ . '/../includes/footer.php'; ?>
