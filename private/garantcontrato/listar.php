@@ -129,7 +129,7 @@ $ligacao = null;
         <?php elseif (count($resultados) == 0) : ?>
             <p class="text-muted">Não existem garantias ou contratos registados.</p>
         <?php else : ?>
-            <table class="table table-striped table-bordered shadow-sm">
+            <table id="tabela-garantcontrato" class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
                         <th>Equipamento</th>
@@ -143,28 +143,28 @@ $ligacao = null;
                 </thead>
                 <tbody>
                     <?php foreach ($resultados as $gc) : ?>
-                    <tr>
-                        <td><?= $gc->nome_equipamento ?></td>
-                        <td><?= $gc->tipo_contrato ?></td>
-                        <td><?= $gc->entidade_responsavel ?></td>
-                        <td><?= $gc->periodicidade ?></td>
-                        <td><?= $gc->data_inicio ?></td>
-                        <td><?= $gc->data_fim ?></td>
-                        <td>
-                            <a href="detalhes.php?id=<?= $gc->id ?>" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-eye"></i>
-                            </a>
-                            <a href="editar.php?id=<?= $gc->id ?>" class="btn btn-warning btn-sm">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <button class="btn btn-danger btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalEliminar"
-                                data-id="<?= $gc->id ?>">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?= $gc->nome_equipamento ?></td>
+                            <td><?= $gc->tipo_contrato ?></td>
+                            <td><?= $gc->entidade_responsavel ?></td>
+                            <td><?= $gc->periodicidade ?></td>
+                            <td><?= $gc->data_inicio ?></td>
+                            <td><?= $gc->data_fim ?></td>
+                            <td>
+                                <a href="detalhes.php?id=<?= $gc->id ?>" class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="editar.php?id=<?= $gc->id ?>" class="btn btn-warning btn-sm">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <button class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEliminar"
+                                    data-id="<?= $gc->id ?>">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -196,14 +196,44 @@ $ligacao = null;
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('modalEliminar');
-            modal.addEventListener('show.bs.modal', function (event) {
+            modal.addEventListener('show.bs.modal', function(event) {
                 const btn = event.relatedTarget;
                 const id = btn.getAttribute('data-id');
                 document.getElementById('btnConfirmarEliminar').href = 'listar.php?apagar=' + id;
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#tabela-garantias').DataTable({
+                pageLength: 5,
+                pagingType: "full_numbers",
+                language: {
+                    decimal: "",
+                    emptyTable: "Sem dados disponíveis na tabela.",
+                    info: "Mostrando _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrando _MAX_ total de registos)",
+                    infoPostFix: "",
+                    thousands: ",",
+                    lengthMenu: "Mostrando _MENU_ registos por página.",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    search: "Filtrar:",
+                    zeroRecords: "Nenhum registo encontrado.",
+                    paginate: {
+                        first: "Primeira",
+                        last: "Última",
+                        next: "Seguinte",
+                        previous: "Anterior"
+                    }
+                }
+            });
+        });
+    </script>
+
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>

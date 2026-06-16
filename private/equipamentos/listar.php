@@ -185,7 +185,7 @@ $ligacao = null;
             <p class="text-muted">Não existem equipamentos registados.</p>
         <?php else : ?>
 
-            <table class="table table-striped table-bordered shadow-sm">
+            <table id="tabela-equipamentos" class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
                         <th>Nome</th>
@@ -197,26 +197,26 @@ $ligacao = null;
                 </thead>
                 <tbody>
                     <?php foreach ($resultados as $eq) : ?>
-                    <tr>
-                        <td><?= $eq->nome ?></td>
-                        <td><?= $eq->categoria ?></td>
-                        <td><?= $eq->servico ?></td>
-                        <td><?= $eq->estado ?></td>
-                        <td>
-                            <a href="detalhes.php?id=<?= $eq->id ?>" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-eye"></i>
-                            </a>
-                            <a href="editar.php?id=<?= $eq->id ?>" class="btn btn-warning btn-sm">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <button class="btn btn-danger btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalEliminarEquipamento"
-                                data-id="<?= $eq->id ?>">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?= $eq->nome ?></td>
+                            <td><?= $eq->categoria ?></td>
+                            <td><?= $eq->servico ?></td>
+                            <td><?= $eq->estado ?></td>
+                            <td>
+                                <a href="detalhes.php?id=<?= $eq->id ?>" class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="editar.php?id=<?= $eq->id ?>" class="btn btn-warning btn-sm">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <button class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEliminarEquipamento"
+                                    data-id="<?= $eq->id ?>">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -252,12 +252,46 @@ $ligacao = null;
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('modalEliminarEquipamento');
-            modal.addEventListener('show.bs.modal', function (event) {
+            modal.addEventListener('show.bs.modal', function(event) {
                 const btn = event.relatedTarget;
                 const id = btn.getAttribute('data-id');
                 document.getElementById('btnConfirmarEliminarEquipamento').href = 'listar.php?apagar=' + id;
+            });
+        });
+    </script>
+
+    <script>
+        //fazer sem o filtrar mais para a frente, para tentar usar o meu
+        $(document).ready(function() {
+            $('#tabela-equipamentos').DataTable({
+                pageLength: 5,
+                pagingType: "full_numbers",
+                language: {
+                    decimal: "",
+                    emptyTable: "Sem dados disponíveis na tabela.",
+                    info: "Mostrando _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrando _MAX_ total de registos)",
+                    infoPostFix: "",
+                    thousands: ",",
+                    lengthMenu: "Mostrando _MENU_ registos por página.",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    search: "Filtrar:",
+                    zeroRecords: "Nenhum registo encontrado.",
+                    paginate: {
+                        first: "Primeira",
+                        last: "Última",
+                        next: "Seguinte",
+                        previous: "Anterior"
+                    },
+                    aria: {
+                        sortAscending: ": ative para classificar em ordem crescente.",
+                        sortDescending: ": ative para classificar em ordem decrescente."
+                    }
+                }
             });
         });
     </script>

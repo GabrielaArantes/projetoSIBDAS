@@ -107,7 +107,7 @@ $ligacao = null;
         <?php elseif (count($resultados) == 0) : ?>
             <p class="text-muted">Não existem fornecedores registados.</p>
         <?php else : ?>
-            <table class="table table-striped table-bordered shadow-sm">
+            <table id="tabela-fornecedores" class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
                         <th>Nome</th>
@@ -121,28 +121,28 @@ $ligacao = null;
                 </thead>
                 <tbody>
                     <?php foreach ($resultados as $forn) : ?>
-                    <tr>
-                        <td><?= $forn->nome ?></td>
-                        <td><?= $forn->nif ?></td>
-                        <td><?= $forn->telefone ?></td>
-                        <td><?= $forn->email ?></td>
-                        <td><?= $forn->tipo ?></td>
-                        <td><?= $forn->pessoa_contacto ?></td>
-                        <td>
-                            <a href="detalhes.php?id=<?= $forn->id ?>" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-eye"></i>
-                            </a>
-                            <a href="editar.php?id=<?= $forn->id ?>" class="btn btn-warning btn-sm">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <button class="btn btn-danger btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalEliminarFornecedor"
-                                data-id="<?= $forn->id ?>">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?= $forn->nome ?></td>
+                            <td><?= $forn->nif ?></td>
+                            <td><?= $forn->telefone ?></td>
+                            <td><?= $forn->email ?></td>
+                            <td><?= $forn->tipo ?></td>
+                            <td><?= $forn->pessoa_contacto ?></td>
+                            <td>
+                                <a href="detalhes.php?id=<?= $forn->id ?>" class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="editar.php?id=<?= $forn->id ?>" class="btn btn-warning btn-sm">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <button class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEliminarFornecedor"
+                                    data-id="<?= $forn->id ?>">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -177,14 +177,42 @@ $ligacao = null;
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('modalEliminarFornecedor');
-            modal.addEventListener('show.bs.modal', function (event) {
+            modal.addEventListener('show.bs.modal', function(event) {
                 const btn = event.relatedTarget;
                 const id = btn.getAttribute('data-id');
                 document.getElementById('btnConfirmarEliminarFornecedor').href = 'listar.php?apagar=' + id;
             });
         });
     </script>
-
+    <script>
+        //nota
+        $(document).ready(function() {
+            $('#tabela-fornecedores').DataTable({
+                pageLength: 5,
+                pagingType: "full_numbers",
+                language: {
+                    decimal: "",
+                    emptyTable: "Sem dados disponíveis na tabela.",
+                    info: "Mostrando _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrando _MAX_ total de registos)",
+                    infoPostFix: "",
+                    thousands: ",",
+                    lengthMenu: "Mostrando _MENU_ registos por página.",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    search: "Filtrar:",
+                    zeroRecords: "Nenhum registo encontrado.",
+                    paginate: {
+                        first: "Primeira",
+                        last: "Última",
+                        next: "Seguinte",
+                        previous: "Anterior"
+                    }
+                }
+            });
+        });
+    </script>
     <?php include __DIR__ . '/../includes/footer.php'; ?>
