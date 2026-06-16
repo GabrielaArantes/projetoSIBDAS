@@ -12,7 +12,7 @@ try {
         MYSQL_PASSWORD
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $resultados = $ligacao->query("SELECT * FROM equipamento")->fetchAll(PDO::FETCH_OBJ);
+    $resultados = $ligacao->query("SELECT e.*, l.servico FROM equipamento e LEFT JOIN localizacao l ON e.id_localizacao = l.id")->fetchAll(PDO::FETCH_OBJ);
     $erro = '';
 } catch (PDOException $err) {
     $erro = "Aconteceu um erro na ligação à base de dados.";
@@ -168,7 +168,6 @@ $ligacao = null;
             <table class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>Categoria</th>
                         <th>Localização</th>
@@ -179,10 +178,9 @@ $ligacao = null;
                 <tbody>
                     <?php foreach ($resultados as $eq) : ?>
                     <tr>
-                        <td><?= $eq->id ?></td>
                         <td><?= $eq->nome ?></td>
                         <td><?= $eq->categoria ?></td>
-                        <td><?= $eq->localizacao ?></td>
+                        <td><?= $eq->servico ?></td>
                         <td><?= $eq->estado ?></td>
                         <td>
                             <a href="detalhes.php" class="btn btn-primary btn-sm">

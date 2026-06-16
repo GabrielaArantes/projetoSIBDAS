@@ -3,6 +3,43 @@ require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
 ?>
+
+<?php
+$sucesso = '';
+$erro = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD
+        );
+        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $stmt = $ligacao->prepare("INSERT INTO fornecedor (nome, nif, telefone, email, morada, website, pessoa_contacto, telefone_contacto, tipo, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([
+            $_POST['nome_empresa'],
+            $_POST['nif'],
+            $_POST['telefone'],
+            $_POST['email'],
+            $_POST['morada'],
+            $_POST['website'],
+            $_POST['pessoa_contacto'],
+            $_POST['telefone_contacto'],
+            $_POST['tipo_fornecedor'],
+            $_POST['observacoes']
+        ]);
+
+        $ligacao = null;
+        $sucesso = "Fornecedor inserido com sucesso!";
+
+    } catch (PDOException $err) {
+        $erro = "Erro ao inserir: " . $err->getMessage();
+    }
+}
+?>
+
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
 <body class="pagprivada">
@@ -13,14 +50,20 @@ start_session();
 
         <h1 class="mb-4">Inserir Fornecedor</h1>
 
-        <form class="shadow p-4 rounded" style="max-width: 800px;" method="POST" action="#">
+        <?php if (!empty($sucesso)) : ?>
+            <div class="alert alert-success"><?= $sucesso ?></div>
+        <?php endif; ?>
+        <?php if (!empty($erro)) : ?>
+            <div class="alert alert-danger"><?= $erro ?></div>
+        <?php endif; ?>
+
+        <form class="shadow p-4 rounded" style="max-width: 800px;" method="POST" action="inserir.php">
 
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Nome da Empresa <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" name="nome_empresa" placeholder="Ex: Medstock Portugal" required>
                 </div>
-
                 <div class="col">
                     <label class="form-label">NIF <span class="text-danger">*</span></label>
                     <input type="number" class="form-control" name="nif" placeholder="Ex: 501234657" required>
@@ -32,7 +75,6 @@ start_session();
                     <label class="form-label">Telefone <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" name="telefone" placeholder="Ex: 912 345 678" required>
                 </div>
-
                 <div class="col">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
                     <input type="email" class="form-control" name="email" placeholder="Ex: suporte@medstock.pt" required>
@@ -56,7 +98,6 @@ start_session();
                     <label class="form-label">Pessoa de Contacto</label>
                     <input type="text" class="form-control" name="pessoa_contacto" placeholder="Ex: Gabriela Arantes">
                 </div>
-                
                 <div class="col">
                     <label class="form-label">Telefone da Pessoa de Contacto</label>
                     <input type="text" class="form-control" name="telefone_contacto" placeholder="Ex: 934 567 890">
@@ -83,7 +124,6 @@ start_session();
                 <a href="listar.php" class="btn btn-secondary">
                     <i class="fa-solid fa-arrow-left"></i> Voltar
                 </a>
-
                 <button type="submit" class="btn btn-success">
                     <i class="fa-solid fa-check"></i> Guardar Fornecedor
                 </button>
