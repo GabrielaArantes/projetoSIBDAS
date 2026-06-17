@@ -2,41 +2,22 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
 
-<?php
-$sucesso = '';
-$erro = '';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $nome_empresa     = $_POST["nome_empresa"]      ?? "";
+    $nif              = $_POST["nif"]               ?? "";
+    $telefone         = $_POST["telefone"]          ?? "";
+    $email            = $_POST["email"]             ?? "";
+    $morada           = $_POST["morada"]            ?? "";
+    $website          = $_POST["website"]           ?? "";
+    $pessoa_contacto  = $_POST["pessoa_contacto"]   ?? "";
+    $tel_contacto     = $_POST["telefone_contacto"] ?? "";
+    $tipo_fornecedor  = $_POST["tipo_fornecedor"]   ?? "";
+    $observacoes      = $_POST["observacoes"]       ?? "";
 
-        $stmt = $ligacao->prepare("INSERT INTO fornecedor (nome, nif, telefone, email, morada, website, pessoa_contacto, telefone_contacto, tipo, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $_POST['nome_empresa'],
-            $_POST['nif'],
-            $_POST['telefone'],
-            $_POST['email'],
-            $_POST['morada'],
-            $_POST['website'],
-            $_POST['pessoa_contacto'],
-            $_POST['telefone_contacto'],
-            $_POST['tipo_fornecedor'],
-            $_POST['observacoes']
-        ]);
+    echo "<p><strong>Dados recebidos:</strong> Nome: $nome_empresa | NIF: $nif | Telefone: $telefone | Email: $email | Tipo: $tipo_fornecedor</p>";
 
-        $ligacao = null;
-        $sucesso = "Fornecedor inserido com sucesso!";
-
-    } catch (PDOException $err) {
-        $erro = "Erro ao inserir: " . $err->getMessage();
-    }
 }
 ?>
 

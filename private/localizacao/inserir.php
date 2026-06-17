@@ -2,35 +2,16 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
 
-<?php
-$sucesso = '';
-$erro = '';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $edificio = $_POST["edificio"] ?? "";
+    $piso     = $_POST["piso"]     ?? "";
+    $servico  = $_POST["servico"]  ?? "";
+    $sala     = $_POST["sala"]     ?? "";
 
-        $stmt = $ligacao->prepare("INSERT INTO localizacao (edificio, piso, servico, sala) VALUES (?, ?, ?, ?)");
-        $stmt->execute([
-            $_POST['edificio'],
-            $_POST['piso'],
-            $_POST['servico'],
-            $_POST['sala']
-        ]);
+    echo "<p><strong>Dados recebidos:</strong> Edifício: $edificio | Piso: $piso | Serviço: $servico | Sala: $sala</p>";
 
-        $ligacao = null;
-        $sucesso = "Localização inserida com sucesso!";
-
-    } catch (PDOException $err) {
-        $erro = "Erro ao inserir: " . $err->getMessage();
-    }
 }
 ?>
 

@@ -2,87 +2,39 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
 
-<?php
-$sucesso = '';
-$erro = '';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $codigo_interno    = $_POST["codigo_interno"]          ?? "";
+    $designacao        = $_POST["designacao"]              ?? "";
+    $categoria         = $_POST["categoria"]              ?? "";
+    $marca             = $_POST["marca"]                  ?? "";
+    $modelo            = $_POST["modelo"]                 ?? "";
+    $numero_serie      = $_POST["numero_serie"]           ?? "";
+    $fabricante        = $_POST["fabricante"]             ?? "";
+    $data_aquisicao    = $_POST["data_aquisicao"]         ?? "";
+    $ano_fabrico       = $_POST["ano_fabrico"]            ?? "";
+    $custo_aquisicao   = $_POST["custo_aquisicao"]        ?? "";
+    $tipo_entrada      = $_POST["tipo_entrada"]           ?? "";
+    $estado            = $_POST["estado"]                 ?? "";
+    $criticidade       = $_POST["criticidade"]            ?? "";
+    $observacoes       = $_POST["observacoes"]            ?? "";
+    $local_edificio    = $_POST["local_edificio"]         ?? "";
+    $local_piso        = $_POST["local_piso"]             ?? "";
+    $local_servico     = $_POST["local_servico"]          ?? "";
+    $local_sala        = $_POST["local_sala"]             ?? "";
+    $fornecedor_nome   = $_POST["fornecedor_nome"]        ?? "";
+    $fornecedor_email  = $_POST["fornecedor_email"]       ?? "";
+    $fornecedor_tel    = $_POST["fornecedor_telefone"]    ?? "";
+    $fornecedor_morada = $_POST["fornecedor_morada"]      ?? "";
+    $garantia_inicio   = $_POST["garantia_inicio"]        ?? "";
+    $garantia_fim      = $_POST["garantia_fim"]           ?? "";
+    $garantia_tipo     = $_POST["garantia_tipo"]          ?? "";
+    $garantia_entidade = $_POST["garantia_entidade"]      ?? "";
+    $garantia_period   = $_POST["garantia_periodicidade"] ?? "";
+    $garantia_obs      = $_POST["garantia_observacoes"]   ?? "";
 
-        // Inserir localização
-        $stmt = $ligacao->prepare("INSERT INTO localizacao (edificio, piso, servico, sala) VALUES (?, ?, ?, ?)");
-        $stmt->execute([
-            $_POST['local_edificio'],
-            $_POST['local_piso'],
-            $_POST['local_servico'],
-            $_POST['local_sala']
-        ]);
-        $id_localizacao = $ligacao->lastInsertId();
-
-        // Inserir equipamento
-        $stmt = $ligacao->prepare("INSERT INTO equipamento (codigo_interno, nome, categoria, marca, modelo, num_serie, fabricante, data_aquisicao, ano_fabrico, custo, tipo_entrada, estado, criticidade, observacoes, id_localizacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $_POST['codigo_interno'],
-            $_POST['designacao'],
-            $_POST['categoria'],
-            $_POST['marca'],
-            $_POST['modelo'],
-            $_POST['numero_serie'],
-            $_POST['fabricante'],
-            $_POST['data_aquisicao'],
-            $_POST['ano_fabrico'],
-            $_POST['custo_aquisicao'],
-            $_POST['tipo_entrada'],
-            $_POST['estado'],
-            $_POST['criticidade'],
-            $_POST['observacoes'],
-            $id_localizacao
-        ]);
-        $id_equipamento = $ligacao->lastInsertId();
-
-        // Inserir fornecedor se nome preenchido
-        if (!empty($_POST['fornecedor_nome'])) {
-            $stmt = $ligacao->prepare("INSERT INTO fornecedor (nome, email, telefone, morada) VALUES (?, ?, ?, ?)");
-            $stmt->execute([
-                $_POST['fornecedor_nome'],
-                $_POST['fornecedor_email'],
-                $_POST['fornecedor_telefone'],
-                $_POST['fornecedor_morada']
-            ]);
-            $id_fornecedor = $ligacao->lastInsertId();
-
-            $stmt = $ligacao->prepare("INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor) VALUES (?, ?)");
-            $stmt->execute([$id_equipamento, $id_fornecedor]);
-        }
-
-        // Inserir garantia se preenchida
-        if (!empty($_POST['garantia_inicio']) || !empty($_POST['garantia_fim'])) {
-            $stmt = $ligacao->prepare("INSERT INTO garantia_contrato (id_equipamento, data_inicio, data_fim, tipo_contrato, entidade_responsavel, periodicidade, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([
-                $id_equipamento,
-                $_POST['garantia_inicio'] ?: null,
-                $_POST['garantia_fim'] ?: null,
-                $_POST['garantia_tipo'],
-                $_POST['garantia_entidade'],
-                $_POST['garantia_periodicidade'],
-                $_POST['garantia_observacoes']
-            ]);
-        }
-
-        $ligacao = null;
-        $sucesso = "Equipamento inserido com sucesso!";
-
-    } catch (PDOException $err) {
-        $erro = "Erro ao inserir: " . $err->getMessage();
-    }
+    echo "<p><strong>Dados recebidos:</strong> Código: $codigo_interno | Designação: $designacao | Categoria: $categoria | Marca: $marca | Estado: $estado</p>";
 }
 ?>
 

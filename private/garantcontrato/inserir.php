@@ -2,13 +2,8 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
 
-<?php
-$sucesso = '';
-$erro = '';
 $equipamentos = [];
-
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -19,35 +14,20 @@ try {
     $equipamentos = $ligacao->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
     $ligacao = null;
 } catch (PDOException $err) {
-    $erro = "Erro ao carregar equipamentos.";
+
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        $stmt = $ligacao->prepare("INSERT INTO garantia_contrato (id_equipamento, data_inicio, data_fim, tipo_contrato, entidade_responsavel, periodicidade, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $_POST['equipamento'],
-            $_POST['inicio'] ?: null,
-            $_POST['fim'] ?: null,
-            $_POST['tipo'],
-            $_POST['entidade'],
-            $_POST['periodicidade'],
-            $_POST['observacoes']
-        ]);
+    $equipamento   = $_POST["equipamento"]   ?? "";
+    $inicio        = $_POST["inicio"]        ?? "";
+    $fim           = $_POST["fim"]           ?? "";
+    $tipo          = $_POST["tipo"]          ?? "";
+    $entidade      = $_POST["entidade"]      ?? "";
+    $periodicidade = $_POST["periodicidade"] ?? "";
+    $observacoes   = $_POST["observacoes"]   ?? "";
 
-        $ligacao = null;
-        $sucesso = "Garantia/Contrato inserido com sucesso!";
-
-    } catch (PDOException $err) {
-        $erro = "Erro ao inserir: " . $err->getMessage();
-    }
+    echo "<p><strong>Dados recebidos:</strong> Equipamento ID: $equipamento | Tipo: $tipo | Início: $inicio | Fim: $fim</p>";
 }
 ?>
 

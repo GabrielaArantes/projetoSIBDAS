@@ -2,13 +2,8 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
 
-<?php
-$sucesso = '';
-$erro = '';
 $equipamentos = [];
-
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -19,34 +14,18 @@ try {
     $equipamentos = $ligacao->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
     $ligacao = null;
 } catch (PDOException $err) {
-    $erro = "Erro ao carregar equipamentos.";
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        $stmt = $ligacao->prepare("INSERT INTO documento (id_equipamento, tipo, nome, data_documento, data_validade, ficheiro) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $_POST['equipamento'],
-            $_POST['tipo'],
-            $_POST['nome'],
-            $_POST['data'],
-            $_POST['validade'] ?: null,
-            $_POST['ficheiro_nome'] ?? ''
-        ]);
+    $tipo        = $_POST["tipo"]        ?? "";
+    $nome        = $_POST["nome"]        ?? "";
+    $data        = $_POST["data"]        ?? "";
+    $validade    = $_POST["validade"]    ?? "";
+    $equipamento = $_POST["equipamento"] ?? "";
 
-        $ligacao = null;
-        $sucesso = "Documento inserido com sucesso!";
+    echo "<p><strong>Dados recebidos:</strong> Tipo: $tipo | Nome: $nome | Data: $data | Equipamento ID: $equipamento</p>";
 
-    } catch (PDOException $err) {
-        $erro = "Erro ao inserir: " . $err->getMessage();
-    }
 }
 ?>
 
