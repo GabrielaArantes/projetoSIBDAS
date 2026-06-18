@@ -27,7 +27,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $periodicidade = $_POST["periodicidade"] ?? "";
     $observacoes   = $_POST["observacoes"]   ?? "";
 
-    echo "<p><strong>Dados recebidos:</strong> Equipamento ID: $equipamento | Tipo: $tipo | Início: $inicio | Fim: $fim</p>";
+    $erros = [];
+    $erro_sistema = "";
+
+    $tipo   = trim($tipo);
+    $inicio = trim($inicio);
+    $fim    = trim($fim);
+
+    if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
+    if (empty($tipo))        $erros[] = "O Tipo de contrato é obrigatório.";
+
+    if (!empty($inicio) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicio))
+        $erros[] = "Formato de data de início inválido. Use AAAA-MM-DD.";
+
+    if (!empty($fim) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fim))
+        $erros[] = "Formato de data de fim inválido. Use AAAA-MM-DD.";
+
+    if (!empty($inicio) && !empty($fim) && $fim < $inicio)
+        $erros[] = "A data de fim não pode ser anterior à data de início.";
+
 }
 ?>
 
@@ -41,14 +59,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <h1 class="mb-4">Inserir Garantia / Contrato</h1>
 
-        <?php if (!empty($sucesso)) : ?>
-            <div class="alert alert-success"><?= $sucesso ?></div>
-        <?php endif; ?>
-        <?php if (!empty($erro)) : ?>
-            <div class="alert alert-danger"><?= $erro ?></div>
+        <?php if (!empty($erros)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Foram encontrados os seguintes erros:</strong>
+                <ul class="mb-0">
+                    <?php foreach ($erros as $erro) : ?>
+                        <li><?= htmlspecialchars($erro) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
 
-        <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="inserir.php">
+        <?php if (!empty($erro_sistema)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Erro:</strong>
+                <p><?= htmlspecialchars($erro_sistema) ?></p>
+            </div>
+        <?php endif; ?>
+
+        <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="inserir.php" novalidate>
 
             <div class="mb-3">
                 <label class="form-label">Equipamento Associado <span class="text-danger">*</span></label>

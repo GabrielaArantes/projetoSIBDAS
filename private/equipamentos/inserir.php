@@ -34,7 +34,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $garantia_period   = $_POST["garantia_periodicidade"] ?? "";
     $garantia_obs      = $_POST["garantia_observacoes"]   ?? "";
 
-    echo "<p><strong>Dados recebidos:</strong> Código: $codigo_interno | Designação: $designacao | Categoria: $categoria | Marca: $marca | Estado: $estado</p>";
+    $erros = [];
+    $erro_sistema = "";
+
+    $codigo_interno  = trim($codigo_interno);
+    $designacao      = trim($designacao);
+    $marca           = trim($marca);
+    $modelo          = trim($modelo);
+    $numero_serie    = trim($numero_serie);
+    $fabricante      = trim($fabricante);
+    $data_aquisicao  = trim($data_aquisicao);
+    $ano_fabrico     = trim($ano_fabrico);
+    $custo_aquisicao = trim($custo_aquisicao);
+
+    if (empty($codigo_interno))
+        $erros[] = "O Código Interno é obrigatório.";
+
+    if (empty($designacao))
+        $erros[] = "A Designação do equipamento é obrigatória.";
+    elseif (preg_match('/\d/', $designacao))
+        $erros[] = "A Designação não pode conter números.";
+
+    if (empty($categoria))    $erros[] = "A Categoria é obrigatória.";
+    if (empty($marca))        $erros[] = "A Marca é obrigatória.";
+    if (empty($modelo))       $erros[] = "O Modelo é obrigatório.";
+    if (empty($numero_serie)) $erros[] = "O Número de Série é obrigatório.";
+    if (empty($fabricante))   $erros[] = "O Fabricante é obrigatório.";
+
+    if (empty($data_aquisicao)) {
+        $erros[] = "A Data de Aquisição é obrigatória.";
+    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data_aquisicao)) {
+        $erros[] = "Formato de Data de Aquisição inválido. Use AAAA-MM-DD.";
+    } else {
+        $partes = explode('-', $data_aquisicao);
+        if (!checkdate((int)$partes[1], (int)$partes[2], (int)$partes[0]))
+            $erros[] = "Data de Aquisição inválida.";
+    }
+
+    if (empty($ano_fabrico)) {
+        $erros[] = "O Ano de Fabrico é obrigatório.";
+    } elseif (!preg_match('/^\d{4}$/', $ano_fabrico) || (int)$ano_fabrico < 1900 || (int)$ano_fabrico > 2100) {
+        $erros[] = "Ano de Fabrico inválido.";
+    }
+
+    if ($custo_aquisicao === '') {
+        $erros[] = "O Custo de Aquisição é obrigatório.";
+    } elseif (!is_numeric($custo_aquisicao) || (float)$custo_aquisicao < 0) {
+        $erros[] = "O Custo de Aquisição deve ser um número positivo.";
+    }
+
+    if (empty($tipo_entrada)) $erros[] = "O Tipo de Entrada é obrigatório.";
+    if (empty($estado))       $erros[] = "O Estado atual é obrigatório.";
+    if (empty($criticidade))  $erros[] = "A Criticidade é obrigatória.";
+
+    if (!empty($fornecedor_email) && !filter_var($fornecedor_email, FILTER_VALIDATE_EMAIL))
+        $erros[] = "O email do fornecedor não é válido.";
+
+    if (!empty($fornecedor_tel) && !preg_match('/^[29]\d{8}$/', $fornecedor_tel))
+        $erros[] = "O telefone do fornecedor deve ter 9 dígitos e começar por 9 ou 2.";
+
+    if (!empty($garantia_inicio) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $garantia_inicio))
+        $erros[] = "Formato de data de início de garantia inválido. Use AAAA-MM-DD.";
+
+    if (!empty($garantia_fim) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $garantia_fim))
+        $erros[] = "Formato de data de fim de garantia inválido. Use AAAA-MM-DD.";
+
 }
 ?>
 
@@ -53,14 +117,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </a>
         </div>
 
-        <?php if (!empty($sucesso)) : ?>
-            <div class="alert alert-success"><?= $sucesso ?></div>
-        <?php endif; ?>
-        <?php if (!empty($erro)) : ?>
-            <div class="alert alert-danger"><?= $erro ?></div>
+        <?php if (!empty($erros)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Foram encontrados os seguintes erros:</strong>
+                <ul class="mb-0">
+                    <?php foreach ($erros as $erro) : ?>
+                        <li><?= htmlspecialchars($erro) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
 
-        <form action="inserir.php" method="POST" enctype="multipart/form-data" class="shadow p-4 rounded bg-white"
+        <?php if (!empty($erro_sistema)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Erro:</strong>
+                <p><?= htmlspecialchars($erro_sistema) ?></p>
+            </div>
+        <?php endif; ?>
+
+        <form action="inserir.php" method="POST" enctype="multipart/form-data" novalidate class="shadow p-4 rounded bg-white"
             style="max-width: 900px; margin: auto;">
 
             <ul class="nav nav-tabs mb-4" id="equipTabs" role="tablist">

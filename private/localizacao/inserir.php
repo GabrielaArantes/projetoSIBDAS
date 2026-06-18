@@ -10,7 +10,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $servico  = $_POST["servico"]  ?? "";
     $sala     = $_POST["sala"]     ?? "";
 
-    echo "<p><strong>Dados recebidos:</strong> Edifício: $edificio | Piso: $piso | Serviço: $servico | Sala: $sala</p>";
+    $erros = [];
+    $erro_sistema = "";
+
+    $edificio = trim($edificio);
+    $piso     = trim($piso);
+    $servico  = trim($servico);
+    $sala     = trim($sala);
+
+    if (empty($edificio)) $erros[] = "O Edifício é obrigatório.";
+    if (empty($piso))     $erros[] = "O Piso é obrigatório.";
+    if (empty($servico))  $erros[] = "O Serviço / Departamento é obrigatório.";
 
 }
 ?>
@@ -25,14 +35,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <h1 class="mb-4">Inserir Localização</h1>
 
-        <?php if (!empty($sucesso)) : ?>
-            <div class="alert alert-success"><?= $sucesso ?></div>
-        <?php endif; ?>
-        <?php if (!empty($erro)) : ?>
-            <div class="alert alert-danger"><?= $erro ?></div>
+        <?php if (!empty($erros)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Foram encontrados os seguintes erros:</strong>
+                <ul class="mb-0">
+                    <?php foreach ($erros as $erro) : ?>
+                        <li><?= htmlspecialchars($erro) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
 
-        <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="inserir.php">
+        <?php if (!empty($erro_sistema)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Erro:</strong>
+                <p><?= htmlspecialchars($erro_sistema) ?></p>
+            </div>
+        <?php endif; ?>
+
+        <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="inserir.php" novalidate>
 
             <div class="row mb-3">
                 <div class="col">

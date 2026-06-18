@@ -208,7 +208,7 @@ $ligacao = null;
 
     <script>
         $(document).ready(function() {
-            $('#tabela-garantias').DataTable({
+            $('#tabela-garantcontrato').DataTable({
                 pageLength: 5,
                 pagingType: "full_numbers",
                 language: {

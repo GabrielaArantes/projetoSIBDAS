@@ -24,7 +24,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $validade    = $_POST["validade"]    ?? "";
     $equipamento = $_POST["equipamento"] ?? "";
 
-    echo "<p><strong>Dados recebidos:</strong> Tipo: $tipo | Nome: $nome | Data: $data | Equipamento ID: $equipamento</p>";
+    $erros = [];
+    $erro_sistema = "";
+
+    $tipo = trim($tipo);
+    $nome = trim($nome);
+    $data = trim($data);
+
+    if (empty($tipo)) $erros[] = "O Tipo de Documento é obrigatório.";
+    if (empty($nome)) $erros[] = "O Nome do Documento é obrigatório.";
+
+    if (empty($data)) {
+        $erros[] = "A Data do Documento é obrigatória.";
+    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data)) {
+        $erros[] = "Formato de data inválido. Use AAAA-MM-DD.";
+    } else {
+        $partes = explode('-', $data);
+        if (!checkdate((int)$partes[1], (int)$partes[2], (int)$partes[0]))
+            $erros[] = "Data do Documento inválida.";
+    }
+
+    if (!empty($validade) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $validade))
+        $erros[] = "Formato de data de validade inválido. Use AAAA-MM-DD.";
+
+    if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
 
 }
 ?>
@@ -44,16 +67,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </a>
         </div>
 
-        <?php if (!empty($sucesso)) : ?>
-            <div class="alert alert-success"><?= $sucesso ?></div>
+        <?php if (!empty($erros)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Foram encontrados os seguintes erros:</strong>
+                <ul class="mb-0">
+                    <?php foreach ($erros as $erro) : ?>
+                        <li><?= htmlspecialchars($erro) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
-        <?php if (!empty($erro)) : ?>
-            <div class="alert alert-danger"><?= $erro ?></div>
+
+        <?php if (!empty($erro_sistema)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Erro:</strong>
+                <p><?= htmlspecialchars($erro_sistema) ?></p>
+            </div>
         <?php endif; ?>
 
         <div class="shadow p-4 rounded bg-white" style="max-width: 700px; margin: auto;">
 
-            <form method="POST" action="inserir.php" enctype="multipart/form-data">
+            <form method="POST" action="inserir.php" enctype="multipart/form-data" novalidate>
 
                 <div class="mb-3">
                     <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>

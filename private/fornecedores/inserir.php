@@ -5,18 +5,52 @@ start_session();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $nome_empresa     = $_POST["nome_empresa"]      ?? "";
-    $nif              = $_POST["nif"]               ?? "";
-    $telefone         = $_POST["telefone"]          ?? "";
-    $email            = $_POST["email"]             ?? "";
-    $morada           = $_POST["morada"]            ?? "";
-    $website          = $_POST["website"]           ?? "";
-    $pessoa_contacto  = $_POST["pessoa_contacto"]   ?? "";
-    $tel_contacto     = $_POST["telefone_contacto"] ?? "";
-    $tipo_fornecedor  = $_POST["tipo_fornecedor"]   ?? "";
-    $observacoes      = $_POST["observacoes"]       ?? "";
+    $nome_empresa    = $_POST["nome_empresa"]      ?? "";
+    $nif             = $_POST["nif"]               ?? "";
+    $telefone        = $_POST["telefone"]          ?? "";
+    $email           = $_POST["email"]             ?? "";
+    $morada          = $_POST["morada"]            ?? "";
+    $website         = $_POST["website"]           ?? "";
+    $pessoa_contacto = $_POST["pessoa_contacto"]   ?? "";
+    $tel_contacto    = $_POST["telefone_contacto"] ?? "";
+    $tipo_fornecedor = $_POST["tipo_fornecedor"]   ?? "";
+    $observacoes     = $_POST["observacoes"]       ?? "";
 
-    echo "<p><strong>Dados recebidos:</strong> Nome: $nome_empresa | NIF: $nif | Telefone: $telefone | Email: $email | Tipo: $tipo_fornecedor</p>";
+    $erros = [];
+    $erro_sistema = "";
+
+    $nome_empresa    = trim($nome_empresa);
+    $nif             = trim($nif);
+    $telefone        = trim($telefone);
+    $email           = trim($email);
+    $tipo_fornecedor = trim($tipo_fornecedor);
+
+    if (empty($nome_empresa))
+        $erros[] = "O Nome da Empresa é obrigatório.";
+
+    if (empty($nif)) {
+        $erros[] = "O NIF é obrigatório.";
+    } elseif (!preg_match('/^\d{9}$/', $nif)) {
+        $erros[] = "O NIF deve ter exatamente 9 dígitos.";
+    }
+
+    if (empty($telefone)) {
+        $erros[] = "O Telefone é obrigatório.";
+    } elseif (!preg_match('/^[29]\d{8}$/', $telefone)) {
+        $erros[] = "O Telefone deve ter 9 dígitos e começar por 9 ou 2.";
+    }
+
+    if (empty($email)) {
+        $erros[] = "O Email é obrigatório.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $erros[] = "O endereço de email não é válido.";
+    }
+
+    if (empty($tipo_fornecedor))
+        $erros[] = "O Tipo de Fornecedor é obrigatório.";
+
+    if (!empty($tel_contacto) && !preg_match('/^[29]\d{8}$/', trim($tel_contacto)))
+        $erros[] = "O Telefone da Pessoa de Contacto deve ter 9 dígitos e começar por 9 ou 2.";
 
 }
 ?>
@@ -31,14 +65,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <h1 class="mb-4">Inserir Fornecedor</h1>
 
-        <?php if (!empty($sucesso)) : ?>
-            <div class="alert alert-success"><?= $sucesso ?></div>
-        <?php endif; ?>
-        <?php if (!empty($erro)) : ?>
-            <div class="alert alert-danger"><?= $erro ?></div>
+        <?php if (!empty($erros)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Foram encontrados os seguintes erros:</strong>
+                <ul class="mb-0">
+                    <?php foreach ($erros as $erro) : ?>
+                        <li><?= htmlspecialchars($erro) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
 
-        <form class="shadow p-4 rounded" style="max-width: 800px;" method="POST" action="inserir.php">
+        <?php if (!empty($erro_sistema)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Erro:</strong>
+                <p><?= htmlspecialchars($erro_sistema) ?></p>
+            </div>
+        <?php endif; ?>
+
+        <form class="shadow p-4 rounded" style="max-width: 800px;" method="POST" action="inserir.php" novalidate>
 
             <div class="row mb-3">
                 <div class="col">
