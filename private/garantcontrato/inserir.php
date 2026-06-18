@@ -14,7 +14,6 @@ try {
     $equipamentos = $ligacao->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
     $ligacao = null;
 } catch (PDOException $err) {
-
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -45,7 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($inicio) && !empty($fim) && $fim < $inicio)
         $erros[] = "A data de fim não pode ser anterior à data de início.";
-
 }
 ?>
 
@@ -84,50 +82,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select class="form-select" name="equipamento" required>
                     <option value="">Selecione...</option>
                     <?php foreach ($equipamentos as $eq) : ?>
-                        <option value="<?= $eq->id ?>"><?= $eq->nome ?></option>
+                        <option value="<?= $eq->id ?>" <?= (($_POST['equipamento'] ?? '') == $eq->id) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($eq->nome) ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Data de início</label>
-                <input type="date" class="form-control" name="inicio">
+                <input type="text" class="form-control" id="data_inicio" name="inicio"
+                    value="<?= htmlspecialchars($_POST['inicio'] ?? '') ?>">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Data de fim</label>
-                <input type="date" class="form-control" name="fim">
+                <input type="text" class="form-control" id="data_fim" name="fim"
+                    value="<?= htmlspecialchars($_POST['fim'] ?? '') ?>">
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Tipo de contrato</label>
-                <select class="form-select" name="tipo">
+                <label class="form-label">Tipo de contrato <span class="text-danger">*</span></label>
+                <select class="form-select" name="tipo" required>
                     <option value="">Selecione...</option>
-                    <option>Garantia</option>
-                    <option>Contrato de Manutenção</option>
-                    <option>Assistência Técnica</option>
+                    <?php foreach (['Garantia', 'Contrato de Manutenção', 'Assistência Técnica'] as $op) : ?>
+                        <option value="<?= $op ?>" <?= (($_POST['tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Entidade responsável</label>
-                <input type="text" class="form-control" name="entidade">
+                <input type="text" class="form-control" name="entidade"
+                    value="<?= htmlspecialchars($_POST['entidade'] ?? '') ?>">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Periodicidade</label>
                 <select class="form-select" name="periodicidade">
                     <option value="">Selecione...</option>
-                    <option>Mensal</option>
-                    <option>Trimestral</option>
-                    <option>Semestral</option>
-                    <option>Anual</option>
+                    <?php foreach (['Mensal', 'Trimestral', 'Semestral', 'Anual'] as $op) : ?>
+                        <option value="<?= $op ?>" <?= (($_POST['periodicidade'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Observações</label>
-                <textarea class="form-control" name="observacoes" rows="4"></textarea>
+                <textarea class="form-control" name="observacoes" rows="4"><?= htmlspecialchars($_POST['observacoes'] ?? '') ?></textarea>
             </div>
 
             <div class="d-flex justify-content-between mt-4">

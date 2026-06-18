@@ -21,7 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($edificio)) $erros[] = "O Edifício é obrigatório.";
     if (empty($piso))     $erros[] = "O Piso é obrigatório.";
     if (empty($servico))  $erros[] = "O Serviço / Departamento é obrigatório.";
-
 }
 ?>
 
@@ -57,23 +56,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="row mb-3">
                 <div class="col">
-                    <label class="form-label">Edifício</label>
-                    <input type="text" class="form-control" name="edificio" placeholder="Ex: Edifício A">
+                    <label class="form-label">Edifício <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="edificio"
+                        value="<?= htmlspecialchars($_POST['edificio'] ?? '') ?>" required>
                 </div>
                 <div class="col">
-                    <label class="form-label">Piso</label>
-                    <input type="text" class="form-control" name="piso" placeholder="Ex: Piso 2">
+                    <label class="form-label">Piso <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="piso"
+                        value="<?= htmlspecialchars($_POST['piso'] ?? '') ?>" required>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Serviço / Departamento</label>
-                <input type="text" class="form-control" name="servico" placeholder="Ex: Cardiologia">
+                <label class="form-label">Serviço / Departamento <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="servico"
+                    value="<?= htmlspecialchars($_POST['servico'] ?? '') ?>" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Sala / Gabinete</label>
-                <input type="text" class="form-control" name="sala" placeholder="Ex: Sala 203">
+                <input type="text" class="form-control" name="sala"
+                    value="<?= htmlspecialchars($_POST['sala'] ?? '') ?>">
             </div>
 
             <div class="d-flex justify-content-between mt-4">

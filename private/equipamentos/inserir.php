@@ -99,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($garantia_fim) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $garantia_fim))
         $erros[] = "Formato de data de fim de garantia inválido. Use AAAA-MM-DD.";
 
+    // 3. Guardar na base de dados (a implementar)
 }
 ?>
 
@@ -141,217 +142,221 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <ul class="nav nav-tabs mb-4" id="equipTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados"
-                        type="button" role="tab">
-                        Dados do Equipamento
-                    </button>
+                        type="button" role="tab">Dados do Equipamento</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="fornecedor-tab" data-bs-toggle="tab" data-bs-target="#fornecedor"
-                        type="button" role="tab">
-                        Fornecedor
-                    </button>
+                        type="button" role="tab">Fornecedor</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="localizacao-tab" data-bs-toggle="tab" data-bs-target="#localizacao"
-                        type="button" role="tab">
-                        Localização
-                    </button>
+                        type="button" role="tab">Localização</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="garantia-tab" data-bs-toggle="tab" data-bs-target="#garantia"
-                        type="button" role="tab">
-                        Garantia / Contrato
-                    </button>
+                        type="button" role="tab">Garantia / Contrato</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs" type="button"
-                        role="tab">
-                        Documentação
-                    </button>
+                    <button class="nav-link" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs"
+                        type="button" role="tab">Documentação</button>
                 </li>
             </ul>
 
             <div class="tab-content" id="equipTabsContent">
 
+                <!-- Tab: Dados do Equipamento -->
                 <div class="tab-pane fade show active" id="dados" role="tabpanel">
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Código Interno de Inventário</label>
-                        <input type="text" name="codigo_interno" class="form-control" required>
+                        <input type="text" name="codigo_interno" class="form-control"
+                            value="<?= htmlspecialchars($_POST['codigo_interno'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Designação do Equipamento</label>
-                        <input type="text" name="designacao" class="form-control" required>
+                        <input type="text" name="designacao" class="form-control"
+                            value="<?= htmlspecialchars($_POST['designacao'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Categoria / Grupo</label>
                         <select name="categoria" class="form-select" required>
                             <option value="">Selecione a categoria</option>
-                            <option value="Monitorização">Monitorização</option>
-                            <option value="Suporte de vida">Suporte de vida</option>
-                            <option value="Terapia">Terapia</option>
-                            <option value="Diagnóstico">Diagnóstico</option>
-                            <option value="Laboratório">Laboratório</option>
-                            <option value="Esterilização">Esterilização</option>
-                            <option value="Reabilitação">Reabilitação</option>
+                            <?php foreach (['Monitorização','Suporte de vida','Terapia','Diagnóstico','Laboratório','Esterilização','Reabilitação'] as $op) : ?>
+                                <option value="<?= $op ?>" <?= (($_POST['categoria'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Marca</label>
-                        <input type="text" name="marca" class="form-control" required>
+                        <input type="text" name="marca" class="form-control"
+                            value="<?= htmlspecialchars($_POST['marca'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Modelo</label>
-                        <input type="text" name="modelo" class="form-control" required>
+                        <input type="text" name="modelo" class="form-control"
+                            value="<?= htmlspecialchars($_POST['modelo'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Número de Série</label>
-                        <input type="text" name="numero_serie" class="form-control" required>
+                        <input type="text" name="numero_serie" class="form-control"
+                            value="<?= htmlspecialchars($_POST['numero_serie'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Fabricante</label>
-                        <input type="text" name="fabricante" class="form-control" required>
+                        <input type="text" name="fabricante" class="form-control"
+                            value="<?= htmlspecialchars($_POST['fabricante'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Data de Aquisição</label>
-                        <input type="date" name="data_aquisicao" class="form-control" required>
+                        <input type="date" name="data_aquisicao" class="form-control"
+                            value="<?= htmlspecialchars($_POST['data_aquisicao'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Ano de Fabrico</label>
-                        <input type="number" name="ano_fabrico" class="form-control" min="1900" max="2100" required>
+                        <input type="number" name="ano_fabrico" class="form-control" min="1900" max="2100"
+                            value="<?= htmlspecialchars($_POST['ano_fabrico'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Custo de Aquisição (€)</label>
-                        <input type="number" name="custo_aquisicao" class="form-control" min="0" required>
+                        <input type="number" name="custo_aquisicao" class="form-control" min="0"
+                            value="<?= htmlspecialchars($_POST['custo_aquisicao'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tipo de Entrada</label>
                         <select name="tipo_entrada" class="form-select" required>
                             <option value="">Selecione o tipo</option>
-                            <option value="Compra">Compra</option>
-                            <option value="Doação">Doação</option>
-                            <option value="Aluguer">Aluguer</option>
-                            <option value="Empréstimo">Empréstimo</option>
+                            <?php foreach (['Compra','Doação','Aluguer','Empréstimo'] as $op) : ?>
+                                <option value="<?= $op ?>" <?= (($_POST['tipo_entrada'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Estado Atual</label>
                         <select name="estado" class="form-select" required>
                             <option value="">Selecione o estado</option>
-                            <option value="Ativo">Ativo</option>
-                            <option value="Em manutenção">Em manutenção</option>
-                            <option value="Inativo">Inativo</option>
-                            <option value="Em calibração">Em calibração</option>
-                            <option value="Em quarentena">Em quarentena</option>
-                            <option value="Abatido">Abatido</option>
+                            <?php foreach (['Ativo','Em manutenção','Inativo','Em calibração','Em quarentena','Abatido'] as $op) : ?>
+                                <option value="<?= $op ?>" <?= (($_POST['estado'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Criticidade</label>
                         <select name="criticidade" class="form-select" required>
                             <option value="">Selecione a criticidade</option>
-                            <option value="Baixa">Baixa</option>
-                            <option value="Média">Média</option>
-                            <option value="Alta">Alta</option>
-                            <option value="Suporte de vida">Suporte de vida</option>
+                            <?php foreach (['Baixa','Média','Alta','Suporte de vida'] as $op) : ?>
+                                <option value="<?= $op ?>" <?= (($_POST['criticidade'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Observações</label>
-                        <textarea name="observacoes" class="form-control" rows="4"></textarea>
+                        <textarea name="observacoes" class="form-control" rows="4"><?= htmlspecialchars($_POST['observacoes'] ?? '') ?></textarea>
                     </div>
-
                 </div>
 
+                <!-- Tab: Fornecedor -->
                 <div class="tab-pane fade" id="fornecedor" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Fornecedor associado</h5>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Nome do fornecedor</label>
-                            <input type="text" class="form-control" name="fornecedor_nome">
+                            <input type="text" class="form-control" name="fornecedor_nome"
+                                value="<?= htmlspecialchars($_POST['fornecedor_nome'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Email</label>
-                            <input type="email" class="form-control" name="fornecedor_email">
+                            <input type="email" class="form-control" name="fornecedor_email"
+                                value="<?= htmlspecialchars($_POST['fornecedor_email'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Telefone</label>
-                            <input type="tel" class="form-control" name="fornecedor_telefone" pattern="[0-9]{9}" maxlength="9" placeholder="Ex: 912345678">
+                            <input type="tel" class="form-control" name="fornecedor_telefone"
+                                value="<?= htmlspecialchars($_POST['fornecedor_telefone'] ?? '') ?>"
+                                pattern="[0-9]{9}" maxlength="9" placeholder="Ex: 912345678">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Morada</label>
-                            <input type="text" class="form-control" name="fornecedor_morada">
+                            <input type="text" class="form-control" name="fornecedor_morada"
+                                value="<?= htmlspecialchars($_POST['fornecedor_morada'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Observações</label>
-                            <textarea class="form-control" rows="3" name="fornecedor_observacoes"></textarea>
+                            <textarea class="form-control" rows="3" name="fornecedor_observacoes"><?= htmlspecialchars($_POST['fornecedor_observacoes'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>
 
+                <!-- Tab: Localização -->
                 <div class="tab-pane fade" id="localizacao" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Localização do equipamento</h5>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Edifício</label>
-                            <input type="text" class="form-control" name="local_edificio">
+                            <input type="text" class="form-control" name="local_edificio"
+                                value="<?= htmlspecialchars($_POST['local_edificio'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Piso</label>
-                            <input type="text" class="form-control" name="local_piso">
+                            <input type="text" class="form-control" name="local_piso"
+                                value="<?= htmlspecialchars($_POST['local_piso'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Serviço / Departamento</label>
-                            <input type="text" class="form-control" name="local_servico">
+                            <input type="text" class="form-control" name="local_servico"
+                                value="<?= htmlspecialchars($_POST['local_servico'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Sala / Gabinete</label>
-                            <input type="text" class="form-control" name="local_sala">
+                            <input type="text" class="form-control" name="local_sala"
+                                value="<?= htmlspecialchars($_POST['local_sala'] ?? '') ?>">
                         </div>
                     </div>
                 </div>
 
+                <!-- Tab: Garantia -->
                 <div class="tab-pane fade" id="garantia" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Garantia / Contrato associado</h5>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Data de início da garantia</label>
-                            <input type="date" class="form-control" name="garantia_inicio">
+                            <input type="date" class="form-control" name="garantia_inicio"
+                                value="<?= htmlspecialchars($_POST['garantia_inicio'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Data de fim da garantia</label>
-                            <input type="date" class="form-control" name="garantia_fim">
+                            <input type="date" class="form-control" name="garantia_fim"
+                                value="<?= htmlspecialchars($_POST['garantia_fim'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Tipo de contrato</label>
                             <select class="form-select" name="garantia_tipo">
                                 <option value="">Selecione...</option>
-                                <option>Garantia</option>
-                                <option>Contrato de Manutenção</option>
-                                <option>Assistência Técnica</option>
+                                <?php foreach (['Garantia','Contrato de Manutenção','Assistência Técnica'] as $op) : ?>
+                                    <option value="<?= $op ?>" <?= (($_POST['garantia_tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Entidade responsável</label>
-                            <input type="text" class="form-control" name="garantia_entidade">
+                            <input type="text" class="form-control" name="garantia_entidade"
+                                value="<?= htmlspecialchars($_POST['garantia_entidade'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Periodicidade</label>
                             <select class="form-select" name="garantia_periodicidade">
                                 <option value="">Selecione...</option>
-                                <option>Mensal</option>
-                                <option>Trimestral</option>
-                                <option>Semestral</option>
-                                <option>Anual</option>
+                                <?php foreach (['Mensal','Trimestral','Semestral','Anual'] as $op) : ?>
+                                    <option value="<?= $op ?>" <?= (($_POST['garantia_periodicidade'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Observações</label>
-                            <textarea class="form-control" rows="4" name="garantia_observacoes"></textarea>
+                            <textarea class="form-control" rows="4" name="garantia_observacoes"><?= htmlspecialchars($_POST['garantia_observacoes'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>
 
+                <!-- Tab: Documentação -->
                 <div class="tab-pane fade" id="docs" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Documentação associada</h5>
@@ -359,15 +364,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label class="form-label fw-bold">Tipo de documento</label>
                             <select class="form-select" name="doc_tipo">
                                 <option value="">Selecione...</option>
-                                <option>Manual</option>
-                                <option>Certificado</option>
-                                <option>Relatório Técnico</option>
-                                <option>Outro</option>
+                                <?php foreach (['Manual','Certificado','Relatório Técnico','Outro'] as $op) : ?>
+                                    <option value="<?= $op ?>" <?= (($_POST['doc_tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Descrição</label>
-                            <input type="text" class="form-control" name="doc_descricao">
+                            <input type="text" class="form-control" name="doc_descricao"
+                                value="<?= htmlspecialchars($_POST['doc_descricao'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Ficheiros</label>
@@ -375,7 +380,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Observações</label>
-                            <textarea class="form-control" rows="3" name="doc_observacoes"></textarea>
+                            <textarea class="form-control" rows="3" name="doc_observacoes"><?= htmlspecialchars($_POST['doc_observacoes'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>

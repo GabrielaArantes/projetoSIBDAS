@@ -48,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $erros[] = "Formato de data de validade inválido. Use AAAA-MM-DD.";
 
     if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
-
 }
 ?>
 
@@ -91,22 +90,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="mb-3">
                     <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="tipo" required>
+                    <input type="text" class="form-control" name="tipo"
+                        value="<?= htmlspecialchars($_POST['tipo'] ?? '') ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Nome do Documento <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="nome" required>
+                    <input type="text" class="form-control" name="nome"
+                        value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Data do Documento <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" name="data" required>
+                    <input type="text" class="form-control" id="data_doc" name="data"
+                        value="<?= htmlspecialchars($_POST['data'] ?? '') ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Data de Validade (opcional)</label>
-                    <input type="date" class="form-control" name="validade">
+                    <input type="text" class="form-control" id="data_validade" name="validade"
+                        value="<?= htmlspecialchars($_POST['validade'] ?? '') ?>">
                 </div>
 
                 <div class="mb-3">
@@ -114,7 +117,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <select class="form-select" name="equipamento" required>
                         <option value="">Selecione...</option>
                         <?php foreach ($equipamentos as $eq) : ?>
-                            <option value="<?= $eq->id ?>"><?= $eq->nome ?></option>
+                            <option value="<?= $eq->id ?>" <?= (($_POST['equipamento'] ?? '') == $eq->id) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($eq->nome) ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -123,7 +128,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label class="form-label">Ficheiro <span class="text-danger">*</span></label>
                     <input type="file" class="form-control" name="ficheiro" accept=".pdf,.jpg,.png,.doc,.docx" required>
                 </div>
-
                 <div class="d-flex justify-content-end mt-4">
                     <button type="submit" class="btn btn-success px-4">
                         <i class="fa-solid fa-floppy-disk me-2"></i>Guardar
