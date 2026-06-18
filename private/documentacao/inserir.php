@@ -48,6 +48,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $erros[] = "Formato de data de validade inválido. Use AAAA-MM-DD.";
 
     if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
+
+    if (empty($erros)) {
+        $tipo = ucwords(strtolower($tipo));
+        $nome = ucwords(strtolower($nome));
+    }
+
 }
 ?>
 

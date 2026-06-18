@@ -44,6 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($inicio) && !empty($fim) && $fim < $inicio)
         $erros[] = "A data de fim não pode ser anterior à data de início.";
+
+    if (empty($erros)) {
+        $entidade = ucwords(strtolower($entidade));
+    }
+
 }
 ?>
 

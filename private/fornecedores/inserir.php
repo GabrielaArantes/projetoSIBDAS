@@ -51,6 +51,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($tel_contacto) && !preg_match('/^[29]\d{8}$/', trim($tel_contacto)))
         $erros[] = "O Telefone da Pessoa de Contacto deve ter 9 dígitos e começar por 9 ou 2.";
+
+    if (empty($erros)) {
+        $nome_empresa    = ucwords(strtolower($nome_empresa));
+        $email           = strtolower($email);
+        $pessoa_contacto = ucwords(strtolower($pessoa_contacto));
+    }
+
 }
 ?>
 

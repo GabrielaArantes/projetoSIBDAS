@@ -99,7 +99,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($garantia_fim) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $garantia_fim))
         $erros[] = "Formato de data de fim de garantia inválido. Use AAAA-MM-DD.";
 
-    // 3. Guardar na base de dados (a implementar)
+    if (empty($erros)) {
+        $codigo_interno    = strtoupper($codigo_interno);
+        $designacao        = ucwords(strtolower($designacao));
+        $marca             = ucwords(strtolower($marca));
+        $fabricante        = ucwords(strtolower($fabricante));
+        $local_edificio    = ucwords(strtolower($local_edificio));
+        $local_piso        = ucfirst(strtolower($local_piso));
+        $local_servico     = ucwords(strtolower($local_servico));
+        $local_sala        = ucfirst(strtolower($local_sala));
+        $fornecedor_nome   = ucwords(strtolower($fornecedor_nome));
+        $fornecedor_email  = strtolower($fornecedor_email);
+        $garantia_entidade = ucwords(strtolower($garantia_entidade));
+    }
+
 }
 ?>
 

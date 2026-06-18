@@ -21,6 +21,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($edificio)) $erros[] = "O Edifício é obrigatório.";
     if (empty($piso))     $erros[] = "O Piso é obrigatório.";
     if (empty($servico))  $erros[] = "O Serviço / Departamento é obrigatório.";
+
+    if (empty($erros)) {
+        $edificio = ucwords(strtolower($edificio));
+        $piso     = ucfirst(strtolower($piso));
+        $servico  = ucwords(strtolower($servico));
+        $sala     = ucfirst(strtolower($sala));
+    }
+
 }
 ?>
 
