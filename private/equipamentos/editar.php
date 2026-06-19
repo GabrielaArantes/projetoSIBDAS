@@ -2,20 +2,96 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
+require_once __DIR__ . '/../includes/validacoes.php';
 
-<?php
+if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
+    header('Location: ' . BASE_URL . '/public/login.php');
+    exit;
+}
+
 $sucesso = '';
 $erro = '';
+$erros = [];
 $equipamento = null;
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
 
+$id = (int)$id;
+
+// 1. Tratar primeiro a submissão do formulário (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $erros = array_merge(
+        validar_designacao($_POST['designacao'] ?? ''),
+        validar_marca($_POST['marca'] ?? ''),
+        validar_modelo($_POST['modelo'] ?? ''),
+        validar_numero_serie($_POST['numero_serie'] ?? ''),
+        validar_fabricante($_POST['fabricante'] ?? ''),
+        validar_select_obrigatorio($_POST['categoria'] ?? '', 'Categoria / Grupo'),
+        validar_select_obrigatorio($_POST['tipo_entrada'] ?? '', 'Tipo de Entrada'),
+        validar_select_obrigatorio($_POST['estado'] ?? '', 'Estado Atual'),
+        validar_select_obrigatorio($_POST['criticidade'] ?? '', 'Criticidade')
+    );
+
+    if (empty($erros)) {
+        try {
+            $ligacao = new PDO(
+                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+                MYSQL_USERNAME,
+                MYSQL_PASSWORD
+            );
+            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $stmt = $ligacao->prepare("SELECT id_localizacao FROM equipamento WHERE id = ?");
+            $stmt->execute([$id]);
+            $idLocalizacao = $stmt->fetchColumn();
+
+            $stmt = $ligacao->prepare("UPDATE localizacao SET edificio=?, piso=?, servico=?, sala=? WHERE id=?");
+            $stmt->execute([
+                $_POST['local_edificio'],
+                $_POST['local_piso'],
+                $_POST['local_servico'],
+                $_POST['local_sala'],
+                $idLocalizacao
+            ]);
+
+            $custoAquisicao = ($_POST['custo_aquisicao'] === '') ? null : $_POST['custo_aquisicao'];
+
+            $stmt = $ligacao->prepare("UPDATE equipamento SET codigo_interno=?, nome=?, categoria=?, marca=?, modelo=?, num_serie=?, fabricante=?, data_aquisicao=?, ano_fabrico=?, custo=?, tipo_entrada=?, estado=?, criticidade=?, observacoes=? WHERE id=?");
+            $stmt->execute([
+                $_POST['codigo_interno'],
+                $_POST['designacao'],
+                $_POST['categoria'],
+                $_POST['marca'],
+                $_POST['modelo'],
+                $_POST['numero_serie'],
+                $_POST['fabricante'],
+                $_POST['data_aquisicao'],
+                $_POST['ano_fabrico'],
+                $custoAquisicao,
+                $_POST['tipo_entrada'],
+                $_POST['estado'],
+                $_POST['criticidade'],
+                $_POST['observacoes'],
+                $id
+            ]);
+
+            $ligacao = null;
+            $sucesso = "Equipamento atualizado com sucesso!";
+
+        } catch (PDOException $err) {
+            $erro = "Erro ao atualizar: " . $err->getMessage();
+        }
+    }
+}
+
+// 2. Obter os dados atuais do equipamento (GET, ou para mostrar o formulário após o POST)
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -36,64 +112,6 @@ try {
     $ligacao = null;
 } catch (PDOException $err) {
     $erro = "Erro ao carregar equipamento.";
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // Atualizar localização
-        $stmt = $ligacao->prepare("UPDATE localizacao SET edificio=?, piso=?, servico=?, sala=? WHERE id=?");
-        $stmt->execute([
-            $_POST['local_edificio'],
-            $_POST['local_piso'],
-            $_POST['local_servico'],
-            $_POST['local_sala'],
-            $equipamento->id_localizacao
-        ]);
-
-        // Atualizar equipamento
-        $stmt = $ligacao->prepare("UPDATE equipamento SET codigo_interno=?, nome=?, categoria=?, marca=?, modelo=?, num_serie=?, fabricante=?, data_aquisicao=?, ano_fabrico=?, custo=?, tipo_entrada=?, estado=?, criticidade=?, observacoes=? WHERE id=?");
-        $stmt->execute([
-            $_POST['codigo_interno'],
-            $_POST['designacao'],
-            $_POST['categoria'],
-            $_POST['marca'],
-            $_POST['modelo'],
-            $_POST['numero_serie'],
-            $_POST['fabricante'],
-            $_POST['data_aquisicao'],
-            $_POST['ano_fabrico'],
-            $_POST['custo_aquisicao'],
-            $_POST['tipo_entrada'],
-            $_POST['estado'],
-            $_POST['criticidade'],
-            $_POST['observacoes'],
-            $id
-        ]);
-
-        $ligacao = null;
-        $sucesso = "Equipamento atualizado com sucesso!";
-
-        // Recarregar dados atualizados
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $stmt = $ligacao->prepare("SELECT e.*, l.edificio, l.piso, l.servico, l.sala FROM equipamento e LEFT JOIN localizacao l ON e.id_localizacao = l.id WHERE e.id = ?");
-        $stmt->execute([$id]);
-        $equipamento = $stmt->fetch(PDO::FETCH_OBJ);
-        $ligacao = null;
-
-    } catch (PDOException $err) {
-        $erro = "Erro ao atualizar: " . $err->getMessage();
-    }
 }
 ?>
 
@@ -118,8 +136,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if (!empty($erro)) : ?>
             <div class="alert alert-danger"><?= $erro ?></div>
         <?php endif; ?>
+        <?php if (!empty($erros)) : ?>
+            <div class="alert alert-danger">
+                <?php foreach ($erros as $e) : ?>
+                    <div><?= htmlspecialchars($e) ?></div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 
-        <form method="POST" action="editar.php?id=<?= $id ?>" class="shadow p-4 rounded bg-white" style="max-width: 900px; margin: auto;">
+        <form method="POST" action="editar.php?id=<?= $idEncrypted ?>" novalidate autocomplete="off" class="shadow p-4 rounded bg-white" style="max-width: 900px; margin: auto;">
 
             <ul class="nav nav-tabs mb-4" id="equipTabs" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -146,10 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h5 class="fw-bold mb-3">Dados do Equipamento</h5>
 
                         <label>Código Interno <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control mb-2" name="codigo_interno" value="<?= $equipamento->codigo_interno ?? '' ?>" required>
+                        <input type="text" class="form-control mb-2" name="codigo_interno" value="<?= htmlspecialchars($equipamento->codigo_interno ?? '') ?>" required>
 
                         <label>Designação <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control mb-2" name="designacao" value="<?= $equipamento->nome ?? '' ?>" required>
+                        <input type="text" class="form-control mb-2" name="designacao" value="<?= htmlspecialchars($equipamento->nome ?? '') ?>" required>
 
                         <label>Categoria / Grupo <span class="text-danger">*</span></label>
                         <select name="categoria" class="form-select mb-2" required>
@@ -160,25 +185,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </select>
 
                         <label>Marca <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control mb-2" name="marca" value="<?= $equipamento->marca ?? '' ?>" required>
+                        <input type="text" class="form-control mb-2" name="marca" value="<?= htmlspecialchars($equipamento->marca ?? '') ?>" required>
 
                         <label>Modelo <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control mb-2" name="modelo" value="<?= $equipamento->modelo ?? '' ?>" required>
+                        <input type="text" class="form-control mb-2" name="modelo" value="<?= htmlspecialchars($equipamento->modelo ?? '') ?>" required>
 
                         <label>Número de Série <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control mb-2" name="numero_serie" value="<?= $equipamento->num_serie ?? '' ?>" required>
+                        <input type="text" class="form-control mb-2" name="numero_serie" value="<?= htmlspecialchars($equipamento->num_serie ?? '') ?>" required>
 
                         <label>Fabricante <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control mb-2" name="fabricante" value="<?= $equipamento->fabricante ?? '' ?>" required>
+                        <input type="text" class="form-control mb-2" name="fabricante" value="<?= htmlspecialchars($equipamento->fabricante ?? '') ?>" required>
 
                         <label>Data de Aquisição <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control mb-2" name="data_aquisicao" value="<?= $equipamento->data_aquisicao ?? '' ?>" required>
+                        <input type="date" class="form-control mb-2" name="data_aquisicao" value="<?= htmlspecialchars($equipamento->data_aquisicao ?? '') ?>" required>
 
                         <label>Ano de Fabrico <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control mb-2" name="ano_fabrico" value="<?= $equipamento->ano_fabrico ?? '' ?>" min="1900" max="2100" required>
+                        <input type="number" class="form-control mb-2" name="ano_fabrico" value="<?= htmlspecialchars($equipamento->ano_fabrico ?? '') ?>" min="1900" max="2100" required>
 
                         <label>Custo de Aquisição (€)</label>
-                        <input type="number" class="form-control mb-2" name="custo_aquisicao" value="<?= $equipamento->custo ?? '' ?>" min="0">
+                        <input type="number" class="form-control mb-2" name="custo_aquisicao" value="<?= htmlspecialchars($equipamento->custo ?? '') ?>" min="0">
 
                         <label>Tipo de Entrada <span class="text-danger">*</span></label>
                         <select name="tipo_entrada" class="form-select mb-2" required>
@@ -205,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </select>
 
                         <label>Observações</label>
-                        <textarea class="form-control mb-2" name="observacoes"><?= $equipamento->observacoes ?? '' ?></textarea>
+                        <textarea class="form-control mb-2" name="observacoes"><?= htmlspecialchars($equipamento->observacoes ?? '') ?></textarea>
                     </div>
                 </div>
 
@@ -229,13 +254,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Localização</h5>
                         <label>Edifício</label>
-                        <input type="text" class="form-control mb-2" name="local_edificio" value="<?= $equipamento->edificio ?? '' ?>">
+                        <input type="text" class="form-control mb-2" name="local_edificio" value="<?= htmlspecialchars($equipamento->edificio ?? '') ?>">
                         <label>Piso</label>
-                        <input type="text" class="form-control mb-2" name="local_piso" value="<?= $equipamento->piso ?? '' ?>">
+                        <input type="text" class="form-control mb-2" name="local_piso" value="<?= htmlspecialchars($equipamento->piso ?? '') ?>">
                         <label>Serviço / Departamento</label>
-                        <input type="text" class="form-control mb-2" name="local_servico" value="<?= $equipamento->servico ?? '' ?>">
+                        <input type="text" class="form-control mb-2" name="local_servico" value="<?= htmlspecialchars($equipamento->servico ?? '') ?>">
                         <label>Sala / Gabinete</label>
-                        <input type="text" class="form-control mb-2" name="local_sala" value="<?= $equipamento->sala ?? '' ?>">
+                        <input type="text" class="form-control mb-2" name="local_sala" value="<?= htmlspecialchars($equipamento->sala ?? '') ?>">
                     </div>
                 </div>
 

@@ -206,7 +206,7 @@ $ligacao = null;
                                 <a href="detalhes.php?id=<?= $eq->id ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="editar.php?id=<?= $eq->id ?>" class="btn btn-warning btn-sm">
+                                <a href="editar.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
                                 <button class="btn btn-danger btn-sm"

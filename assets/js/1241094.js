@@ -261,4 +261,6 @@ function iniciarDashboard() {
     graficoCategoria();
 }
 
-iniciarDashboard();
+if (document.getElementById("cardsDashboard")) {
+    iniciarDashboard();
+}
