@@ -53,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tipo = ucwords(strtolower($tipo));
         $nome = ucwords(strtolower($nome));
     }
-
 }
 ?>
 
@@ -108,13 +107,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="mb-3">
                     <label class="form-label">Data do Documento <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="data_doc" name="data"
+                    <input type="text" id="data_doc" class="form-control" name="data"
                         value="<?= htmlspecialchars($_POST['data'] ?? '') ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Data de Validade (opcional)</label>
-                    <input type="text" class="form-control" id="data_validade" name="validade"
+                    <input type="text" id="data_validade" class="form-control" name="validade"
                         value="<?= htmlspecialchars($_POST['validade'] ?? '') ?>">
                 </div>
 
@@ -145,4 +144,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
     </main>
+
+    <script>
+        flatpickr("#data_doc", {
+            dateFormat: "Y-m-d"
+        });
+        flatpickr("#data_validade", {
+            dateFormat: "Y-m-d"
+        });
+    </script>
+    
     <?php include __DIR__ . '/../includes/footer.php'; ?>

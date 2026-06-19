@@ -112,7 +112,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fornecedor_email  = strtolower($fornecedor_email);
         $garantia_entidade = ucwords(strtolower($garantia_entidade));
     }
-
 }
 ?>
 
@@ -193,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="form-label fw-bold">Categoria / Grupo</label>
                         <select name="categoria" class="form-select" required>
                             <option value="">Selecione a categoria</option>
-                            <?php foreach (['Monitorização','Suporte de vida','Terapia','Diagnóstico','Laboratório','Esterilização','Reabilitação'] as $op) : ?>
+                            <?php foreach (['Monitorização', 'Suporte de vida', 'Terapia', 'Diagnóstico', 'Laboratório', 'Esterilização', 'Reabilitação'] as $op) : ?>
                                 <option value="<?= $op ?>" <?= (($_POST['categoria'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -220,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Data de Aquisição</label>
-                        <input type="date" name="data_aquisicao" class="form-control"
+                        <input type="text" id="data_aquisicao" name="data_aquisicao" class="form-control"
                             value="<?= htmlspecialchars($_POST['data_aquisicao'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
@@ -237,7 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="form-label fw-bold">Tipo de Entrada</label>
                         <select name="tipo_entrada" class="form-select" required>
                             <option value="">Selecione o tipo</option>
-                            <?php foreach (['Compra','Doação','Aluguer','Empréstimo'] as $op) : ?>
+                            <?php foreach (['Compra', 'Doação', 'Aluguer', 'Empréstimo'] as $op) : ?>
                                 <option value="<?= $op ?>" <?= (($_POST['tipo_entrada'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -246,7 +245,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="form-label fw-bold">Estado Atual</label>
                         <select name="estado" class="form-select" required>
                             <option value="">Selecione o estado</option>
-                            <?php foreach (['Ativo','Em manutenção','Inativo','Em calibração','Em quarentena','Abatido'] as $op) : ?>
+                            <?php foreach (['Ativo', 'Em manutenção', 'Inativo', 'Em calibração', 'Em quarentena', 'Abatido'] as $op) : ?>
                                 <option value="<?= $op ?>" <?= (($_POST['estado'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -255,7 +254,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="form-label fw-bold">Criticidade</label>
                         <select name="criticidade" class="form-select" required>
                             <option value="">Selecione a criticidade</option>
-                            <?php foreach (['Baixa','Média','Alta','Suporte de vida'] as $op) : ?>
+                            <?php foreach (['Baixa', 'Média', 'Alta', 'Suporte de vida'] as $op) : ?>
                                 <option value="<?= $op ?>" <?= (($_POST['criticidade'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -331,19 +330,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <h5 class="fw-bold mb-3">Garantia / Contrato associado</h5>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Data de início da garantia</label>
-                            <input type="date" class="form-control" name="garantia_inicio"
+                            <input type="text" id="garantia_inicio" class="form-control" name="garantia_inicio"
                                 value="<?= htmlspecialchars($_POST['garantia_inicio'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Data de fim da garantia</label>
-                            <input type="date" class="form-control" name="garantia_fim"
+                            <input type="text" id="garantia_fim" class="form-control" name="garantia_fim"
                                 value="<?= htmlspecialchars($_POST['garantia_fim'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Tipo de contrato</label>
                             <select class="form-select" name="garantia_tipo">
                                 <option value="">Selecione...</option>
-                                <?php foreach (['Garantia','Contrato de Manutenção','Assistência Técnica'] as $op) : ?>
+                                <?php foreach (['Garantia', 'Contrato de Manutenção', 'Assistência Técnica'] as $op) : ?>
                                     <option value="<?= $op ?>" <?= (($_POST['garantia_tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -357,7 +356,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label class="form-label fw-bold">Periodicidade</label>
                             <select class="form-select" name="garantia_periodicidade">
                                 <option value="">Selecione...</option>
-                                <?php foreach (['Mensal','Trimestral','Semestral','Anual'] as $op) : ?>
+                                <?php foreach (['Mensal', 'Trimestral', 'Semestral', 'Anual'] as $op) : ?>
                                     <option value="<?= $op ?>" <?= (($_POST['garantia_periodicidade'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -377,7 +376,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label class="form-label fw-bold">Tipo de documento</label>
                             <select class="form-select" name="doc_tipo">
                                 <option value="">Selecione...</option>
-                                <?php foreach (['Manual','Certificado','Relatório Técnico','Outro'] as $op) : ?>
+                                <?php foreach (['Manual', 'Certificado', 'Relatório Técnico', 'Outro'] as $op) : ?>
                                     <option value="<?= $op ?>" <?= (($_POST['doc_tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -407,4 +406,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
     </main>
+
+    <script>
+        flatpickr("#data_aquisicao", {
+            dateFormat: "Y-m-d"
+        });
+        flatpickr("#garantia_inicio", {
+            dateFormat: "Y-m-d"
+        });
+        flatpickr("#garantia_fim", {
+            dateFormat: "Y-m-d"
+        });
+    </script>
     <?php include __DIR__ . '/../includes/footer.php'; ?>

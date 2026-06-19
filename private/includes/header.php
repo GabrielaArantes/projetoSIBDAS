@@ -4,6 +4,8 @@ require_once __DIR__ . '/../../config/config.php';
 <!DOCTYPE html>
 <html lang="pt">
 
+
+</head>
 <script src="/projetoSIBDAS/assets/jquery/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="/projetoSIBDAS/assets/datatables/datatables.min.css">
 <script src="/projetoSIBDAS/assets/datatables/datatables.min.js"></script>
@@ -17,5 +19,7 @@ require_once __DIR__ . '/../../config/config.php';
     <link rel="stylesheet" href="/projetoSIBDAS/assets/css/1241094.css">
     <link rel="stylesheet" href="/projetoSIBDAS/assets/fontawesome/all.min.css">
     <link rel="icon" type="image/png" href="/projetoSIBDAS/assets/img/logHospital.png">
+        <link rel="stylesheet" href="/projetoSIBDAS/assets/flatpickr/flatpickr.min.css">
+    <script src="/projetoSIBDAS/assets/flatpickr/flatpickr.js"></script>
 
 </head>

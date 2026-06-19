@@ -48,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($erros)) {
         $entidade = ucwords(strtolower($entidade));
     }
-
 }
 ?>
 
@@ -96,13 +95,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="mb-3">
                 <label class="form-label">Data de início</label>
-                <input type="text" class="form-control" id="data_inicio" name="inicio"
+                <input type="text" id="data_inicio" class="form-control" name="inicio"
                     value="<?= htmlspecialchars($_POST['inicio'] ?? '') ?>">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Data de fim</label>
-                <input type="text" class="form-control" id="data_fim" name="fim"
+                <input type="text" id="data_fim" class="form-control" name="fim"
                     value="<?= htmlspecialchars($_POST['fim'] ?? '') ?>">
             </div>
 
@@ -145,4 +144,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
     </main>
+
+    <script>
+        flatpickr("#data_inicio", {
+            dateFormat: "Y-m-d"
+        });
+        flatpickr("#data_fim", {
+            dateFormat: "Y-m-d"
+        });
+    </script>
+    
     <?php include __DIR__ . '/../includes/footer.php'; ?>
