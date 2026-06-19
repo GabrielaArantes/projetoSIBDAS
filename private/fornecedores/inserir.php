@@ -58,6 +58,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pessoa_contacto = ucwords(strtolower($pessoa_contacto));
     }
 
+    // 4. Guardar na base de dados
+    if (empty($erros)) {
+        try {
+            $ligacao = new PDO(
+                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+                MYSQL_USERNAME,
+                MYSQL_PASSWORD
+            );
+            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = "INSERT INTO fornecedor (nome, nif, telefone, email, morada, website, pessoa_contacto, telefone_contacto, tipo, observacoes)
+                    VALUES (:nome, :nif, :telefone, :email, :morada, :website, :pessoa_contacto, :telefone_contacto, :tipo, :observacoes)";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':nome'              => $nome_empresa,
+                ':nif'               => $nif,
+                ':telefone'          => $telefone,
+                ':email'             => $email,
+                ':morada'            => $morada,
+                ':website'           => $website,
+                ':pessoa_contacto'   => $pessoa_contacto,
+                ':telefone_contacto' => $tel_contacto,
+                ':tipo'              => $tipo_fornecedor,
+                ':observacoes'       => $observacoes
+            ]);
+
+            $ligacao = null;
+            header("Location: listar.php");
+            exit;
+
+        } catch (PDOException $err) {
+            $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+        }
+        $ligacao = null;
+    }
 }
 ?>
 

@@ -48,6 +48,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($erros)) {
         $entidade = ucwords(strtolower($entidade));
     }
+
+    // 4. Guardar na base de dados
+    if (empty($erros)) {
+        try {
+            $ligacao = new PDO(
+                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+                MYSQL_USERNAME,
+                MYSQL_PASSWORD
+            );
+            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = "INSERT INTO garantia_contrato (id_equipamento, data_inicio, data_fim, tipo_contrato, entidade_responsavel, periodicidade, observacoes)
+                    VALUES (:id_equipamento, :inicio, :fim, :tipo, :entidade, :periodicidade, :observacoes)";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':id_equipamento' => $equipamento,
+                ':inicio'         => $inicio ?: null,
+                ':fim'            => $fim    ?: null,
+                ':tipo'           => $tipo,
+                ':entidade'       => $entidade,
+                ':periodicidade'  => $periodicidade,
+                ':observacoes'    => $observacoes
+            ]);
+
+            $ligacao = null;
+            header("Location: listar.php");
+            exit;
+
+        } catch (PDOException $err) {
+            $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+        }
+        $ligacao = null;
+    }
 }
 ?>
 
@@ -153,5 +186,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             dateFormat: "Y-m-d"
         });
     </script>
-    
+
     <?php include __DIR__ . '/../includes/footer.php'; ?>

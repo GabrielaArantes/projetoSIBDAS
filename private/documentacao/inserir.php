@@ -53,6 +53,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tipo = ucwords(strtolower($tipo));
         $nome = ucwords(strtolower($nome));
     }
+
+    // 4. Guardar na base de dados
+    if (empty($erros)) {
+        try {
+            $ligacao = new PDO(
+                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+                MYSQL_USERNAME,
+                MYSQL_PASSWORD
+            );
+            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = "INSERT INTO documento (id_equipamento, tipo, nome, data_documento, data_validade, ficheiro)
+                    VALUES (:id_equipamento, :tipo, :nome, :data, :validade, :ficheiro)";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':id_equipamento' => $equipamento,
+                ':tipo'           => $tipo,
+                ':nome'           => $nome,
+                ':data'           => $data,
+                ':validade'       => $validade ?: null,
+                ':ficheiro'       => ''
+            ]);
+
+            $ligacao = null;
+            header("Location: listar.php");
+            exit;
+
+        } catch (PDOException $err) {
+            $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+        }
+        $ligacao = null;
+    }
 }
 ?>
 
@@ -153,5 +185,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             dateFormat: "Y-m-d"
         });
     </script>
-    
+
     <?php include __DIR__ . '/../includes/footer.php'; ?>

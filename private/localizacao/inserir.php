@@ -29,6 +29,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sala     = ucfirst(strtolower($sala));
     }
 
+    // 4. Guardar na base de dados
+    if (empty($erros)) {
+        try {
+            $ligacao = new PDO(
+                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+                MYSQL_USERNAME,
+                MYSQL_PASSWORD
+            );
+            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = "INSERT INTO localizacao (edificio, piso, servico, sala) VALUES (:edificio, :piso, :servico, :sala)";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':edificio' => $edificio,
+                ':piso'     => $piso,
+                ':servico'  => $servico,
+                ':sala'     => $sala
+            ]);
+
+            $ligacao = null;
+            header("Location: listar.php");
+            exit;
+
+        } catch (PDOException $err) {
+            $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+        }
+        $ligacao = null;
+    }
+
 }
 ?>
 

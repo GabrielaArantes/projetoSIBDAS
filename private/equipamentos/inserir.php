@@ -112,6 +112,96 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fornecedor_email  = strtolower($fornecedor_email);
         $garantia_entidade = ucwords(strtolower($garantia_entidade));
     }
+
+    // 4. Guardar na base de dados
+    if (empty($erros)) {
+        try {
+            $ligacao = new PDO(
+                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+                MYSQL_USERNAME,
+                MYSQL_PASSWORD
+            );
+            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Inserir localização (só se algum campo de localização foi preenchido)
+            $id_localizacao = null;
+            if (!empty($local_edificio) || !empty($local_piso) || !empty($local_servico) || !empty($local_sala)) {
+                $sql = "INSERT INTO localizacao (edificio, piso, servico, sala) VALUES (:edificio, :piso, :servico, :sala)";
+                $stmt = $ligacao->prepare($sql);
+                $stmt->execute([
+                    ':edificio' => $local_edificio,
+                    ':piso'     => $local_piso,
+                    ':servico'  => $local_servico,
+                    ':sala'     => $local_sala
+                ]);
+                $id_localizacao = $ligacao->lastInsertId();
+            }
+
+            // Inserir equipamento
+            $sql = "INSERT INTO equipamento (codigo_interno, nome, categoria, marca, modelo, num_serie, fabricante, data_aquisicao, ano_fabrico, custo, tipo_entrada, estado, criticidade, observacoes, id_localizacao)
+                    VALUES (:codigo_interno, :nome, :categoria, :marca, :modelo, :num_serie, :fabricante, :data_aquisicao, :ano_fabrico, :custo, :tipo_entrada, :estado, :criticidade, :observacoes, :id_localizacao)";
+            $stmt = $ligacao->prepare($sql);
+            $stmt->execute([
+                ':codigo_interno' => $codigo_interno,
+                ':nome'           => $designacao,
+                ':categoria'      => $categoria,
+                ':marca'          => $marca,
+                ':modelo'         => $modelo,
+                ':num_serie'      => $numero_serie,
+                ':fabricante'     => $fabricante,
+                ':data_aquisicao' => $data_aquisicao,
+                ':ano_fabrico'    => $ano_fabrico,
+                ':custo'          => $custo_aquisicao,
+                ':tipo_entrada'   => $tipo_entrada,
+                ':estado'         => $estado,
+                ':criticidade'    => $criticidade,
+                ':observacoes'    => $observacoes,
+                ':id_localizacao' => $id_localizacao
+            ]);
+            $id_equipamento = $ligacao->lastInsertId();
+
+            // Inserir fornecedor (só se nome preenchido) e associar
+            if (!empty($fornecedor_nome)) {
+                $sql = "INSERT INTO fornecedor (nome, email, telefone, morada) VALUES (:nome, :email, :telefone, :morada)";
+                $stmt = $ligacao->prepare($sql);
+                $stmt->execute([
+                    ':nome'     => $fornecedor_nome,
+                    ':email'    => $fornecedor_email,
+                    ':telefone' => $fornecedor_tel,
+                    ':morada'   => $fornecedor_morada
+                ]);
+                $id_fornecedor = $ligacao->lastInsertId();
+
+                $sql = "INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor) VALUES (:id_eq, :id_forn)";
+                $stmt = $ligacao->prepare($sql);
+                $stmt->execute([':id_eq' => $id_equipamento, ':id_forn' => $id_fornecedor]);
+            }
+
+            // Inserir garantia (só se datas preenchidas)
+            if (!empty($garantia_inicio) || !empty($garantia_fim)) {
+                $sql = "INSERT INTO garantia_contrato (id_equipamento, data_inicio, data_fim, tipo_contrato, entidade_responsavel, periodicidade, observacoes)
+                        VALUES (:id_eq, :inicio, :fim, :tipo, :entidade, :periodicidade, :obs)";
+                $stmt = $ligacao->prepare($sql);
+                $stmt->execute([
+                    ':id_eq'         => $id_equipamento,
+                    ':inicio'        => $garantia_inicio ?: null,
+                    ':fim'           => $garantia_fim    ?: null,
+                    ':tipo'          => $garantia_tipo,
+                    ':entidade'      => $garantia_entidade,
+                    ':periodicidade' => $garantia_period,
+                    ':obs'           => $garantia_obs
+                ]);
+            }
+
+            $ligacao = null;
+            header("Location: listar.php");
+            exit;
+
+        } catch (PDOException $err) {
+            $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
+        }
+        $ligacao = null;
+    }
 }
 ?>
 
