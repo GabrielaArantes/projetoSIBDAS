@@ -2,20 +2,67 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
+require_once __DIR__ . '/../includes/validacoes.php';
 
-<?php
+if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
+    header('Location: ' . BASE_URL . '/public/login.php');
+    exit;
+}
+
 $sucesso = '';
 $erro = '';
+$erros = [];
 $fornecedor = null;
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
 
+$id = (int)$id;
+
+// 1. Tratar primeiro a submissão do formulário (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $erros = validar_nome($_POST['nome_empresa'] ?? '');
+
+    if (empty($erros)) {
+        try {
+            $ligacao = new PDO(
+                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+                MYSQL_USERNAME,
+                MYSQL_PASSWORD
+            );
+            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $stmt = $ligacao->prepare("UPDATE fornecedor SET nome=?, nif=?, telefone=?, email=?, morada=?, website=?, pessoa_contacto=?, telefone_contacto=?, tipo=?, observacoes=? WHERE id=?");
+            $stmt->execute([
+                $_POST['nome_empresa'],
+                $_POST['nif'],
+                $_POST['telefone'],
+                $_POST['email'],
+                $_POST['morada'],
+                $_POST['website'],
+                $_POST['pessoa_contacto'],
+                $_POST['telefone_contacto'],
+                $_POST['tipo_fornecedor'],
+                $_POST['observacoes'],
+                $id
+            ]);
+
+            $ligacao = null;
+            $sucesso = "Fornecedor atualizado com sucesso!";
+
+        } catch (PDOException $err) {
+            $erro = "Erro ao atualizar: " . $err->getMessage();
+        }
+    }
+}
+
+// 2. Obter os dados atuais do fornecedor (GET, ou para mostrar o formulário após o POST)
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -35,48 +82,6 @@ try {
 } catch (PDOException $err) {
     $erro = "Erro ao carregar fornecedor.";
 }
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $stmt = $ligacao->prepare("UPDATE fornecedor SET nome=?, nif=?, telefone=?, email=?, morada=?, website=?, pessoa_contacto=?, telefone_contacto=?, tipo=?, observacoes=? WHERE id=?");
-        $stmt->execute([
-            $_POST['nome_empresa'],
-            $_POST['nif'],
-            $_POST['telefone'],
-            $_POST['email'],
-            $_POST['morada'],
-            $_POST['website'],
-            $_POST['pessoa_contacto'],
-            $_POST['telefone_contacto'],
-            $_POST['tipo_fornecedor'],
-            $_POST['observacoes'],
-            $id
-        ]);
-
-        $ligacao = null;
-        $sucesso = "Fornecedor atualizado com sucesso!";
-
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $stmt = $ligacao->prepare("SELECT * FROM fornecedor WHERE id = ?");
-        $stmt->execute([$id]);
-        $fornecedor = $stmt->fetch(PDO::FETCH_OBJ);
-        $ligacao = null;
-
-    } catch (PDOException $err) {
-        $erro = "Erro ao atualizar: " . $err->getMessage();
-    }
-}
 ?>
 
 <?php include __DIR__ . '/../includes/header.php'; ?>
@@ -95,39 +100,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if (!empty($erro)) : ?>
             <div class="alert alert-danger"><?= $erro ?></div>
         <?php endif; ?>
+        <?php if (!empty($erros)) : ?>
+            <div class="alert alert-danger">
+                <?php foreach ($erros as $e) : ?>
+                    <div><?= htmlspecialchars($e) ?></div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 
-        <form class="shadow p-4 rounded" style="max-width: 800px;" method="POST" action="editar.php?id=<?= $id ?>">
+        <form class="shadow p-4 rounded" style="max-width: 800px;" method="POST" action="editar.php?id=<?= $idEncrypted ?>" novalidate autocomplete="off">
 
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Nome da Empresa <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="nome_empresa" value="<?= $fornecedor->nome ?? '' ?>" required>
+                    <input type="text" class="form-control" name="nome_empresa" value="<?= htmlspecialchars($fornecedor->nome ?? '') ?>" required>
                 </div>
                 <div class="col">
                     <label class="form-label">NIF <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="nif" value="<?= $fornecedor->nif ?? '' ?>" required>
+                    <input type="text" class="form-control" name="nif" value="<?= htmlspecialchars($fornecedor->nif ?? '') ?>" required>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Telefone <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="telefone" value="<?= $fornecedor->telefone ?? '' ?>" required>
+                    <input type="text" class="form-control" name="telefone" value="<?= htmlspecialchars($fornecedor->telefone ?? '') ?>" required>
                 </div>
                 <div class="col">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control" name="email" value="<?= $fornecedor->email ?? '' ?>" required>
+                    <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($fornecedor->email ?? '') ?>" required>
                 </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Morada</label>
-                <input type="text" class="form-control" name="morada" value="<?= $fornecedor->morada ?? '' ?>">
+                <input type="text" class="form-control" name="morada" value="<?= htmlspecialchars($fornecedor->morada ?? '') ?>">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Website</label>
-                <input type="text" class="form-control" name="website" value="<?= $fornecedor->website ?? '' ?>">
+                <input type="text" class="form-control" name="website" value="<?= htmlspecialchars($fornecedor->website ?? '') ?>">
             </div>
 
             <hr>
@@ -135,11 +147,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Pessoa de Contacto</label>
-                    <input type="text" class="form-control" name="pessoa_contacto" value="<?= $fornecedor->pessoa_contacto ?? '' ?>">
+                    <input type="text" class="form-control" name="pessoa_contacto" value="<?= htmlspecialchars($fornecedor->pessoa_contacto ?? '') ?>">
                 </div>
                 <div class="col">
                     <label class="form-label">Telefone da Pessoa de Contacto</label>
-                    <input type="text" class="form-control" name="telefone_contacto" value="<?= $fornecedor->telefone_contacto ?? '' ?>">
+                    <input type="text" class="form-control" name="telefone_contacto" value="<?= htmlspecialchars($fornecedor->telefone_contacto ?? '') ?>">
                 </div>
             </div>
 
@@ -155,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="mb-3">
                 <label class="form-label">Observações</label>
-                <textarea class="form-control" rows="4" name="observacoes"><?= $fornecedor->observacoes ?? '' ?></textarea>
+                <textarea class="form-control" rows="4" name="observacoes"><?= htmlspecialchars($fornecedor->observacoes ?? '') ?></textarea>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
