@@ -41,7 +41,7 @@ try {
     $erro = "Erro ao carregar lista de localizações.";
 }
 
-// Carregar lista de fornecedores existentes
+// Carregar lista de fornecedores existentes (apenas ativos)
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -49,7 +49,7 @@ try {
         MYSQL_PASSWORD
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $fornecedores = $ligacao->query("SELECT id, nome, tipo FROM fornecedor ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    $fornecedores = $ligacao->query("SELECT id, nome, tipo FROM fornecedor WHERE fornecedor_ativo = 1 ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
     $ligacao = null;
 } catch (PDOException $err) {
     $erro = "Erro ao carregar lista de fornecedores.";
@@ -289,10 +289,10 @@ try {
                 <div class="tab-pane fade" id="fornecedor" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Fornecedores associados</h5>
-                        <p class="text-muted small">Um equipamento pode ter vários fornecedores associados (ex: fabricante, distribuidor, assistência técnica).</p>
+                        <p class="text-muted small">Um equipamento pode ter vários fornecedores associados (ex: fabricante, distribuidor, assistência técnica). Apenas fornecedores ativos são apresentados.</p>
 
                         <?php if (empty($fornecedores)) : ?>
-                            <p class="text-muted">Ainda não existem fornecedores registados. <a href="../fornecedores/listar.php">Adicionar fornecedor</a>.</p>
+                            <p class="text-muted">Ainda não existem fornecedores ativos registados. <a href="../fornecedores/listar.php">Adicionar fornecedor</a>.</p>
                         <?php else : ?>
                             <?php foreach ($fornecedores as $forn) : ?>
                                 <div class="form-check mb-2">

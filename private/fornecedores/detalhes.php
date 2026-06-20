@@ -9,12 +9,15 @@ $erro = '';
 $fornecedor = null;
 $equipamentos = [];
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
+
+$id = (int)$id;
 
 try {
     $ligacao = new PDO(
@@ -53,8 +56,17 @@ try {
     <main class="conteudo">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Detalhes do Fornecedor</h1>
-            <a href="editar.php?id=<?= $id ?>" class="btn btn-warning">
+            <h1>
+                Detalhes do Fornecedor
+                <?php if ($fornecedor) : ?>
+                    <?php if ($fornecedor->fornecedor_ativo == 1) : ?>
+                        <span class="badge bg-success">Ativo</span>
+                    <?php else : ?>
+                        <span class="badge bg-secondary">Inativo</span>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </h1>
+            <a href="editar.php?id=<?= urlencode($idEncrypted) ?>" class="btn btn-warning">
                 <i class="fa-solid fa-pen"></i> Editar
             </a>
         </div>
@@ -70,33 +82,33 @@ try {
             <div class="row mb-3">
                 <div class="col">
                     <strong>Nome da Empresa:</strong>
-                    <p><?= $fornecedor->nome ?></p>
+                    <p><?= htmlspecialchars($fornecedor->nome) ?></p>
                 </div>
                 <div class="col">
                     <strong>NIF:</strong>
-                    <p><?= $fornecedor->nif ?: '-' ?></p>
+                    <p><?= $fornecedor->nif ? htmlspecialchars($fornecedor->nif) : '-' ?></p>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col">
                     <strong>Telefone:</strong>
-                    <p><?= $fornecedor->telefone ?: '-' ?></p>
+                    <p><?= $fornecedor->telefone ? htmlspecialchars($fornecedor->telefone) : '-' ?></p>
                 </div>
                 <div class="col">
                     <strong>Email:</strong>
-                    <p><?= $fornecedor->email ?: '-' ?></p>
+                    <p><?= $fornecedor->email ? htmlspecialchars($fornecedor->email) : '-' ?></p>
                 </div>
             </div>
 
             <div class="mb-3">
                 <strong>Morada:</strong>
-                <p><?= $fornecedor->morada ?: '-' ?></p>
+                <p><?= $fornecedor->morada ? htmlspecialchars($fornecedor->morada) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Website:</strong>
-                <p><?= $fornecedor->website ?: '-' ?></p>
+                <p><?= $fornecedor->website ? htmlspecialchars($fornecedor->website) : '-' ?></p>
             </div>
 
             <hr>
@@ -106,22 +118,22 @@ try {
             <div class="row mb-3">
                 <div class="col">
                     <strong>Pessoa de Contacto:</strong>
-                    <p><?= $fornecedor->pessoa_contacto ?: '-' ?></p>
+                    <p><?= $fornecedor->pessoa_contacto ? htmlspecialchars($fornecedor->pessoa_contacto) : '-' ?></p>
                 </div>
                 <div class="col">
                     <strong>Telefone da Pessoa de Contacto:</strong>
-                    <p><?= $fornecedor->telefone_contacto ?: '-' ?></p>
+                    <p><?= $fornecedor->telefone_contacto ? htmlspecialchars($fornecedor->telefone_contacto) : '-' ?></p>
                 </div>
             </div>
 
             <div class="mb-3">
                 <strong>Tipo de Fornecedor:</strong>
-                <p><?= $fornecedor->tipo ?: '-' ?></p>
+                <p><?= $fornecedor->tipo ? htmlspecialchars($fornecedor->tipo) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Observações:</strong>
-                <p><?= $fornecedor->observacoes ?: '-' ?></p>
+                <p><?= $fornecedor->observacoes ? htmlspecialchars($fornecedor->observacoes) : '-' ?></p>
             </div>
 
         </div>
@@ -142,11 +154,11 @@ try {
                 <tbody>
                     <?php foreach ($equipamentos as $eq) : ?>
                     <tr>
-                        <td><?= $eq->nome ?></td>
-                        <td><?= $eq->categoria ?></td>
-                        <td><?= $eq->estado ?></td>
+                        <td><?= htmlspecialchars($eq->nome) ?></td>
+                        <td><?= htmlspecialchars($eq->categoria) ?></td>
+                        <td><?= htmlspecialchars($eq->estado) ?></td>
                         <td>
-                            <a href="../equipamentos/detalhes.php?id=<?= $eq->id ?>" class="btn btn-primary btn-sm">
+                            <a href="../equipamentos/detalhes.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-primary btn-sm">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                         </td>

@@ -5,32 +5,6 @@ start_session();
 ?>
 
 <?php
-$erro_eliminar = '';
-if (isset($_GET['apagar'])) {
-    $id_apagar = (int)$_GET['apagar'];
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $ligacao->prepare("DELETE FROM fornecedor WHERE id = ?");
-        $stmt->execute([$id_apagar]);
-        $ligacao = null;
-        header("Location: listar.php");
-        exit;
-    } catch (PDOException $err) {
-        if ($err->getCode() == '23000') {
-            $erro_eliminar = "Não é possível eliminar este fornecedor porque está associado a um ou mais equipamentos.";
-        } else {
-            $erro_eliminar = "Erro ao eliminar fornecedor.";
-        }
-    }
-}
-?>
-
-<?php
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -108,10 +82,6 @@ $ligacao = null;
             </div>
         </div>
 
-        <?php if (!empty($erro_eliminar)) : ?>
-            <div class="alert alert-danger"><?= htmlspecialchars($erro_eliminar) ?></div>
-        <?php endif; ?>
-
         <?php if (!empty($erro)) : ?>
             <p class="text-center text-danger"><?= $erro ?></p>
         <?php elseif (count($resultados) == 0) : ?>
@@ -137,21 +107,33 @@ $ligacao = null;
                             <td><?= $forn->nif ?></td>
                             <td><?= $forn->telefone ?></td>
                             <td><?= $forn->email ?></td>
-                            <td><?= $forn->tipo ?></td>
+                            <td>
+                                <?= $forn->tipo ?>
+                                <?php if ($forn->fornecedor_ativo == 0) : ?>
+                                    <span class="badge bg-secondary ms-1">Inativo</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?= $forn->pessoa_contacto ?></td>
                             <td>
-                                <a href="detalhes.php?id=<?= $forn->id ?>" class="btn btn-primary btn-sm">
+                                <a href="detalhes.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
                                 <a href="editar.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <button class="btn btn-danger btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalEliminarFornecedor"
-                                    data-id="<?= $forn->id ?>">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
+                                <?php if ($forn->fornecedor_ativo == 0) : ?>
+                                    <a href="confirmar_apagar.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-success btn-sm" title="Reativar">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                    </a>
+                                <?php else : ?>
+                                    <button class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminarFornecedor"
+                                        data-id="<?= aes_encrypt($forn->id) ?>"
+                                        title="Eliminar">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -177,7 +159,7 @@ $ligacao = null;
                     </div>
                     <div class="modal-body">
                         <p>Deseja apagar este fornecedor?</p>
-                        <p class="text-muted">Esta ação é irreversível.</p>
+                        <p class="text-muted">O fornecedor não será apagado da base de dados, apenas ficará marcado como inativo.</p>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -195,7 +177,7 @@ $ligacao = null;
             modal.addEventListener('show.bs.modal', function(event) {
                 const btn = event.relatedTarget;
                 const id = btn.getAttribute('data-id');
-                document.getElementById('btnConfirmarEliminarFornecedor').href = 'listar.php?apagar=' + id;
+                document.getElementById('btnConfirmarEliminarFornecedor').href = 'confirmar_apagar.php?id=' + encodeURIComponent(id);
             });
         });
     </script>

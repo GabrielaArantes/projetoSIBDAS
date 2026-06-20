@@ -11,7 +11,7 @@ try {
         MYSQL_PASSWORD
     );
     $ligacaoForn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $fornecedores = $ligacaoForn->query("SELECT id, nome, tipo FROM fornecedor ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    $fornecedores = $ligacaoForn->query("SELECT id, nome, tipo FROM fornecedor WHERE fornecedor_ativo = 1 ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
     $ligacaoForn = null;
 } catch (PDOException $err) {
 }
@@ -351,10 +351,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="tab-pane fade" id="fornecedor" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Fornecedores associados</h5>
-                        <p class="text-muted small">Um equipamento pode ter vários fornecedores associados (ex: fabricante, distribuidor, assistência técnica).</p>
+                        <p class="text-muted small">Um equipamento pode ter vários fornecedores associados (ex: fabricante, distribuidor, assistência técnica). Apenas fornecedores ativos são apresentados.</p>
 
                         <?php if (empty($fornecedores)) : ?>
-                            <p class="text-muted">Ainda não existem fornecedores registados. <a href="../fornecedores/listar.php">Adicionar fornecedor</a>.</p>
+                            <p class="text-muted">Ainda não existem fornecedores ativos registados. <a href="../fornecedores/listar.php">Adicionar fornecedor</a>.</p>
                         <?php else : ?>
                             <?php foreach ($fornecedores as $forn) : ?>
                                 <div class="form-check mb-2">
