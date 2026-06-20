@@ -135,10 +135,7 @@ $ligacao = null;
                     <tr>
                         <th>Equipamento</th>
                         <th>Tipo</th>
-                        <th>Entidade</th>
                         <th>Periodicidade</th>
-                        <th>Início</th>
-                        <th>Fim</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -147,15 +144,12 @@ $ligacao = null;
                         <tr>
                             <td><?= $gc->nome_equipamento ?></td>
                             <td><?= $gc->tipo_contrato ?></td>
-                            <td><?= $gc->entidade_responsavel ?></td>
                             <td><?= $gc->periodicidade ?></td>
-                            <td><?= $gc->data_inicio ?></td>
-                            <td><?= $gc->data_fim ?></td>
                             <td>
                                 <a href="detalhes.php?id=<?= $gc->id ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="editar.php?id=<?= $gc->id ?>" class="btn btn-warning btn-sm">
+                                <a href="editar.php?id=<?= aes_encrypt($gc->id) ?>" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
                                 <button class="btn btn-danger btn-sm"
