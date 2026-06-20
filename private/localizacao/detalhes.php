@@ -9,12 +9,15 @@ $erro = '';
 $localizacao = null;
 $equipamentos = [];
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
+
+$id = (int)$id;
 
 try {
     $ligacao = new PDO(
@@ -52,7 +55,16 @@ try {
 
     <main class="conteudo">
 
-        <h1 class="mb-4">Detalhes da Localização</h1>
+        <h1 class="mb-4">
+            Detalhes da Localização
+            <?php if ($localizacao) : ?>
+                <?php if ($localizacao->localizacao_ativo == 1) : ?>
+                    <span class="badge bg-success">Ativo</span>
+                <?php else : ?>
+                    <span class="badge bg-secondary">Inativo</span>
+                <?php endif; ?>
+            <?php endif; ?>
+        </h1>
 
         <?php if (!empty($erro)) : ?>
             <div class="alert alert-danger"><?= $erro ?></div>
@@ -67,29 +79,29 @@ try {
 
             <div class="mb-3">
                 <strong>Edifício:</strong>
-                <p><?= $localizacao->edificio ?: '-' ?></p>
+                <p><?= $localizacao->edificio ? htmlspecialchars($localizacao->edificio) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Piso:</strong>
-                <p><?= $localizacao->piso ?: '-' ?></p>
+                <p><?= $localizacao->piso ? htmlspecialchars($localizacao->piso) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Serviço / Departamento:</strong>
-                <p><?= $localizacao->servico ?: '-' ?></p>
+                <p><?= $localizacao->servico ? htmlspecialchars($localizacao->servico) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Sala / Gabinete:</strong>
-                <p><?= $localizacao->sala ?: '-' ?></p>
+                <p><?= $localizacao->sala ? htmlspecialchars($localizacao->sala) : '-' ?></p>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
                 <a href="listar.php" class="btn btn-secondary">
                     <i class="fa-solid fa-arrow-left"></i> Voltar
                 </a>
-                <a href="editar.php?id=<?= $id ?>" class="btn btn-warning">
+                <a href="editar.php?id=<?= urlencode($idEncrypted) ?>" class="btn btn-warning">
                     <i class="fa-solid fa-pen"></i> Editar
                 </a>
             </div>
@@ -112,11 +124,11 @@ try {
                 <tbody>
                     <?php foreach ($equipamentos as $eq) : ?>
                     <tr>
-                        <td><?= $eq->nome ?></td>
-                        <td><?= $eq->categoria ?></td>
-                        <td><?= $eq->estado ?></td>
+                        <td><?= htmlspecialchars($eq->nome) ?></td>
+                        <td><?= htmlspecialchars($eq->categoria) ?></td>
+                        <td><?= htmlspecialchars($eq->estado) ?></td>
                         <td>
-                            <a href="../equipamentos/detalhes.php?id=<?= $eq->id ?>" class="btn btn-primary btn-sm">
+                            <a href="../equipamentos/detalhes.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-primary btn-sm">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                         </td>

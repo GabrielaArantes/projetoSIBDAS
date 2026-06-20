@@ -25,7 +25,7 @@ try {
         MYSQL_PASSWORD
     );
     $ligacaoLoc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $localizacoes = $ligacaoLoc->query("SELECT id, edificio, piso, servico, sala FROM localizacao ORDER BY edificio, piso, servico, sala")->fetchAll(PDO::FETCH_OBJ);
+    $localizacoes = $ligacaoLoc->query("SELECT id, edificio, piso, servico, sala FROM localizacao WHERE localizacao_ativo = 1 ORDER BY edificio, piso, servico, sala")->fetchAll(PDO::FETCH_OBJ);
     $ligacaoLoc = null;
 } catch (PDOException $err) {
 }
