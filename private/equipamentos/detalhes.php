@@ -11,12 +11,15 @@ $fornecedor = null;
 $garantia = null;
 $documentos = [];
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
+
+$id = (int)$id;
 
 try {
     $ligacao = new PDO(
@@ -66,7 +69,16 @@ try {
     <main class="conteudo p-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Detalhes do Equipamento</h1>
+            <h1>
+                Detalhes do Equipamento
+                <?php if ($equipamento) : ?>
+                    <?php if ($equipamento->equipamento_ativo == 1) : ?>
+                        <span class="badge bg-success">Ativo</span>
+                    <?php else : ?>
+                        <span class="badge bg-secondary">Inativo</span>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </h1>
             <a href="listar.php" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left me-2"></i>Voltar
             </a>
@@ -101,20 +113,20 @@ try {
                 <div class="tab-pane fade show active" id="dados" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Dados do Equipamento</h5>
-                        <p><strong>Código Interno:</strong> <?= $equipamento->codigo_interno ?></p>
-                        <p><strong>Designação:</strong> <?= $equipamento->nome ?></p>
-                        <p><strong>Categoria / Grupo:</strong> <?= $equipamento->categoria ?></p>
-                        <p><strong>Marca:</strong> <?= $equipamento->marca ?></p>
-                        <p><strong>Modelo:</strong> <?= $equipamento->modelo ?></p>
-                        <p><strong>Número de Série:</strong> <?= $equipamento->num_serie ?></p>
-                        <p><strong>Fabricante:</strong> <?= $equipamento->fabricante ?></p>
-                        <p><strong>Data de Aquisição:</strong> <?= $equipamento->data_aquisicao ?></p>
-                        <p><strong>Ano de Fabrico:</strong> <?= $equipamento->ano_fabrico ?></p>
+                        <p><strong>Código Interno:</strong> <?= htmlspecialchars($equipamento->codigo_interno) ?></p>
+                        <p><strong>Designação:</strong> <?= htmlspecialchars($equipamento->nome) ?></p>
+                        <p><strong>Categoria / Grupo:</strong> <?= htmlspecialchars($equipamento->categoria) ?></p>
+                        <p><strong>Marca:</strong> <?= htmlspecialchars($equipamento->marca) ?></p>
+                        <p><strong>Modelo:</strong> <?= htmlspecialchars($equipamento->modelo) ?></p>
+                        <p><strong>Número de Série:</strong> <?= htmlspecialchars($equipamento->num_serie) ?></p>
+                        <p><strong>Fabricante:</strong> <?= htmlspecialchars($equipamento->fabricante) ?></p>
+                        <p><strong>Data de Aquisição:</strong> <?= $equipamento->data_aquisicao ? date('d/m/Y', strtotime($equipamento->data_aquisicao)) : '-' ?></p>
+                        <p><strong>Ano de Fabrico:</strong> <?= htmlspecialchars($equipamento->ano_fabrico) ?></p>
                         <p><strong>Custo de Aquisição:</strong> <?= $equipamento->custo ? number_format($equipamento->custo, 2, ',', '.') . ' €' : '-' ?></p>
-                        <p><strong>Tipo de Entrada:</strong> <?= $equipamento->tipo_entrada ?></p>
-                        <p><strong>Estado Atual:</strong> <?= $equipamento->estado ?></p>
-                        <p><strong>Criticidade:</strong> <?= $equipamento->criticidade ?></p>
-                        <p><strong>Observações:</strong> <?= $equipamento->observacoes ?: '-' ?></p>
+                        <p><strong>Tipo de Entrada:</strong> <?= htmlspecialchars($equipamento->tipo_entrada) ?></p>
+                        <p><strong>Estado Atual:</strong> <?= htmlspecialchars($equipamento->estado) ?></p>
+                        <p><strong>Criticidade:</strong> <?= htmlspecialchars($equipamento->criticidade) ?></p>
+                        <p><strong>Observações:</strong> <?= $equipamento->observacoes ? htmlspecialchars($equipamento->observacoes) : '-' ?></p>
                     </div>
                 </div>
 
@@ -122,13 +134,13 @@ try {
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Fornecedor</h5>
                         <?php if ($fornecedor) : ?>
-                            <p><strong>Nome:</strong> <?= $fornecedor->nome ?></p>
-                            <p><strong>NIF:</strong> <?= $fornecedor->nif ?></p>
-                            <p><strong>Email:</strong> <?= $fornecedor->email ?></p>
-                            <p><strong>Telefone:</strong> <?= $fornecedor->telefone ?></p>
-                            <p><strong>Morada:</strong> <?= $fornecedor->morada ?></p>
-                            <p><strong>Tipo:</strong> <?= $fornecedor->tipo ?></p>
-                            <p><strong>Pessoa de Contacto:</strong> <?= $fornecedor->pessoa_contacto ?></p>
+                            <p><strong>Nome:</strong> <?= htmlspecialchars($fornecedor->nome) ?></p>
+                            <p><strong>NIF:</strong> <?= htmlspecialchars($fornecedor->nif) ?></p>
+                            <p><strong>Email:</strong> <?= htmlspecialchars($fornecedor->email) ?></p>
+                            <p><strong>Telefone:</strong> <?= htmlspecialchars($fornecedor->telefone) ?></p>
+                            <p><strong>Morada:</strong> <?= htmlspecialchars($fornecedor->morada) ?></p>
+                            <p><strong>Tipo:</strong> <?= htmlspecialchars($fornecedor->tipo) ?></p>
+                            <p><strong>Pessoa de Contacto:</strong> <?= htmlspecialchars($fornecedor->pessoa_contacto) ?></p>
                         <?php else : ?>
                             <p class="text-muted">Nenhum fornecedor associado.</p>
                         <?php endif; ?>
@@ -138,10 +150,10 @@ try {
                 <div class="tab-pane fade" id="localizacao" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Localização</h5>
-                        <p><strong>Edifício:</strong> <?= $equipamento->edificio ?: '-' ?></p>
-                        <p><strong>Piso:</strong> <?= $equipamento->piso ?: '-' ?></p>
-                        <p><strong>Serviço / Departamento:</strong> <?= $equipamento->servico ?: '-' ?></p>
-                        <p><strong>Sala / Gabinete:</strong> <?= $equipamento->sala ?: '-' ?></p>
+                        <p><strong>Edifício:</strong> <?= $equipamento->edificio ? htmlspecialchars($equipamento->edificio) : '-' ?></p>
+                        <p><strong>Piso:</strong> <?= $equipamento->piso ? htmlspecialchars($equipamento->piso) : '-' ?></p>
+                        <p><strong>Serviço / Departamento:</strong> <?= $equipamento->servico ? htmlspecialchars($equipamento->servico) : '-' ?></p>
+                        <p><strong>Sala / Gabinete:</strong> <?= $equipamento->sala ? htmlspecialchars($equipamento->sala) : '-' ?></p>
                     </div>
                 </div>
 
@@ -149,12 +161,12 @@ try {
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Garantia / Contrato</h5>
                         <?php if ($garantia) : ?>
-                            <p><strong>Data de início:</strong> <?= $garantia->data_inicio ?></p>
-                            <p><strong>Data de fim:</strong> <?= $garantia->data_fim ?></p>
-                            <p><strong>Tipo de contrato:</strong> <?= $garantia->tipo_contrato ?></p>
-                            <p><strong>Entidade responsável:</strong> <?= $garantia->entidade_responsavel ?></p>
-                            <p><strong>Periodicidade:</strong> <?= $garantia->periodicidade ?></p>
-                            <p><strong>Observações:</strong> <?= $garantia->observacoes ?: '-' ?></p>
+                            <p><strong>Data de início:</strong> <?= $garantia->data_inicio ? date('d/m/Y', strtotime($garantia->data_inicio)) : '-' ?></p>
+                            <p><strong>Data de fim:</strong> <?= $garantia->data_fim ? date('d/m/Y', strtotime($garantia->data_fim)) : '-' ?></p>
+                            <p><strong>Tipo de contrato:</strong> <?= htmlspecialchars($garantia->tipo_contrato) ?></p>
+                            <p><strong>Entidade responsável:</strong> <?= htmlspecialchars($garantia->entidade_responsavel) ?></p>
+                            <p><strong>Periodicidade:</strong> <?= htmlspecialchars($garantia->periodicidade) ?></p>
+                            <p><strong>Observações:</strong> <?= $garantia->observacoes ? htmlspecialchars($garantia->observacoes) : '-' ?></p>
                         <?php else : ?>
                             <p class="text-muted">Nenhuma garantia ou contrato associado.</p>
                         <?php endif; ?>
@@ -167,10 +179,10 @@ try {
                         <?php if (count($documentos) > 0) : ?>
                             <?php foreach ($documentos as $doc) : ?>
                                 <div class="border rounded p-2 mb-2">
-                                    <p class="mb-1"><strong>Tipo:</strong> <?= $doc->tipo ?></p>
-                                    <p class="mb-1"><strong>Nome:</strong> <?= $doc->nome ?></p>
-                                    <p class="mb-1"><strong>Data:</strong> <?= $doc->data_documento ?></p>
-                                    <p class="mb-0"><strong>Validade:</strong> <?= $doc->data_validade ?: '-' ?></p>
+                                    <p class="mb-1"><strong>Tipo:</strong> <?= htmlspecialchars($doc->tipo) ?></p>
+                                    <p class="mb-1"><strong>Nome:</strong> <?= htmlspecialchars($doc->nome) ?></p>
+                                    <p class="mb-1"><strong>Data:</strong> <?= $doc->data_documento ? date('d/m/Y', strtotime($doc->data_documento)) : '-' ?></p>
+                                    <p class="mb-0"><strong>Validade:</strong> <?= $doc->data_validade ? date('d/m/Y', strtotime($doc->data_validade)) : '-' ?></p>
                                 </div>
                             <?php endforeach; ?>
                         <?php else : ?>

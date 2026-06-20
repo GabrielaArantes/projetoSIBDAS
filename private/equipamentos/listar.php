@@ -5,26 +5,6 @@ start_session();
 ?>
 
 <?php
-if (isset($_GET['apagar'])) {
-    $id_apagar = (int)$_GET['apagar'];
-    try {
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $ligacao->prepare("DELETE FROM equipamento WHERE id = ?");
-        $stmt->execute([$id_apagar]);
-        $ligacao = null;
-    } catch (PDOException $err) {
-    }
-    header("Location: listar.php");
-    exit;
-}
-?>
-
-<?php
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
@@ -202,20 +182,32 @@ $ligacao = null;
                             <td><?= $eq->nome ?></td>
                             <td><?= $eq->categoria ?></td>
                             <td><?= $eq->servico ?></td>
-                            <td><?= $eq->estado ?></td>
                             <td>
-                                <a href="detalhes.php?id=<?= $eq->id ?>" class="btn btn-primary btn-sm">
+                                <?= $eq->estado ?>
+                                <?php if ($eq->equipamento_ativo == 0) : ?>
+                                    <span class="badge bg-secondary ms-1">Inativo</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href="detalhes.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="editar.php?id=<?= $eq->id ?>" class="btn btn-warning btn-sm">
+                                <a href="editar.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <button class="btn btn-danger btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalEliminarEquipamento"
-                                    data-id="<?= $eq->id ?>">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
+                                <?php if ($eq->equipamento_ativo == 0) : ?>
+                                    <a href="confirmar_apagar.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-success btn-sm" title="Reativar">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                    </a>
+                                <?php else : ?>
+                                    <button class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminarEquipamento"
+                                        data-id="<?= aes_encrypt($eq->id) ?>"
+                                        title="Eliminar">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -241,7 +233,7 @@ $ligacao = null;
                     </div>
                     <div class="modal-body">
                         <p>Deseja apagar este equipamento?</p>
-                        <p class="text-muted">Esta ação é irreversível.</p>
+                        <p class="text-muted">O equipamento não será apagado da base de dados, apenas ficará marcado como inativo.</p>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -259,13 +251,12 @@ $ligacao = null;
             modal.addEventListener('show.bs.modal', function(event) {
                 const btn = event.relatedTarget;
                 const id = btn.getAttribute('data-id');
-                document.getElementById('btnConfirmarEliminarEquipamento').href = 'listar.php?apagar=' + id;
+                document.getElementById('btnConfirmarEliminarEquipamento').href = 'confirmar_apagar.php?id=' + encodeURIComponent(id);
             });
         });
     </script>
 
     <script>
-        //fazer sem o filtrar mais para a frente, para tentar usar o meu
         $(document).ready(function() {
             $('#tabela-equipamentos').DataTable({
                 pageLength: 5,
