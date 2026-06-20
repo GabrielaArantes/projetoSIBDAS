@@ -129,6 +129,7 @@ $ligacao = null;
         <?php elseif (count($resultados) == 0) : ?>
             <p class="text-muted">Não existem garantias ou contratos registados.</p>
         <?php else : ?>
+            <div class="table-responsive">
             <table id="tabela-garantcontrato" class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
@@ -168,7 +169,9 @@ $ligacao = null;
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         <?php endif; ?>
+
 
         <div class="col">
             <p class="mb-5">Total: <strong><?= count($resultados) ?></strong></p>

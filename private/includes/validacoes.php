@@ -73,3 +73,23 @@ function validar_select_obrigatorio(string $valor, string $nomeCampo): array {
 
     return $erros;
 }
+
+function validar_tipo_documento(string $tipo): array {
+    $erros = [];
+
+    if (empty(trim($tipo))) {
+        $erros[] = "O Tipo de Documento é obrigatório.";
+    }
+
+    return $erros;
+}
+
+function validar_data(string $data, string $nomeCampo): array {
+    $erros = [];
+
+    if (empty(trim($data))) {
+        $erros[] = "O campo $nomeCampo é obrigatório.";
+    }
+
+    return $erros;
+}

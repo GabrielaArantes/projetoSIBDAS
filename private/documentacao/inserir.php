@@ -49,9 +49,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
 
+    if (empty($_FILES['ficheiro']['name'])) {
+        $erros[] = "O Ficheiro é obrigatório.";
+    }
+
     if (empty($erros)) {
         $tipo = ucwords(strtolower($tipo));
         $nome = ucwords(strtolower($nome));
+    }
+
+    // Processar o upload do ficheiro
+    $nomeFicheiro = '';
+    $nomeOriginal = '';
+    if (empty($erros)) {
+        $nomeOriginal = $_FILES['ficheiro']['name'];
+        $extensao = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
+        $nomeFicheiro = uniqid('doc_') . '.' . $extensao;
+        $destino = __DIR__ . '/../../assets/uploads/documentos/' . $nomeFicheiro;
+
+        if (!move_uploaded_file($_FILES['ficheiro']['tmp_name'], $destino)) {
+            $erros[] = "Erro ao guardar o ficheiro. Tente novamente.";
+        }
     }
 
     // 4. Guardar na base de dados
@@ -64,16 +82,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
             $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $sql = "INSERT INTO documento (id_equipamento, tipo, nome, data_documento, data_validade, ficheiro)
-                    VALUES (:id_equipamento, :tipo, :nome, :data, :validade, :ficheiro)";
+            $sql = "INSERT INTO documento (id_equipamento, tipo, nome, data_documento, data_validade, ficheiro, ficheiro_nome_original)
+                    VALUES (:id_equipamento, :tipo, :nome, :data, :validade, :ficheiro, :ficheiro_nome_original)";
             $stmt = $ligacao->prepare($sql);
             $stmt->execute([
-                ':id_equipamento' => $equipamento,
-                ':tipo'           => $tipo,
-                ':nome'           => $nome,
-                ':data'           => $data,
-                ':validade'       => $validade ?: null,
-                ':ficheiro'       => ''
+                ':id_equipamento'         => $equipamento,
+                ':tipo'                   => $tipo,
+                ':nome'                   => $nome,
+                ':data'                   => $data,
+                ':validade'               => $validade ?: null,
+                ':ficheiro'               => $nomeFicheiro,
+                ':ficheiro_nome_original' => $nomeOriginal
             ]);
 
             $ligacao = null;

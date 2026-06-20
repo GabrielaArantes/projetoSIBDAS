@@ -155,6 +155,7 @@ try {
 
     </main>
 
+    <script src="/projetoSIBDAS/assets/js/chart.umd.min.js"></script>
     <script>
         const dadosEstado = <?= json_encode(array_map(fn($r) => ['estado' => $r->estado, 'total' => $r->total], $por_estado)) ?>;
         const dadosServico = <?= json_encode(array_map(fn($r) => ['servico' => $r->servico ?? 'Sem serviço', 'total' => $r->total], $por_servico)) ?>;

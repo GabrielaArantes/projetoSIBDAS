@@ -59,22 +59,23 @@ try {
         </div>
 
         <?php if (!empty($erro)) : ?>
-            <div class="alert alert-danger"><?= $erro ?></div>
+            <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div>
         <?php else : ?>
 
         <div class="shadow p-4 rounded bg-white" style="max-width: 700px; margin: auto;">
 
             <h5 class="fw-bold mb-3">Informação do Documento</h5>
 
-            <p><strong>Tipo:</strong> <?= $documento->tipo ?: '-' ?></p>
-            <p><strong>Nome:</strong> <?= $documento->nome ?: '-' ?></p>
-            <p><strong>Data do Documento:</strong> <?= $documento->data_documento ?: '-' ?></p>
-            <p><strong>Data de Validade:</strong> <?= $documento->data_validade ?: '-' ?></p>
-            <p><strong>Equipamento Associado:</strong> <?= $documento->nome_equipamento ?: '-' ?></p>
+            <p><strong>Tipo:</strong> <?= htmlspecialchars($documento->tipo ?: '-') ?></p>
+            <p><strong>Nome:</strong> <?= htmlspecialchars($documento->nome ?: '-') ?></p>
+            <p><strong>Data do Documento:</strong> <?= htmlspecialchars($documento->data_documento ?: '-') ?></p>
+            <p><strong>Data de Validade:</strong> <?= htmlspecialchars($documento->data_validade ?: '-') ?></p>
+            <p><strong>Equipamento Associado:</strong> <?= htmlspecialchars($documento->nome_equipamento ?: '-') ?></p>
             <p>
                 <strong>Ficheiro:</strong>
                 <?php if (!empty($documento->ficheiro)) : ?>
-                    <a href="<?= $documento->ficheiro ?>" target="_blank" class="btn btn-outline-primary btn-sm ms-2">
+                    <?= htmlspecialchars($documento->ficheiro_nome_original ?? $documento->ficheiro) ?>
+                    <a href="<?= BASE_URL ?>/assets/uploads/documentos/<?= rawurlencode($documento->ficheiro) ?>" target="_blank" class="btn btn-outline-primary btn-sm ms-2">
                         <i class="fa-solid fa-file"></i> Abrir Ficheiro
                     </a>
                 <?php else : ?>

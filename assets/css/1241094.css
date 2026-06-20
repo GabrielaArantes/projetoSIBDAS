@@ -476,11 +476,11 @@ main {
 }
 
 .pagprivada .sidebar {
-    width: 250px;
+    width: 210px;
     height: calc(100vh-60px);
     background-color: lch(65.43% 18.14 155.69);
     color: white;
-    padding: 40px 20px;
+    padding: 25px 12px;
     position: fixed;
     left: 0;
     bottom: 0;
@@ -492,10 +492,11 @@ main {
     align-items: center;
     text-decoration: none;
     color: white;
-    padding: 15px;
+    padding: 10px;
     border-radius: 5px;
     margin-bottom: 7px;
-    font-size: 18px;
+    font-size: 17px;
+    gap: 6px;
 }
 
 .pagprivada .sidebar nav a:hover {
@@ -575,7 +576,7 @@ main {
 
 
 .pagprivada .conteudo {
-    margin-left: 250px;
+    margin-left: 210px;
     margin-top: 60px;
     padding: 40px;
     background-color: white;
@@ -767,4 +768,12 @@ main {
 }
 .preview-link:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 992px) {
+    .pagprivada .conteudo .btn-success,
+    .pagprivada .conteudo .d-flex.justify-content-between .btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
 }

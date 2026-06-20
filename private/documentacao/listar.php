@@ -106,7 +106,6 @@ $ligacao = null;
                 </tbody>
             </table>
         <?php endif; ?>
-
         <div class="col">
             <p class="mb-5">Total: <strong><?= count($resultados) ?></strong></p>
         </div>
