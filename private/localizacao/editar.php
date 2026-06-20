@@ -2,40 +2,27 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
-?>
 
-<?php
+if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
+    header('Location: ' . BASE_URL . '/public/login.php');
+    exit;
+}
+
 $sucesso = '';
 $erro = '';
 $localizacao = null;
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
 
-try {
-    $ligacao = new PDO(
-        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-        MYSQL_USERNAME,
-        MYSQL_PASSWORD
-    );
-    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $stmt = $ligacao->prepare("SELECT * FROM localizacao WHERE id = ?");
-    $stmt->execute([$id]);
-    $localizacao = $stmt->fetch(PDO::FETCH_OBJ);
-    $ligacao = null;
+$id = (int)$id;
 
-    if (!$localizacao) {
-        header("Location: listar.php");
-        exit;
-    }
-} catch (PDOException $err) {
-    $erro = "Erro ao carregar localização.";
-}
-
+// 1. Tratar primeiro a submissão do formulário (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $ligacao = new PDO(
@@ -57,19 +44,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ligacao = null;
         $sucesso = "Localização atualizada com sucesso!";
 
-        $ligacao = new PDO(
-            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-            MYSQL_USERNAME,
-            MYSQL_PASSWORD
-        );
-        $stmt = $ligacao->prepare("SELECT * FROM localizacao WHERE id = ?");
-        $stmt->execute([$id]);
-        $localizacao = $stmt->fetch(PDO::FETCH_OBJ);
-        $ligacao = null;
-
     } catch (PDOException $err) {
         $erro = "Erro ao atualizar: " . $err->getMessage();
     }
+}
+
+// 2. Obter os dados atuais da localização (GET, ou para mostrar o formulário após o POST)
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmt = $ligacao->prepare("SELECT * FROM localizacao WHERE id = ?");
+    $stmt->execute([$id]);
+    $localizacao = $stmt->fetch(PDO::FETCH_OBJ);
+    $ligacao = null;
+
+    if (!$localizacao) {
+        header("Location: listar.php");
+        exit;
+    }
+} catch (PDOException $err) {
+    $erro = "Erro ao carregar localização.";
 }
 ?>
 
@@ -90,27 +88,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="alert alert-danger"><?= $erro ?></div>
         <?php endif; ?>
 
-        <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="editar.php?id=<?= $id ?>">
+        <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="editar.php?id=<?= $idEncrypted ?>" novalidate autocomplete="off">
 
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Edifício</label>
-                    <input type="text" class="form-control" name="edificio" value="<?= $localizacao->edificio ?? '' ?>">
+                    <input type="text" class="form-control" name="edificio" value="<?= htmlspecialchars($localizacao->edificio ?? '') ?>">
                 </div>
                 <div class="col">
                     <label class="form-label">Piso</label>
-                    <input type="text" class="form-control" name="piso" value="<?= $localizacao->piso ?? '' ?>">
+                    <input type="text" class="form-control" name="piso" value="<?= htmlspecialchars($localizacao->piso ?? '') ?>">
                 </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Serviço / Departamento</label>
-                <input type="text" class="form-control" name="servico" value="<?= $localizacao->servico ?? '' ?>">
+                <input type="text" class="form-control" name="servico" value="<?= htmlspecialchars($localizacao->servico ?? '') ?>">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Sala / Gabinete</label>
-                <input type="text" class="form-control" name="sala" value="<?= $localizacao->sala ?? '' ?>">
+                <input type="text" class="form-control" name="sala" value="<?= htmlspecialchars($localizacao->sala ?? '') ?>">
             </div>
 
             <div class="d-flex justify-content-between mt-4">
