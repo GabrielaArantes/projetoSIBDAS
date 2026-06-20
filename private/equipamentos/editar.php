@@ -13,6 +13,9 @@ $sucesso = '';
 $erro = '';
 $erros = [];
 $equipamento = null;
+$localizacoes = [];
+$fornecedores = [];
+$fornecedoresAssociados = [];
 
 $idEncrypted = $_GET['id'] ?? null;
 $id = aes_decrypt($idEncrypted);
@@ -23,6 +26,50 @@ if (!$id || !is_numeric($id)) {
 }
 
 $id = (int)$id;
+
+// Carregar lista de localizações existentes (necessária tanto para mostrar o form como após o POST)
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $localizacoes = $ligacao->query("SELECT id, edificio, piso, servico, sala FROM localizacao ORDER BY edificio, piso, servico, sala")->fetchAll(PDO::FETCH_OBJ);
+    $ligacao = null;
+} catch (PDOException $err) {
+    $erro = "Erro ao carregar lista de localizações.";
+}
+
+// Carregar lista de fornecedores existentes
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $fornecedores = $ligacao->query("SELECT id, nome, tipo FROM fornecedor ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    $ligacao = null;
+} catch (PDOException $err) {
+    $erro = "Erro ao carregar lista de fornecedores.";
+}
+
+// Carregar fornecedores já associados a este equipamento
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmt = $ligacao->prepare("SELECT id_fornecedor FROM equipamento_fornecedor WHERE id_equipamento = ?");
+    $stmt->execute([$id]);
+    $fornecedoresAssociados = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $ligacao = null;
+} catch (PDOException $err) {
+    $erro = "Erro ao carregar fornecedores associados.";
+}
 
 // 1. Tratar primeiro a submissão do formulário (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,7 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         validar_select_obrigatorio($_POST['categoria'] ?? '', 'Categoria / Grupo'),
         validar_select_obrigatorio($_POST['tipo_entrada'] ?? '', 'Tipo de Entrada'),
         validar_select_obrigatorio($_POST['estado'] ?? '', 'Estado Atual'),
-        validar_select_obrigatorio($_POST['criticidade'] ?? '', 'Criticidade')
+        validar_select_obrigatorio($_POST['criticidade'] ?? '', 'Criticidade'),
+        validar_select_obrigatorio($_POST['localizacao'] ?? '', 'Localização')
     );
 
     if (empty($erros)) {
@@ -48,22 +96,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $stmt = $ligacao->prepare("SELECT id_localizacao FROM equipamento WHERE id = ?");
-            $stmt->execute([$id]);
-            $idLocalizacao = $stmt->fetchColumn();
-
-            $stmt = $ligacao->prepare("UPDATE localizacao SET edificio=?, piso=?, servico=?, sala=? WHERE id=?");
-            $stmt->execute([
-                $_POST['local_edificio'],
-                $_POST['local_piso'],
-                $_POST['local_servico'],
-                $_POST['local_sala'],
-                $idLocalizacao
-            ]);
-
             $custoAquisicao = ($_POST['custo_aquisicao'] === '') ? null : $_POST['custo_aquisicao'];
+            $idLocalizacaoEscolhida = (int)$_POST['localizacao'];
+            $fornecedoresEscolhidos = $_POST['fornecedores'] ?? [];
 
-            $stmt = $ligacao->prepare("UPDATE equipamento SET codigo_interno=?, nome=?, categoria=?, marca=?, modelo=?, num_serie=?, fabricante=?, data_aquisicao=?, ano_fabrico=?, custo=?, tipo_entrada=?, estado=?, criticidade=?, observacoes=? WHERE id=?");
+            $stmt = $ligacao->prepare("UPDATE equipamento SET codigo_interno=?, nome=?, categoria=?, marca=?, modelo=?, num_serie=?, fabricante=?, data_aquisicao=?, ano_fabrico=?, custo=?, tipo_entrada=?, estado=?, criticidade=?, observacoes=?, id_localizacao=? WHERE id=?");
             $stmt->execute([
                 $_POST['codigo_interno'],
                 $_POST['designacao'],
@@ -79,11 +116,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_POST['estado'],
                 $_POST['criticidade'],
                 $_POST['observacoes'],
+                $idLocalizacaoEscolhida,
                 $id
             ]);
 
+            // Atualizar associações de fornecedores: apaga todas e recria com as escolhidas agora
+            $stmt = $ligacao->prepare("DELETE FROM equipamento_fornecedor WHERE id_equipamento = ?");
+            $stmt->execute([$id]);
+
+            if (!empty($fornecedoresEscolhidos)) {
+                $stmt = $ligacao->prepare("INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor) VALUES (?, ?)");
+                foreach ($fornecedoresEscolhidos as $idForn) {
+                    $stmt->execute([$id, (int)$idForn]);
+                }
+            }
+
             $ligacao = null;
             $sucesso = "Equipamento atualizado com sucesso!";
+
+            // Recarregar fornecedores associados, para refletir a alteração no formulário
+            $fornecedoresAssociados = $fornecedoresEscolhidos;
 
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
@@ -236,31 +288,46 @@ try {
 
                 <div class="tab-pane fade" id="fornecedor" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
-                        <h5 class="fw-bold mb-3">Fornecedor</h5>
-                        <label>Nome</label>
-                        <input type="text" class="form-control mb-2" name="fornecedor_nome">
-                        <label>Email</label>
-                        <input type="email" class="form-control mb-2" name="fornecedor_email">
-                        <label>Telefone</label>
-                        <input type="text" class="form-control mb-2" name="fornecedor_telefone">
-                        <label>Morada</label>
-                        <input type="text" class="form-control mb-2" name="fornecedor_morada">
-                        <label>Observações</label>
-                        <textarea class="form-control mb-2" name="fornecedor_observacoes"></textarea>
+                        <h5 class="fw-bold mb-3">Fornecedores associados</h5>
+                        <p class="text-muted small">Um equipamento pode ter vários fornecedores associados (ex: fabricante, distribuidor, assistência técnica).</p>
+
+                        <?php if (empty($fornecedores)) : ?>
+                            <p class="text-muted">Ainda não existem fornecedores registados. <a href="../fornecedores/listar.php">Adicionar fornecedor</a>.</p>
+                        <?php else : ?>
+                            <?php foreach ($fornecedores as $forn) : ?>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="fornecedores[]" value="<?= $forn->id ?>"
+                                        id="forn_<?= $forn->id ?>"
+                                        <?= in_array($forn->id, $fornecedoresAssociados) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="forn_<?= $forn->id ?>">
+                                        <?= htmlspecialchars($forn->nome) ?>
+                                        <span class="text-muted">(<?= htmlspecialchars($forn->tipo ?? 'Tipo não definido') ?>)</span>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                            <p class="text-muted small mt-2">
+                                Caso queira outro fornecedor, pode adicioná-lo em <a href="../fornecedores/listar.php">Fornecedores</a>.
+                            </p>
+                        <?php endif; ?>
                     </div>
                 </div>
 
                 <div class="tab-pane fade" id="localizacao" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
-                        <h5 class="fw-bold mb-3">Localização</h5>
-                        <label>Edifício</label>
-                        <input type="text" class="form-control mb-2" name="local_edificio" value="<?= htmlspecialchars($equipamento->edificio ?? '') ?>">
-                        <label>Piso</label>
-                        <input type="text" class="form-control mb-2" name="local_piso" value="<?= htmlspecialchars($equipamento->piso ?? '') ?>">
-                        <label>Serviço / Departamento</label>
-                        <input type="text" class="form-control mb-2" name="local_servico" value="<?= htmlspecialchars($equipamento->servico ?? '') ?>">
-                        <label>Sala / Gabinete</label>
-                        <input type="text" class="form-control mb-2" name="local_sala" value="<?= htmlspecialchars($equipamento->sala ?? '') ?>">
+                        <h5 class="fw-bold mb-3">Localização do equipamento</h5>
+                        <label>Localização <span class="text-danger">*</span></label>
+                        <select class="form-select mb-2" name="localizacao" required>
+                            <option value="">Selecione uma localização...</option>
+                            <?php foreach ($localizacoes as $loc) : ?>
+                                <option value="<?= $loc->id ?>" <?= ($equipamento->id_localizacao ?? '') == $loc->id ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($loc->edificio) ?> - <?= htmlspecialchars($loc->piso) ?> - <?= htmlspecialchars($loc->servico) ?> - <?= htmlspecialchars($loc->sala) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="form-text">
+                            Não encontra a localização pretendida? Crie-a primeiro em
+                            <a href="../localizacao/inserir.php">Localização → Adicionar</a>.
+                        </div>
                     </div>
                 </div>
 

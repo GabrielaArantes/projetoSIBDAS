@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sala     = ucfirst(strtolower($sala));
     }
 
-    // 4. Guardar na base de dados
+    // Guardar na base de dados
     if (empty($erros)) {
         try {
             $ligacao = new PDO(

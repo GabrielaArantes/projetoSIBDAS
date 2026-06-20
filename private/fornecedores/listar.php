@@ -5,6 +5,7 @@ start_session();
 ?>
 
 <?php
+$erro_eliminar = '';
 if (isset($_GET['apagar'])) {
     $id_apagar = (int)$_GET['apagar'];
     try {
@@ -17,10 +18,15 @@ if (isset($_GET['apagar'])) {
         $stmt = $ligacao->prepare("DELETE FROM fornecedor WHERE id = ?");
         $stmt->execute([$id_apagar]);
         $ligacao = null;
+        header("Location: listar.php");
+        exit;
     } catch (PDOException $err) {
+        if ($err->getCode() == '23000') {
+            $erro_eliminar = "Não é possível eliminar este fornecedor porque está associado a um ou mais equipamentos.";
+        } else {
+            $erro_eliminar = "Erro ao eliminar fornecedor.";
+        }
     }
-    header("Location: listar.php");
-    exit;
 }
 ?>
 
@@ -102,6 +108,10 @@ $ligacao = null;
             </div>
         </div>
 
+        <?php if (!empty($erro_eliminar)) : ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($erro_eliminar) ?></div>
+        <?php endif; ?>
+
         <?php if (!empty($erro)) : ?>
             <p class="text-center text-danger"><?= $erro ?></p>
         <?php elseif (count($resultados) == 0) : ?>
@@ -133,7 +143,7 @@ $ligacao = null;
                                 <a href="detalhes.php?id=<?= $forn->id ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="editar.php?id=<?= $forn->id ?>" class="btn btn-warning btn-sm">
+                                <a href="editar.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
                                 <button class="btn btn-danger btn-sm"

@@ -93,3 +93,33 @@ function validar_data(string $data, string $nomeCampo): array {
 
     return $erros;
 }
+
+function validar_edificio(string $edificio): array {
+    $erros = [];
+
+    if (empty(trim($edificio))) {
+        $erros[] = "O Edifício é obrigatório.";
+    }
+
+    return $erros;
+}
+
+function validar_piso(string $piso): array {
+    $erros = [];
+
+    if (empty(trim($piso))) {
+        $erros[] = "O Piso é obrigatório.";
+    }
+
+    return $erros;
+}
+
+function validar_servico(string $servico): array {
+    $erros = [];
+
+    if (empty(trim($servico))) {
+        $erros[] = "O Serviço / Departamento é obrigatório.";
+    }
+
+    return $erros;
+}

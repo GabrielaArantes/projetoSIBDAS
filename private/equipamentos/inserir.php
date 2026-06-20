@@ -3,6 +3,33 @@ require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
 
+$fornecedores = [];
+try {
+    $ligacaoForn = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacaoForn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $fornecedores = $ligacaoForn->query("SELECT id, nome, tipo FROM fornecedor ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
+    $ligacaoForn = null;
+} catch (PDOException $err) {
+}
+
+// Carregar lista de localizações já existentes, para o select do formulário
+$localizacoes = [];
+try {
+    $ligacaoLoc = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD
+    );
+    $ligacaoLoc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $localizacoes = $ligacaoLoc->query("SELECT id, edificio, piso, servico, sala FROM localizacao ORDER BY edificio, piso, servico, sala")->fetchAll(PDO::FETCH_OBJ);
+    $ligacaoLoc = null;
+} catch (PDOException $err) {
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $codigo_interno    = $_POST["codigo_interno"]          ?? "";
@@ -19,14 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $estado            = $_POST["estado"]                 ?? "";
     $criticidade       = $_POST["criticidade"]            ?? "";
     $observacoes       = $_POST["observacoes"]            ?? "";
-    $local_edificio    = $_POST["local_edificio"]         ?? "";
-    $local_piso        = $_POST["local_piso"]             ?? "";
-    $local_servico     = $_POST["local_servico"]          ?? "";
-    $local_sala        = $_POST["local_sala"]             ?? "";
-    $fornecedor_nome   = $_POST["fornecedor_nome"]        ?? "";
-    $fornecedor_email  = $_POST["fornecedor_email"]       ?? "";
-    $fornecedor_tel    = $_POST["fornecedor_telefone"]    ?? "";
-    $fornecedor_morada = $_POST["fornecedor_morada"]      ?? "";
+    $id_localizacao_escolhida = $_POST["localizacao"]     ?? "";
+    $fornecedores_escolhidos = $_POST["fornecedores"] ?? [];
     $garantia_inicio   = $_POST["garantia_inicio"]        ?? "";
     $garantia_fim      = $_POST["garantia_fim"]           ?? "";
     $garantia_tipo     = $_POST["garantia_tipo"]          ?? "";
@@ -87,11 +108,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($estado))       $erros[] = "O Estado atual é obrigatório.";
     if (empty($criticidade))  $erros[] = "A Criticidade é obrigatória.";
 
-    if (!empty($fornecedor_email) && !filter_var($fornecedor_email, FILTER_VALIDATE_EMAIL))
-        $erros[] = "O email do fornecedor não é válido.";
+    if (empty($id_localizacao_escolhida)) $erros[] = "A Localização é obrigatória.";
 
-    if (!empty($fornecedor_tel) && !preg_match('/^[29]\d{8}$/', $fornecedor_tel))
-        $erros[] = "O telefone do fornecedor deve ter 9 dígitos e começar por 9 ou 2.";
 
     if (!empty($garantia_inicio) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $garantia_inicio))
         $erros[] = "Formato de data de início de garantia inválido. Use AAAA-MM-DD.";
@@ -104,12 +122,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $designacao        = ucwords(strtolower($designacao));
         $marca             = ucwords(strtolower($marca));
         $fabricante        = ucwords(strtolower($fabricante));
-        $local_edificio    = ucwords(strtolower($local_edificio));
-        $local_piso        = ucfirst(strtolower($local_piso));
-        $local_servico     = ucwords(strtolower($local_servico));
-        $local_sala        = ucfirst(strtolower($local_sala));
-        $fornecedor_nome   = ucwords(strtolower($fornecedor_nome));
-        $fornecedor_email  = strtolower($fornecedor_email);
         $garantia_entidade = ucwords(strtolower($garantia_entidade));
     }
 
@@ -123,19 +135,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
             $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // Inserir localização (só se algum campo de localização foi preenchido)
-            $id_localizacao = null;
-            if (!empty($local_edificio) || !empty($local_piso) || !empty($local_servico) || !empty($local_sala)) {
-                $sql = "INSERT INTO localizacao (edificio, piso, servico, sala) VALUES (:edificio, :piso, :servico, :sala)";
-                $stmt = $ligacao->prepare($sql);
-                $stmt->execute([
-                    ':edificio' => $local_edificio,
-                    ':piso'     => $local_piso,
-                    ':servico'  => $local_servico,
-                    ':sala'     => $local_sala
-                ]);
-                $id_localizacao = $ligacao->lastInsertId();
-            }
+            // Usar a localização escolhida no select (já existente na tabela localizacao)
+            $id_localizacao = !empty($id_localizacao_escolhida) ? (int)$id_localizacao_escolhida : null;
 
             // Inserir equipamento
             $sql = "INSERT INTO equipamento (codigo_interno, nome, categoria, marca, modelo, num_serie, fabricante, data_aquisicao, ano_fabrico, custo, tipo_entrada, estado, criticidade, observacoes, id_localizacao)
@@ -160,21 +161,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
             $id_equipamento = $ligacao->lastInsertId();
 
-            // Inserir fornecedor (só se nome preenchido) e associar
-            if (!empty($fornecedor_nome)) {
-                $sql = "INSERT INTO fornecedor (nome, email, telefone, morada) VALUES (:nome, :email, :telefone, :morada)";
-                $stmt = $ligacao->prepare($sql);
-                $stmt->execute([
-                    ':nome'     => $fornecedor_nome,
-                    ':email'    => $fornecedor_email,
-                    ':telefone' => $fornecedor_tel,
-                    ':morada'   => $fornecedor_morada
-                ]);
-                $id_fornecedor = $ligacao->lastInsertId();
-
+            // Associar os fornecedores escolhidos (já existentes) ao equipamento
+            if (!empty($fornecedores_escolhidos)) {
                 $sql = "INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor) VALUES (:id_eq, :id_forn)";
                 $stmt = $ligacao->prepare($sql);
-                $stmt->execute([':id_eq' => $id_equipamento, ':id_forn' => $id_fornecedor]);
+                foreach ($fornecedores_escolhidos as $idForn) {
+                    $stmt->execute([':id_eq' => $id_equipamento, ':id_forn' => (int)$idForn]);
+                }
             }
 
             // Inserir garantia (só se datas preenchidas)
@@ -196,7 +189,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $ligacao = null;
             header("Location: listar.php");
             exit;
-
         } catch (PDOException $err) {
             $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
         }
@@ -358,58 +350,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Tab: Fornecedor -->
                 <div class="tab-pane fade" id="fornecedor" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
-                        <h5 class="fw-bold mb-3">Fornecedor associado</h5>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nome do fornecedor</label>
-                            <input type="text" class="form-control" name="fornecedor_nome"
-                                value="<?= htmlspecialchars($_POST['fornecedor_nome'] ?? '') ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Email</label>
-                            <input type="email" class="form-control" name="fornecedor_email"
-                                value="<?= htmlspecialchars($_POST['fornecedor_email'] ?? '') ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Telefone</label>
-                            <input type="tel" class="form-control" name="fornecedor_telefone"
-                                value="<?= htmlspecialchars($_POST['fornecedor_telefone'] ?? '') ?>"
-                                pattern="[0-9]{9}" maxlength="9" placeholder="Ex: 912345678">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Morada</label>
-                            <input type="text" class="form-control" name="fornecedor_morada"
-                                value="<?= htmlspecialchars($_POST['fornecedor_morada'] ?? '') ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Observações</label>
-                            <textarea class="form-control" rows="3" name="fornecedor_observacoes"><?= htmlspecialchars($_POST['fornecedor_observacoes'] ?? '') ?></textarea>
-                        </div>
+                        <h5 class="fw-bold mb-3">Fornecedores associados</h5>
+                        <p class="text-muted small">Um equipamento pode ter vários fornecedores associados (ex: fabricante, distribuidor, assistência técnica).</p>
+
+                        <?php if (empty($fornecedores)) : ?>
+                            <p class="text-muted">Ainda não existem fornecedores registados. <a href="../fornecedores/listar.php">Adicionar fornecedor</a>.</p>
+                        <?php else : ?>
+                            <?php foreach ($fornecedores as $forn) : ?>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="fornecedores[]" value="<?= $forn->id ?>"
+                                        id="forn_<?= $forn->id ?>"
+                                        <?= in_array($forn->id, $_POST['fornecedores'] ?? []) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="forn_<?= $forn->id ?>">
+                                        <?= htmlspecialchars($forn->nome) ?>
+                                        <span class="text-muted">(<?= htmlspecialchars($forn->tipo ?? 'Tipo não definido') ?>)</span>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                            <p class="text-muted small mt-2">
+                                Caso queira outro fornecedor, pode adicioná-lo em <a href="../fornecedores/listar.php">Fornecedores</a>.
+                            </p>
+                        <?php endif; ?>
                     </div>
                 </div>
-
                 <!-- Tab: Localização -->
                 <div class="tab-pane fade" id="localizacao" role="tabpanel">
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Localização do equipamento</h5>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Edifício</label>
-                            <input type="text" class="form-control" name="local_edificio"
-                                value="<?= htmlspecialchars($_POST['local_edificio'] ?? '') ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Piso</label>
-                            <input type="text" class="form-control" name="local_piso"
-                                value="<?= htmlspecialchars($_POST['local_piso'] ?? '') ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Serviço / Departamento</label>
-                            <input type="text" class="form-control" name="local_servico"
-                                value="<?= htmlspecialchars($_POST['local_servico'] ?? '') ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Sala / Gabinete</label>
-                            <input type="text" class="form-control" name="local_sala"
-                                value="<?= htmlspecialchars($_POST['local_sala'] ?? '') ?>">
+                            <label class="form-label fw-bold">Localização <span class="text-danger">*</span></label>
+                            <select class="form-select" name="localizacao" required>
+                                <option value="">Selecione uma localização...</option>
+                                <?php foreach ($localizacoes as $loc) : ?>
+                                    <option value="<?= $loc->id ?>" <?= (($_POST['localizacao'] ?? '') == $loc->id) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($loc->edificio) ?> - <?= htmlspecialchars($loc->piso) ?> - <?= htmlspecialchars($loc->servico) ?> - <?= htmlspecialchars($loc->sala) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="form-text">
+                                Não encontra a localização pretendida? Crie-a primeiro em
+                                <a href="../localizacao/inserir.php">Localização → Adicionar</a>.
+                            </div>
                         </div>
                     </div>
                 </div>
