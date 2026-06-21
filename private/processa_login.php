@@ -6,6 +6,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     return;
 }
 
+require_once __DIR__ . '/includes/funcoes.php';
+
 $username = isset($_POST['text_username']) ? $_POST['text_username'] : '';
 $password = isset($_POST['text_password']) ? $_POST['text_password'] : '';
 
@@ -29,15 +31,49 @@ if (!empty($validation_errors)) {
     return;
 }
 
-$result['status'] = 1;
+// --------------------------------------------------------------------
+// VERIFICAÇÃO REAL DO LOGIN NA BASE DE DADOS
+// --------------------------------------------------------------------
+try {
+    $ligacao = new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
 
-if (!$result['status']) {
-    $_SESSION['server_error'] = 'Login inválido';
+    $parametros = [
+        ':u' => $username,
+        ':p' => $password
+    ];
+
+    $comando = $ligacao->prepare("SELECT * FROM agents WHERE email = :u AND password = :p AND agent_ativo = 1");
+    $comando->execute($parametros);
+    $resultados = $comando->fetchAll(PDO::FETCH_OBJ);
+
+    if (count($resultados) === 0) {
+        $_SESSION['server_error'] = 'Login inválido';
+        header('Location: ../public/login.php');
+        return;
+    }
+
+    $agente = $resultados[0];
+
+    // Atualizar last_login
+    $stmt = $ligacao->prepare("UPDATE agents SET last_login = NOW() WHERE id = ?");
+    $stmt->execute([$agente->id]);
+
+    // Guardar dados essenciais na sessão
+    $_SESSION['utilizador'] = $agente->nome;
+    $_SESSION['email'] = $agente->email;
+    $_SESSION['perfil'] = $agente->perfil;
+
+    $ligacao = null;
+} catch (PDOException $e) {
+    $_SESSION['server_error'] = 'Erro ao ligar à base de dados.';
     header('Location: ../public/login.php');
     return;
 }
 
-$_SESSION['utilizador'] = $username;
-
-header('Location: home.php');
+header('Location: ' . BASE_URL . '/private/dashboard/dashboard.php');
 exit;
