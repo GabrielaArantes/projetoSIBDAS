@@ -1,0 +1,115 @@
+// ============================================================
+// MedStock — Diagrama da Base de Dados
+// Projeto SIBDAS — Gestão de Inventário de Equipamento Hospitalar
+// Usar em: https://dbdiagram.io
+// ============================================================
+
+Table equipamento {
+  id int [pk, increment]
+  codigo_interno varchar
+  nome varchar
+  categoria varchar
+  marca varchar
+  modelo varchar
+  num_serie varchar
+  fabricante varchar
+  data_aquisicao date
+  ano_fabrico int
+  custo decimal
+  tipo_entrada varchar
+  estado varchar
+  criticidade varchar
+  observacoes text
+  id_localizacao int [ref: > localizacao.id]
+  equipamento_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+
+  Note: 'Equipamento hospitalar registado no sistema'
+}
+
+Table localizacao {
+  id int [pk, increment]
+  edificio varchar
+  piso varchar
+  servico varchar
+  sala varchar
+  localizacao_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+
+  Note: 'Localização física dos equipamentos no hospital'
+}
+
+Table fornecedor {
+  id int [pk, increment]
+  nome varchar
+  nif varchar
+  telefone varchar
+  email varchar
+  morada varchar
+  website varchar
+  pessoa_contacto varchar
+  telefone_contacto varchar
+  tipo varchar [note: 'Fabricante, Distribuidor, Assistência Técnica, Fornecedor de Consumíveis']
+  observacoes text
+  fornecedor_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+
+  Note: 'Fornecedores e entidades relacionadas com os equipamentos'
+}
+
+Table equipamento_fornecedor {
+  id_equipamento int [ref: > equipamento.id]
+  id_fornecedor int [ref: > fornecedor.id]
+
+  indexes {
+    (id_equipamento, id_fornecedor) [pk]
+  }
+
+  Note: 'Tabela de associação muitos-para-muitos entre equipamentos e fornecedores'
+}
+
+Table garantia_contrato {
+  id int [pk, increment]
+  id_equipamento int [ref: > equipamento.id]
+  data_inicio date
+  data_fim date
+  tipo_contrato varchar [note: 'Garantia, Contrato de Manutenção, Assistência Técnica']
+  entidade_responsavel varchar
+  periodicidade varchar [note: 'Mensal, Trimestral, Semestral, Anual']
+  observacoes text
+  garantia_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+
+  Note: 'Garantias e contratos de manutenção associados a equipamentos'
+}
+
+Table documento {
+  id int [pk, increment]
+  id_equipamento int [ref: > equipamento.id]
+  tipo varchar [note: 'Manual, Fatura, Certificado, Relatório Técnico']
+  nome varchar
+  data_documento date
+  data_validade date
+  ficheiro varchar [note: 'nome do ficheiro guardado no servidor']
+  ficheiro_nome_original varchar [note: 'nome original do ficheiro enviado pelo utilizador']
+  documento_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+
+  Note: 'Documentação associada a equipamentos (manuais, faturas, certificados...)'
+}
+
+Table agents {
+  id int [pk, increment]
+  nome varchar
+  email varbinary [note: 'encriptado com AES_ENCRYPT()']
+  password varchar
+  perfil varchar [note: 'Administrador, Técnico, Profissional de Saude']
+  last_login datetime
+  created_at datetime [default: `CURRENT_TIMESTAMP`]
+  updated_at datetime
+  agent_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+
+  Note: 'Utilizadores do sistema (agentes) com autenticação e perfis de acesso'
+}
+
+Table gestao_site {
+  chave varchar [pk]
+  valor text
+
+  Note: 'Conteúdos editáveis da página pública (chave-valor)'
+}

@@ -37,7 +37,7 @@ $perfil = $_SESSION['perfil'] ?? '';
             <i class="fa-solid fa-chevron-down seta"></i>
 
             <ul class="user-dropdown">
-                <li><a href="#">Mudar password</a></li>
+                <li><a href="/projetoSIBDAS/public/login.php">Mudar Utilizador</a></li>
                 <li><a href="/projetoSIBDAS/public/logout.php">Sair</a></li>
             </ul>
         </div>
