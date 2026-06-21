@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../includes/funcoes.php';
-redirect_if_not_logged();
+redirect_if_not_role(['Administrador', 'Técnico'], '/private/equipamentos/listar.php');
 start_session();
+require_once __DIR__ . '/../includes/validacoes.php';
 ?>
 
 <?php
