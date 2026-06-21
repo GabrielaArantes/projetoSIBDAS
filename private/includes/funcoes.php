@@ -32,10 +32,7 @@ function logout_and_redirect($redirect_to = '/public/login.php')
     exit;
 }
 
-// Verifica se o perfil da sessão atual está dentro dos perfis permitidos.
-// Se não estiver, redireciona (por defeito para o dashboard) e termina o script.
-// Uso: redirect_if_not_role(['Administrador', 'Técnico']);
-function redirect_if_not_role($perfis_permitidos, $redirect_to = '/private/dashboard/dashboard.php')
+function redirect_if_not_role(array $perfis_permitidos, $redirect_to = '/private/dashboard/dashboard.php')
 {
     start_session();
     redirect_if_not_logged();
@@ -50,7 +47,7 @@ function redirect_if_not_role($perfis_permitidos, $redirect_to = '/private/dashb
 }
 
 
-function aes_encrypt($value) {
+function aes_encrypt(string $value) {
     return bin2hex(openssl_encrypt(
         $value,
         OPENSSL_METHOD,
@@ -60,7 +57,7 @@ function aes_encrypt($value) {
     ));
 }
 
-function aes_decrypt($value) {
+function aes_decrypt(mixed $value) {
     if (!is_string($value) || strlen($value) % 2 !== 0) return false; // proteção básica
 
     return openssl_decrypt(
