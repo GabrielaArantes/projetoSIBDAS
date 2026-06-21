@@ -32,7 +32,7 @@ if (!empty($validation_errors)) {
 }
 
 // --------------------------------------------------------------------
-// VERIFICAÇÃO REAL DO LOGIN NA BASE DE DADOS
+// VERIFICAÇÃO REAL DO LOGIN NA BASE DE DADOS (email encriptado com AES)
 // --------------------------------------------------------------------
 try {
     $ligacao = new PDO(
@@ -42,30 +42,33 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 
-    $parametros = [
-        ':u' => $username,
-        ':p' => $password
-    ];
+    $comando = $ligacao->prepare(
+        "SELECT *, AES_DECRYPT(email, :chave) AS email_decifrado
+         FROM agents
+         WHERE AES_DECRYPT(email, :chave2) = :u
+         AND agent_ativo = 1"
+    );
+    $comando->execute([
+        ':chave'  => MYSQL_AES_KEY,
+        ':chave2' => MYSQL_AES_KEY,
+        ':u'      => $username
+    ]);
+    $agente = $comando->fetch(PDO::FETCH_OBJ);
 
-    $comando = $ligacao->prepare("SELECT * FROM agents WHERE email = :u AND password = :p AND agent_ativo = 1");
-    $comando->execute($parametros);
-    $resultados = $comando->fetchAll(PDO::FETCH_OBJ);
-
-    if (count($resultados) === 0) {
+    // Verifica se o utilizador existe e se a password está correta
+    if (!$agente || $password !== $agente->password) {
         $_SESSION['server_error'] = 'Login inválido';
         header('Location: ../public/login.php');
         return;
     }
 
-    $agente = $resultados[0];
-
     // Atualizar last_login
     $stmt = $ligacao->prepare("UPDATE agents SET last_login = NOW() WHERE id = ?");
     $stmt->execute([$agente->id]);
 
-    // Guardar dados essenciais na sessão
+    // Guardar dados essenciais na sessão (email já desencriptado)
     $_SESSION['utilizador'] = $agente->nome;
-    $_SESSION['email'] = $agente->email;
+    $_SESSION['email'] = $agente->email_decifrado;
     $_SESSION['perfil'] = $agente->perfil;
 
     $ligacao = null;

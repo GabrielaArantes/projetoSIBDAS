@@ -22,15 +22,6 @@ if (!empty($_SESSION['server_error'])) {
 
 <body class="login-page">
 
-    <style>
-        .btn-teste-ativo,
-        .btn-teste-ativo:hover {
-            background-color: #198754 !important;
-            border-color: #198754 !important;
-            color: #fff !important;
-        }
-    </style>
-
     <div class="login-card">
 
         <img src="../assets/img/logHospital.png">
@@ -47,6 +38,7 @@ if (!empty($_SESSION['server_error'])) {
                 Entrar <i class="fa-solid fa-right-to-bracket ms-2"></i>
             </button>
 
+            <!-- Botões de preenchimento automático (Fase de Testes) -->
             <div class="mt-3 text-center" style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
                 <button type="button" id="preencher_adm" class="btn btn-outline-success btn-sm btn-teste" style="width:auto; padding:6px 12px;">
                     Admin
@@ -76,5 +68,47 @@ if (!empty($_SESSION['server_error'])) {
         </form>
 
     </div>
+
+    <style>
+        .btn-teste-ativo,
+        .btn-teste-ativo:hover {
+            background-color: #198754 !important;
+            border-color: #198754 !important;
+            color: #fff !important;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const formulario = document.forms['formulario'];
+            const botoesTeste = document.querySelectorAll('.btn-teste');
+
+            function marcarSelecionado(botaoClicado) {
+                botoesTeste.forEach(btn => btn.classList.remove('btn-teste-ativo'));
+                botaoClicado.classList.add('btn-teste-ativo');
+            }
+
+            function preencherEmail(email, botao) {
+                formulario['text_username'].value = email;
+                formulario['text_password'].value = '';
+                formulario['text_password'].focus();
+                marcarSelecionado(botao);
+            }
+
+            document.querySelector('#preencher_adm').addEventListener('click', function () {
+                preencherEmail('admin*@medstock.pt', this);
+            });
+
+            document.querySelector('#preencher_tec').addEventListener('click', function () {
+                preencherEmail('tecnico*@medstock.pt', this);
+            });
+
+            document.querySelector('#preencher_saude').addEventListener('click', function () {
+                preencherEmail('saude*@medstock.pt', this);
+            });
+
+        });
+    </script>
 
     <?php include __DIR__ . '/../private/includes/footer.php'; ?>
