@@ -13,10 +13,12 @@ try {
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $resultados = $ligacao->query("SELECT * FROM localizacao")->fetchAll(PDO::FETCH_OBJ);
+    $edificios = $ligacao->query("SELECT DISTINCT edificio FROM localizacao ORDER BY edificio")->fetchAll(PDO::FETCH_COLUMN);
     $erro = '';
 } catch (PDOException $err) {
     $erro = "Aconteceu um erro na ligação à base de dados.";
     $resultados = [];
+    $edificios = [];
 }
 $ligacao = null;
 ?>
@@ -37,32 +39,37 @@ $ligacao = null;
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
-            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar localização..." name="pesquisa">
+            <input type="text" class="form-control" id="filtro-pesquisa" style="width: 250px;" placeholder="Pesquisar localização..." name="pesquisa">
 
             <div class="menu-wrapper">
-                <button class="btn btn-outline-success">
+                <button type="button" class="btn btn-outline-success">
                     <i class="fa-solid fa-filter"></i> Filtrar
                 </button>
                 <div class="menu-box">
                     <div>
                         <label>Edifício</label>
-                        <input type="text" class="form-control" name="edificio">
-                    </div>
-                    <div>
-                        <label>Piso</label>
-                        <input type="text" class="form-control" name="piso">
+                        <select class="form-select" id="filtro-edificio" name="edificio">
+                            <option value="">Todos</option>
+                            <?php foreach ($edificios as $edificio) : ?>
+                                <option><?= htmlspecialchars($edificio) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div>
                         <label>Serviço / Departamento</label>
-                        <input type="text" class="form-control" name="servico">
-                    </div>
-                    <div>
-                        <label>Sala / Gabinete</label>
-                        <input type="text" class="form-control" name="sala">
+                        <select class="form-select" id="filtro-servico" name="servico">
+                            <option value="">Todos</option>
+                            <option>Urgência</option>
+                            <option>Bloco Operatório</option>
+                            <option>UCI</option>
+                            <option>Internamento</option>
+                            <option>Consultas</option>
+                            <option>Armazém</option>
+                        </select>
                     </div>
                     <div class="d-flex justify-content-end gap-2 mt-2" style="grid-column: span 2;">
-                        <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
-                        <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
+                        <button type="button" id="filtro-limpar" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                        <button type="button" id="filtro-aplicar" class="btn btn-success btn-sm">Aplicar</button>
                     </div>
                 </div>
             </div>
@@ -167,7 +174,7 @@ $ligacao = null;
     <script>
         //nota
         $(document).ready(function() {
-            $('#tabela-localizacao').DataTable({
+            const tabela = $('#tabela-localizacao').DataTable({
                 pageLength: 5,
                 pagingType: "full_numbers",
                 language: {
@@ -190,6 +197,30 @@ $ligacao = null;
                         previous: "Anterior"
                     }
                 }
+            });
+
+            $('#tabela-localizacao_filter').hide();
+
+            $('#filtro-pesquisa').on('keyup', function() {
+                tabela.search(this.value).draw();
+            });
+
+            $('#filtro-aplicar').on('click', function() {
+                const edificio = $('#filtro-edificio').val();
+                const servico = $('#filtro-servico').val();
+
+                // Coluna 0 = Edifício, Coluna 2 = Serviço / Departamento
+                tabela.column(0).search(edificio);
+                tabela.column(2).search(servico);
+
+                tabela.draw();
+            });
+
+            $('#filtro-limpar').on('click', function() {
+                $('#filtro-edificio, #filtro-servico').val('');
+                tabela.column(0).search('');
+                tabela.column(2).search('');
+                tabela.draw();
             });
         });
     </script>

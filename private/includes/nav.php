@@ -10,9 +10,9 @@ $perfil = $_SESSION['perfil'] ?? '';
         <nav>
             <a href="/projetoSIBDAS/private/dashboard/dashboard.php" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="/projetoSIBDAS/private/equipamentos/listar.php"><i class="fa-solid fa-stethoscope"></i> Equipamentos</a>
-            <a href="/projetoSIBDAS/private/localizacao/listar.php"><i class="fa-solid fa-location-dot"></i> Localização</a>
 
             <?php if ($perfil === 'Administrador' || $perfil === 'Técnico') : ?>
+                <a href="/projetoSIBDAS/private/localizacao/listar.php"><i class="fa-solid fa-location-dot"></i> Localização</a>
                 <a href="/projetoSIBDAS/private/fornecedores/listar.php"><i class="fa-solid fa-truck"></i> Fornecedores</a>
                 <a href="/projetoSIBDAS/private/garantcontrato/listar.php"><i class="fa-solid fa-file-contract"></i> Garantias/Contratos</a>
                 <a href="/projetoSIBDAS/private/documentacao/listar.php"><i class="fa-solid fa-folder-open"></i> Documentação</a>

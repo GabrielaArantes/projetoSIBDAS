@@ -1,8 +1,10 @@
 <?php
 require_once __DIR__ . '/../includes/funcoes.php';
-redirect_if_not_role(['Administrador', 'Técnico'], '/private/equipamentos/listar.php');
+redirect_if_not_logged();
 start_session();
 require_once __DIR__ . '/../includes/validacoes.php';
+$perfil = $_SESSION['perfil'] ?? '';
+$pode_gerir = in_array($perfil, ['Administrador', 'Técnico']);
 ?>
 
 <?php
@@ -31,56 +33,26 @@ $ligacao = null;
     <main class="conteudo">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Equipamentos</h1>
-            <a href="inserir.php" class="btn btn-success">
-                <i class="fa-solid fa-plus"></i> Adicionar Equipamento
-            </a>
+            <?php if ($pode_gerir) : ?>
+                <a href="inserir.php" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> Adicionar Equipamento
+                </a>
+            <?php endif; ?>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="d-flex align-items-center gap-3">
 
-                <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar..." name="pesquisa">
+                <input type="text" class="form-control" id="filtro-pesquisa" style="width: 250px;" placeholder="Pesquisar..." name="pesquisa">
 
                 <div class="menu-wrapper">
-                    <button class="btn btn-outline-success">
+                    <button type="button" class="btn btn-outline-success">
                         <i class="fa-solid fa-filter"></i> Filtrar
                     </button>
                     <div class="menu-box">
                         <div>
-                            <label>Código Interno</label>
-                            <input type="text" class="form-control" name="codigo_interno">
-                        </div>
-                        <div>
-                            <label>Designação</label>
-                            <input type="text" class="form-control" name="designacao">
-                        </div>
-                        <div>
-                            <label>Marca</label>
-                            <input type="text" class="form-control" name="marca">
-                        </div>
-                        <div>
-                            <label>Modelo</label>
-                            <input type="text" class="form-control" name="modelo">
-                        </div>
-                        <div>
-                            <label>Número de Série</label>
-                            <input type="text" class="form-control" name="num_serie">
-                        </div>
-                        <div>
-                            <label>Serviço</label>
-                            <select class="form-select" name="servico">
-                                <option value="">Todos</option>
-                                <option>Urgência</option>
-                                <option>Bloco Operatório</option>
-                                <option>UCI</option>
-                                <option>Internamento</option>
-                                <option>Consultas</option>
-                                <option>Armazém</option>
-                            </select>
-                        </div>
-                        <div>
                             <label>Estado</label>
-                            <select class="form-select" name="estado">
+                            <select class="form-select" id="filtro-estado" name="estado">
                                 <option value="">Todos</option>
                                 <option>Ativo</option>
                                 <option>Inativo</option>
@@ -89,14 +61,8 @@ $ligacao = null;
                             </select>
                         </div>
                         <div>
-                            <label>Fornecedor</label>
-                            <select class="form-select" name="fornecedor">
-                                <option value="">Todos</option>
-                            </select>
-                        </div>
-                        <div>
                             <label>Categoria</label>
-                            <select class="form-select" name="categoria">
+                            <select class="form-select" id="filtro-categoria" name="categoria">
                                 <option value="">Todas</option>
                                 <option>Monitorização</option>
                                 <option>Imagiologia</option>
@@ -108,7 +74,7 @@ $ligacao = null;
                         </div>
                         <div>
                             <label>Localização</label>
-                            <select class="form-select" name="localizacao">
+                            <select class="form-select" id="filtro-localizacao" name="localizacao">
                                 <option value="">Todas</option>
                                 <option>Urgência</option>
                                 <option>Bloco Operatório</option>
@@ -118,41 +84,9 @@ $ligacao = null;
                                 <option>Armazém</option>
                             </select>
                         </div>
-                        <div>
-                            <label>Criticidade</label>
-                            <select class="form-select" name="criticidade">
-                                <option value="">Todas</option>
-                                <option>Alta</option>
-                                <option>Média</option>
-                                <option>Baixa</option>
-                            </select>
-                        </div>
                         <div class="d-flex justify-content-end gap-2 mt-2">
-                            <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
-                            <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="menu-wrapper">
-                    <button class="btn btn-outline-primary">
-                        <i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar
-                    </button>
-                    <div class="menu-box">
-                        <div>
-                            <label>Ordenar por</label>
-                            <select class="form-select" name="ordenar">
-                                <option value="">Selecione...</option>
-                                <option value="custo_asc">Custo de aquisição (crescente)</option>
-                                <option value="custo_desc">Custo de aquisição (decrescente)</option>
-                                <option value="data_asc">Data de aquisição (crescente)</option>
-                                <option value="data_desc">Data de aquisição (decrescente)</option>
-                                <option value="ano_asc">Ano de fabrico (crescente)</option>
-                                <option value="ano_desc">Ano de fabrico (decrescente)</option>
-                            </select>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2 mt-2">
-                            <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+                            <button type="button" id="filtro-limpar" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                            <button type="button" id="filtro-aplicar" class="btn btn-success btn-sm">Aplicar</button>
                         </div>
                     </div>
                 </div>
@@ -193,21 +127,23 @@ $ligacao = null;
                                 <a href="detalhes.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="editar.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-warning btn-sm">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-                                <?php if ($eq->equipamento_ativo == 0) : ?>
-                                    <a href="confirmar_apagar.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-success btn-sm" title="Reativar">
-                                        <i class="fa-solid fa-rotate-left"></i>
+                                <?php if ($pode_gerir) : ?>
+                                    <a href="editar.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-pen"></i>
                                     </a>
-                                <?php else : ?>
-                                    <button class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalEliminarEquipamento"
-                                        data-id="<?= aes_encrypt($eq->id) ?>"
-                                        title="Eliminar">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
+                                    <?php if ($eq->equipamento_ativo == 0) : ?>
+                                        <a href="confirmar_apagar.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-success btn-sm" title="Reativar">
+                                            <i class="fa-solid fa-rotate-left"></i>
+                                        </a>
+                                    <?php else : ?>
+                                        <button class="btn btn-danger btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEliminarEquipamento"
+                                            data-id="<?= aes_encrypt($eq->id) ?>"
+                                            title="Eliminar">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -259,7 +195,7 @@ $ligacao = null;
 
     <script>
         $(document).ready(function() {
-            $('#tabela-equipamentos').DataTable({
+            const tabela = $('#tabela-equipamentos').DataTable({
                 pageLength: 5,
                 pagingType: "full_numbers",
                 language: {
@@ -286,6 +222,46 @@ $ligacao = null;
                         sortDescending: ": ative para classificar em ordem decrescente."
                     }
                 }
+            });
+
+            // Esconder a caixa de pesquisa nativa que o DataTables cria sozinho
+            // (mantemos só a nossa caixa "Pesquisar..." com o nosso próprio estilo)
+            $('#tabela-equipamentos_filter').hide();
+
+            // ----------------------------------------------------------
+            // Pesquisa simples (caixa "Pesquisar...") ligada à pesquisa global do DataTables
+            // ----------------------------------------------------------
+            $('#filtro-pesquisa').on('keyup', function() {
+                tabela.search(this.value).draw();
+            });
+
+            // ----------------------------------------------------------
+            // Filtro avançado (menu "Filtrar") usando a pesquisa por
+            // coluna do próprio DataTables (column().search())
+            // ----------------------------------------------------------
+            $('#filtro-aplicar').on('click', function() {
+                const categoria = $('#filtro-categoria').val();
+                const localizacao = $('#filtro-localizacao').val();
+                const estado = $('#filtro-estado').val();
+
+                // Coluna 1 = Categoria
+                tabela.column(1).search(categoria);
+
+                // Coluna 2 = Localização
+                tabela.column(2).search(localizacao);
+
+                // Coluna 3 = Estado
+                tabela.column(3).search(estado);
+
+                tabela.draw();
+            });
+
+            $('#filtro-limpar').on('click', function() {
+                $('#filtro-estado, #filtro-categoria, #filtro-localizacao').val('');
+                tabela.column(1).search('');
+                tabela.column(2).search('');
+                tabela.column(3).search('');
+                tabela.draw();
             });
         });
     </script>

@@ -37,28 +37,26 @@ $ligacao = null;
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
-            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar documentação..." name="pesquisa">
+            <input type="text" class="form-control" id="filtro-pesquisa" style="width: 250px;" placeholder="Pesquisar documentação..." name="pesquisa">
 
             <div class="menu-wrapper">
-                <button class="btn btn-outline-success">
+                <button type="button" class="btn btn-outline-success">
                     <i class="fa-solid fa-filter"></i> Filtrar
                 </button>
                 <div class="menu-box">
                     <div>
                         <label>Tipo</label>
-                        <input type="text" class="form-control" name="tipo">
-                    </div>
-                    <div>
-                        <label>Equipamento</label>
-                        <input type="text" class="form-control" name="equipamento">
-                    </div>
-                    <div>
-                        <label>Data</label>
-                        <input type="date" class="form-control" name="data">
+                        <select class="form-select" id="filtro-tipo" name="tipo">
+                            <option value="">Todos</option>
+                            <option>Manual</option>
+                            <option>Fatura</option>
+                            <option>Certificado</option>
+                            <option>Relatório Técnico</option>
+                        </select>
                     </div>
                     <div class="d-flex justify-content-end gap-2 mt-2" style="grid-column: span 2;">
-                        <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
-                        <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
+                        <button type="button" id="filtro-limpar" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                        <button type="button" id="filtro-aplicar" class="btn btn-success btn-sm">Aplicar</button>
                     </div>
                 </div>
             </div>
@@ -72,7 +70,6 @@ $ligacao = null;
             <table id="tabela-documentacao" class="table table-striped table-bordered shadow-sm">
                 <thead class="table-success">
                     <tr>
-                        <th>ID</th>
                         <th>Tipo</th>
                         <th>Nome</th>
                         <th>Equipamento</th>
@@ -84,7 +81,6 @@ $ligacao = null;
                 <tbody id="tabelaDocumentacao">
                     <?php foreach ($resultados as $doc) : ?>
                         <tr>
-                            <td><?= $doc->id ?></td>
                             <td>
                                 <?= $doc->tipo ?>
                                 <?php if ($doc->documento_ativo == 0) : ?>
@@ -163,7 +159,7 @@ $ligacao = null;
     <script>
         //nota
         $(document).ready(function() {
-            $('#tabela-documentacao').DataTable({
+            const tabela = $('#tabela-documentacao').DataTable({
                 pageLength: 5,
                 pagingType: "full_numbers",
                 language: {
@@ -186,6 +182,27 @@ $ligacao = null;
                         previous: "Anterior"
                     }
                 }
+            });
+
+            $('#tabela-documentacao_filter').hide();
+
+            $('#filtro-pesquisa').on('keyup', function() {
+                tabela.search(this.value).draw();
+            });
+
+            $('#filtro-aplicar').on('click', function() {
+                const tipo = $('#filtro-tipo').val();
+
+                // Coluna 0 = Tipo
+                tabela.column(0).search(tipo);
+
+                tabela.draw();
+            });
+
+            $('#filtro-limpar').on('click', function() {
+                $('#filtro-tipo').val('');
+                tabela.column(0).search('');
+                tabela.draw();
             });
         });
     </script>

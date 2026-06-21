@@ -37,16 +37,16 @@ $ligacao = null;
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
-            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar..." name="pesquisa">
+            <input type="text" class="form-control" id="filtro-pesquisa" style="width: 250px;" placeholder="Pesquisar..." name="pesquisa">
 
             <div class="menu-wrapper">
-                <button class="btn btn-outline-success">
+                <button type="button" class="btn btn-outline-success">
                     <i class="fa-solid fa-filter"></i> Filtrar
                 </button>
                 <div class="menu-box">
                     <div>
                         <label>Tipo de contrato</label>
-                        <select class="form-select" name="tipo">
+                        <select class="form-select" id="filtro-tipo" name="tipo">
                             <option value="">Todos</option>
                             <option>Garantia</option>
                             <option>Contrato de Manutenção</option>
@@ -54,12 +54,8 @@ $ligacao = null;
                         </select>
                     </div>
                     <div>
-                        <label>Entidade responsável</label>
-                        <input type="text" class="form-control" name="entidade">
-                    </div>
-                    <div>
                         <label>Periodicidade</label>
-                        <select class="form-select" name="periodicidade">
+                        <select class="form-select" id="filtro-periodicidade" name="periodicidade">
                             <option value="">Todas</option>
                             <option>Mensal</option>
                             <option>Trimestral</option>
@@ -67,38 +63,9 @@ $ligacao = null;
                             <option>Anual</option>
                         </select>
                     </div>
-                    <div>
-                        <label>Data início (mín.)</label>
-                        <input type="date" class="form-control" name="inicio_min">
-                    </div>
-                    <div>
-                        <label>Data fim (máx.)</label>
-                        <input type="date" class="form-control" name="fim_max">
-                    </div>
                     <div class="d-flex justify-content-end gap-2 mt-2" style="grid-column: span 2;">
-                        <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
-                        <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-wrapper">
-                <button class="btn btn-outline-primary">
-                    <i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar
-                </button>
-                <div class="menu-box">
-                    <div>
-                        <label>Ordenar por</label>
-                        <select class="form-select" name="ordenar">
-                            <option value="">Selecione...</option>
-                            <option value="inicio_asc">Data de início (crescente)</option>
-                            <option value="inicio_desc">Data de início (decrescente)</option>
-                            <option value="fim_asc">Data de fim (crescente)</option>
-                            <option value="fim_desc">Data de fim (decrescente)</option>
-                        </select>
-                    </div>
-                    <div class="d-flex justify-content-end gap-2 mt-2">
-                        <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+                        <button type="button" id="filtro-limpar" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                        <button type="button" id="filtro-aplicar" class="btn btn-success btn-sm">Aplicar</button>
                     </div>
                 </div>
             </div>
@@ -197,7 +164,7 @@ $ligacao = null;
 
     <script>
         $(document).ready(function() {
-            $('#tabela-garantcontrato').DataTable({
+            const tabela = $('#tabela-garantcontrato').DataTable({
                 pageLength: 5,
                 pagingType: "full_numbers",
                 language: {
@@ -220,6 +187,30 @@ $ligacao = null;
                         previous: "Anterior"
                     }
                 }
+            });
+
+            $('#tabela-garantcontrato_filter').hide();
+
+            $('#filtro-pesquisa').on('keyup', function() {
+                tabela.search(this.value).draw();
+            });
+
+            $('#filtro-aplicar').on('click', function() {
+                const tipo = $('#filtro-tipo').val();
+                const periodicidade = $('#filtro-periodicidade').val();
+
+                // Coluna 1 = Tipo, Coluna 2 = Periodicidade
+                tabela.column(1).search(tipo);
+                tabela.column(2).search(periodicidade);
+
+                tabela.draw();
+            });
+
+            $('#filtro-limpar').on('click', function() {
+                $('#filtro-tipo, #filtro-periodicidade').val('');
+                tabela.column(1).search('');
+                tabela.column(2).search('');
+                tabela.draw();
             });
         });
     </script>

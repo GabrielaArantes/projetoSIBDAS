@@ -37,32 +37,16 @@ $ligacao = null;
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
-            <input type="text" class="form-control" style="width: 250px;" placeholder="Pesquisar fornecedor..." name="pesquisa">
+            <input type="text" class="form-control" id="filtro-pesquisa" style="width: 250px;" placeholder="Pesquisar fornecedor..." name="pesquisa">
 
             <div class="menu-wrapper">
-                <button class="btn btn-outline-success">
+                <button type="button" class="btn btn-outline-success">
                     <i class="fa-solid fa-filter"></i> Filtrar
                 </button>
                 <div class="menu-box">
                     <div>
-                        <label>Nome da Empresa</label>
-                        <input type="text" class="form-control" name="nome">
-                    </div>
-                    <div>
-                        <label>NIF</label>
-                        <input type="text" class="form-control" name="nif">
-                    </div>
-                    <div>
-                        <label>Telefone</label>
-                        <input type="text" class="form-control" name="telefone">
-                    </div>
-                    <div>
-                        <label>Email</label>
-                        <input type="email" class="form-control" name="email">
-                    </div>
-                    <div>
                         <label>Tipo de Fornecedor</label>
-                        <select class="form-select" name="tipo">
+                        <select class="form-select" id="filtro-tipo" name="tipo">
                             <option value="">Todos</option>
                             <option>Fabricante</option>
                             <option>Distribuidor / Fornecedor Comercial</option>
@@ -70,13 +54,9 @@ $ligacao = null;
                             <option>Fornecedor de Consumíveis</option>
                         </select>
                     </div>
-                    <div>
-                        <label>Pessoa de Contacto</label>
-                        <input type="text" class="form-control" name="pessoa_contacto">
-                    </div>
                     <div class="d-flex justify-content-end gap-2 mt-2">
-                        <button type="reset" class="btn btn-outline-secondary btn-sm">Limpar</button>
-                        <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
+                        <button type="button" id="filtro-limpar" class="btn btn-outline-secondary btn-sm">Limpar</button>
+                        <button type="button" id="filtro-aplicar" class="btn btn-success btn-sm">Aplicar</button>
                     </div>
                 </div>
             </div>
@@ -184,7 +164,7 @@ $ligacao = null;
     <script>
         //nota
         $(document).ready(function() {
-            $('#tabela-fornecedores').DataTable({
+            const tabela = $('#tabela-fornecedores').DataTable({
                 pageLength: 5,
                 pagingType: "full_numbers",
                 language: {
@@ -207,6 +187,29 @@ $ligacao = null;
                         previous: "Anterior"
                     }
                 }
+            });
+
+            // Esconder a caixa de pesquisa nativa do DataTables (usamos a nossa própria)
+            $('#tabela-fornecedores_filter').hide();
+
+            // Pesquisa simples (caixa "Pesquisar fornecedor...") ligada à pesquisa global
+            $('#filtro-pesquisa').on('keyup', function() {
+                tabela.search(this.value).draw();
+            });
+
+            $('#filtro-aplicar').on('click', function() {
+                const tipo = $('#filtro-tipo').val();
+
+                // Coluna 4 = Tipo
+                tabela.column(4).search(tipo);
+
+                tabela.draw();
+            });
+
+            $('#filtro-limpar').on('click', function() {
+                $('#filtro-tipo').val('');
+                tabela.column(4).search('');
+                tabela.draw();
             });
         });
     </script>
