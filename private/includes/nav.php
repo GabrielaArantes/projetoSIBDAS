@@ -19,6 +19,7 @@ $perfil = $_SESSION['perfil'] ?? '';
             <?php endif; ?>
 
             <?php if ($perfil === 'Administrador') : ?>
+                <a href="/projetoSIBDAS/private/mensagens/listar.php"><i class="fa-solid fa-envelope"></i> Mensagens de Contacto</a>
                 <a href="/projetoSIBDAS/private/gestaoconteudo/gestao.php"><i class="fa-solid fa-pen-to-square"></i> Gestão de Conteúdos Públicos</a>
             <?php endif; ?>
         </nav>

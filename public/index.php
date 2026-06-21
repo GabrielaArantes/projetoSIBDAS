@@ -47,6 +47,11 @@ try {
 function c($conteudos, $chave) {
     return htmlspecialchars($conteudos[$chave] ?? '');
 }
+
+session_start();
+$contacto_sucesso = $_SESSION['contacto_sucesso'] ?? '';
+$contacto_erros = $_SESSION['contacto_erros'] ?? [];
+unset($_SESSION['contacto_sucesso'], $_SESSION['contacto_erros']);
 ?>
 
 <!DOCTYPE html>
@@ -72,7 +77,7 @@ function c($conteudos, $chave) {
             <a href="#sobre">Sobre</a>
             <a href="#funcionalidades">Funcionalidades</a>
             <a href="#contacto">Contacto</a>
-            <a href="../login/login.php" class="btn-login">Iniciar Sessão</a>
+            <a href="login.php" class="btn-login">Iniciar Sessão</a>
         </nav>
     </header>
 
@@ -143,13 +148,28 @@ function c($conteudos, $chave) {
                     <h2>Contacto</h2>
                     <p>Preencha os seus dados abaixo para que possamos entrar em contacto consigo.</p>
                 </div>
-                <form class="contactosform">
+
+                <?php if (!empty($contacto_sucesso)) : ?>
+                    <p class="text-success"><?= htmlspecialchars($contacto_sucesso) ?></p>
+                <?php endif; ?>
+
+                <?php if (!empty($contacto_erros)) : ?>
+                    <ul class="text-danger">
+                        <?php foreach ($contacto_erros as $erro) : ?>
+                            <li><?= htmlspecialchars($erro) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+
+                <form class="contactosform" action="processa_contacto.php" method="POST">
                     <label for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" required>
+                    <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>" required>
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                     <label for="telemovel">Telemóvel:</label>
-                    <input type="tel" id="telemovel" name="telemovel" required>
+                    <input type="tel" id="telemovel" name="telemovel" value="<?= htmlspecialchars($_POST['telemovel'] ?? '') ?>" required>
+                    <label for="mensagem">Mensagem:</label>
+                    <textarea id="mensagem" name="mensagem" rows="4" required><?= htmlspecialchars($_POST['mensagem'] ?? '') ?></textarea>
                     <button type="submit">Enviar</button>
                 </form>
             </div>
