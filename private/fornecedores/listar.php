@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();
+$perfil = $_SESSION['perfil'] ?? '';
+$pode_gerir = in_array($perfil, ['Administrador', 'Técnico']);
 ?>
 
 <?php
@@ -31,9 +33,11 @@ $ligacao = null;
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Fornecedores</h1>
-            <a href="inserir.php" class="btn btn-success">
-                <i class="fa-solid fa-plus"></i> Adicionar Fornecedor
-            </a>
+            <?php if ($pode_gerir) : ?>
+                <a href="inserir.php" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> Adicionar Fornecedor
+                </a>
+            <?php endif; ?>
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
@@ -98,21 +102,23 @@ $ligacao = null;
                                 <a href="detalhes.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="editar.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-warning btn-sm">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-                                <?php if ($forn->fornecedor_ativo == 0) : ?>
-                                    <a href="confirmar_apagar.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-success btn-sm" title="Reativar">
-                                        <i class="fa-solid fa-rotate-left"></i>
+                                <?php if ($pode_gerir) : ?>
+                                    <a href="editar.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-pen"></i>
                                     </a>
-                                <?php else : ?>
-                                    <button class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalEliminarFornecedor"
-                                        data-id="<?= aes_encrypt($forn->id) ?>"
-                                        title="Eliminar">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
+                                    <?php if ($forn->fornecedor_ativo == 0) : ?>
+                                        <a href="confirmar_apagar.php?id=<?= aes_encrypt($forn->id) ?>" class="btn btn-success btn-sm" title="Reativar">
+                                            <i class="fa-solid fa-rotate-left"></i>
+                                        </a>
+                                    <?php else : ?>
+                                        <button class="btn btn-danger btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEliminarFornecedor"
+                                            data-id="<?= aes_encrypt($forn->id) ?>"
+                                            title="Eliminar">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </td>
                         </tr>
