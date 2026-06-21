@@ -22,12 +22,21 @@ if (!empty($_SESSION['server_error'])) {
 
 <body class="login-page">
 
+    <style>
+        .btn-teste-ativo,
+        .btn-teste-ativo:hover {
+            background-color: #198754 !important;
+            border-color: #198754 !important;
+            color: #fff !important;
+        }
+    </style>
+
     <div class="login-card">
 
         <img src="../assets/img/logHospital.png">
         <h2><strong>MedStock</strong></h2>
 
-        <form action="../private/processa_login.php" method="post">
+        <form name="formulario" action="../private/processa_login.php" method="post">
 
             <label for="email">Utilizador</label>
             <input type="email" name="text_username" id="email" required>
@@ -37,6 +46,18 @@ if (!empty($_SESSION['server_error'])) {
             <button type="submit">
                 Entrar <i class="fa-solid fa-right-to-bracket ms-2"></i>
             </button>
+
+            <div class="mt-3 text-center" style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                <button type="button" id="preencher_adm" class="btn btn-outline-success btn-sm btn-teste" style="width:auto; padding:6px 12px;">
+                    Admin
+                </button>
+                <button type="button" id="preencher_tec" class="btn btn-outline-success btn-sm btn-teste" style="width:auto; padding:6px 12px;">
+                    Técnico
+                </button>
+                <button type="button" id="preencher_saude" class="btn btn-outline-success btn-sm btn-teste" style="width:auto; padding:6px 12px;">
+                    Prof. Saúde
+                </button>
+            </div>
 
             <?php if (!empty($validation_errors)) : ?>
                 <div class="alert alert-danger p-2 text-center">
