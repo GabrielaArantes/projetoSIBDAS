@@ -8,12 +8,15 @@ start_session();
 $erro = '';
 $gc = null;
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
+
+$id = (int)$id;
 
 try {
     $ligacao = new PDO(
@@ -46,7 +49,16 @@ try {
 
     <main class="conteudo">
 
-        <h1 class="mb-4">Detalhes da Garantia e Contrato</h1>
+        <h1 class="mb-4">
+            Detalhes da Garantia e Contrato
+            <?php if ($gc) : ?>
+                <?php if ($gc->garantia_ativo == 1) : ?>
+                    <span class="badge bg-success">Ativo</span>
+                <?php else : ?>
+                    <span class="badge bg-secondary">Inativo</span>
+                <?php endif; ?>
+            <?php endif; ?>
+        </h1>
 
         <?php if (!empty($erro)) : ?>
             <div class="alert alert-danger"><?= $erro ?></div>
@@ -56,42 +68,42 @@ try {
 
             <div class="mb-3">
                 <strong>Equipamento:</strong>
-                <p><?= $gc->nome_equipamento ?: '-' ?></p>
+                <p><?= $gc->nome_equipamento ? htmlspecialchars($gc->nome_equipamento) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Tipo de contrato:</strong>
-                <p><?= $gc->tipo_contrato ?: '-' ?></p>
+                <p><?= $gc->tipo_contrato ? htmlspecialchars($gc->tipo_contrato) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Entidade responsável:</strong>
-                <p><?= $gc->entidade_responsavel ?: '-' ?></p>
+                <p><?= $gc->entidade_responsavel ? htmlspecialchars($gc->entidade_responsavel) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Periodicidade:</strong>
-                <p><?= $gc->periodicidade ?: '-' ?></p>
+                <p><?= $gc->periodicidade ? htmlspecialchars($gc->periodicidade) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Data de início:</strong>
-                <p><?= $gc->data_inicio ?: '-' ?></p>
+                <p><?= $gc->data_inicio ? date('d/m/Y', strtotime($gc->data_inicio)) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Data de fim:</strong>
-                <p><?= $gc->data_fim ?: '-' ?></p>
+                <p><?= $gc->data_fim ? date('d/m/Y', strtotime($gc->data_fim)) : '-' ?></p>
             </div>
 
             <div class="mb-3">
                 <strong>Observações:</strong>
-                <p><?= $gc->observacoes ?: '-' ?></p>
+                <p><?= $gc->observacoes ? htmlspecialchars($gc->observacoes) : '-' ?></p>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
                 <a href="listar.php" class="btn btn-secondary">Voltar</a>
-                <a href="editar.php?id=<?= $id ?>" class="btn btn-warning">Editar</a>
+                <a href="editar.php?id=<?= urlencode($idEncrypted) ?>" class="btn btn-warning">Editar</a>
             </div>
 
         </div>

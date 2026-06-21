@@ -85,21 +85,36 @@ $ligacao = null;
                     <?php foreach ($resultados as $doc) : ?>
                         <tr>
                             <td><?= $doc->id ?></td>
-                            <td><?= $doc->tipo ?></td>
+                            <td>
+                                <?= $doc->tipo ?>
+                                <?php if ($doc->documento_ativo == 0) : ?>
+                                    <span class="badge bg-secondary ms-1">Inativo</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?= $doc->nome ?></td>
                             <td><?= $doc->nome_equipamento ?></td>
                             <td><?= $doc->data_documento ?></td>
                             <td><?= $doc->data_validade ?></td>
                             <td>
-                                <a href="detalhes.php" class="btn btn-primary btn-sm">
+                                <a href="detalhes.php?id=<?= aes_encrypt($doc->id) ?>" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
                                 <a href="editar.php?id=<?= aes_encrypt($doc->id) ?>" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
+                                <?php if ($doc->documento_ativo == 0) : ?>
+                                    <a href="confirmar_apagar.php?id=<?= aes_encrypt($doc->id) ?>" class="btn btn-success btn-sm" title="Reativar">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                    </a>
+                                <?php else : ?>
+                                    <button class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminar"
+                                        data-id="<?= aes_encrypt($doc->id) ?>"
+                                        title="Eliminar">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -122,7 +137,7 @@ $ligacao = null;
                     </div>
                     <div class="modal-body">
                         <p>Deseja apagar este documento?</p>
-                        <p class="text-muted">Esta ação é irreversível.</p>
+                        <p class="text-muted">O documento não será apagado da base de dados, apenas ficará marcado como inativo.</p>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -133,6 +148,17 @@ $ligacao = null;
         </div>
 
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('modalEliminar');
+            modal.addEventListener('show.bs.modal', function(event) {
+                const btn = event.relatedTarget;
+                const id = btn.getAttribute('data-id');
+                document.getElementById('btnConfirmarEliminar').href = 'confirmar_apagar.php?id=' + encodeURIComponent(id);
+            });
+        });
+    </script>
 
     <script>
         //nota

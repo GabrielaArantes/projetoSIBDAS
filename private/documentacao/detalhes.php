@@ -8,12 +8,15 @@ start_session();
 $erro = '';
 $documento = null;
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$idEncrypted = $_GET['id'] ?? null;
+$id = aes_decrypt($idEncrypted);
 
-if ($id === 0) {
+if (!$id || !is_numeric($id)) {
     header("Location: listar.php");
     exit;
 }
+
+$id = (int)$id;
 
 try {
     $ligacao = new PDO(
@@ -47,12 +50,21 @@ try {
     <main class="conteudo">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Detalhes da Documentação</h1>
+            <h1>
+                Detalhes da Documentação
+                <?php if ($documento) : ?>
+                    <?php if ($documento->documento_ativo == 1) : ?>
+                        <span class="badge bg-success">Ativo</span>
+                    <?php else : ?>
+                        <span class="badge bg-secondary">Inativo</span>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </h1>
             <div class="d-flex gap-2">
                 <a href="listar.php" class="btn btn-secondary">
                     <i class="fa-solid fa-arrow-left"></i> Voltar
                 </a>
-                <a href="editar.php?id=<?= $id ?>" class="btn btn-warning">
+                <a href="editar.php?id=<?= urlencode($idEncrypted) ?>" class="btn btn-warning">
                     <i class="fa-solid fa-pen"></i> Editar
                 </a>
             </div>
@@ -66,11 +78,11 @@ try {
 
             <h5 class="fw-bold mb-3">Informação do Documento</h5>
 
-            <p><strong>Tipo:</strong> <?= htmlspecialchars($documento->tipo ?: '-') ?></p>
-            <p><strong>Nome:</strong> <?= htmlspecialchars($documento->nome ?: '-') ?></p>
-            <p><strong>Data do Documento:</strong> <?= htmlspecialchars($documento->data_documento ?: '-') ?></p>
-            <p><strong>Data de Validade:</strong> <?= htmlspecialchars($documento->data_validade ?: '-') ?></p>
-            <p><strong>Equipamento Associado:</strong> <?= htmlspecialchars($documento->nome_equipamento ?: '-') ?></p>
+            <p><strong>Tipo:</strong> <?= $documento->tipo ? htmlspecialchars($documento->tipo) : '-' ?></p>
+            <p><strong>Nome:</strong> <?= $documento->nome ? htmlspecialchars($documento->nome) : '-' ?></p>
+            <p><strong>Data do Documento:</strong> <?= $documento->data_documento ? date('d/m/Y', strtotime($documento->data_documento)) : '-' ?></p>
+            <p><strong>Data de Validade:</strong> <?= $documento->data_validade ? date('d/m/Y', strtotime($documento->data_validade)) : '-' ?></p>
+            <p><strong>Equipamento Associado:</strong> <?= $documento->nome_equipamento ? htmlspecialchars($documento->nome_equipamento) : '-' ?></p>
             <p>
                 <strong>Ficheiro:</strong>
                 <?php if (!empty($documento->ficheiro)) : ?>
