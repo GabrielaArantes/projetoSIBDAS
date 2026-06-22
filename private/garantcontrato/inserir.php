@@ -21,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $equipamento   = $_POST["equipamento"]   ?? "";
     $inicio        = $_POST["inicio"]        ?? "";
     $fim           = $_POST["fim"]           ?? "";
+    $tem_contrato  = isset($_POST["tem_contrato"]) ? 1 : 0;
     $tipo          = $_POST["tipo"]          ?? "";
     $entidade      = $_POST["entidade"]      ?? "";
     $periodicidade = $_POST["periodicidade"] ?? "";
@@ -59,13 +60,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
             $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $sql = "INSERT INTO garantia_contrato (id_equipamento, data_inicio, data_fim, tipo_contrato, entidade_responsavel, periodicidade, observacoes)
-                    VALUES (:id_equipamento, :inicio, :fim, :tipo, :entidade, :periodicidade, :observacoes)";
+            $sql = "INSERT INTO garantia_contrato (id_equipamento, data_inicio, data_fim, tem_contrato, tipo_contrato, entidade_responsavel, periodicidade, observacoes)
+                    VALUES (:id_equipamento, :inicio, :fim, :tem_contrato, :tipo, :entidade, :periodicidade, :observacoes)";
             $stmt = $ligacao->prepare($sql);
             $stmt->execute([
                 ':id_equipamento' => $equipamento,
                 ':inicio'         => $inicio ?: null,
                 ':fim'            => $fim    ?: null,
+                ':tem_contrato'   => $tem_contrato,
                 ':tipo'           => $tipo,
                 ':entidade'       => $entidade,
                 ':periodicidade'  => $periodicidade,
@@ -73,10 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
 
             $ligacao = null;
-
-            $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Garantia/Contrato inserido para equipamento id: ' . $equipamento . ' (tipo: ' . $tipo . ')', $agente_id);
-
             header("Location: listar.php");
             exit;
 
@@ -140,6 +138,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label class="form-label">Data de fim</label>
                 <input type="text" id="data_fim" class="form-control" name="fim"
                     value="<?= htmlspecialchars($_POST['fim'] ?? '') ?>">
+            </div>
+
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="tem_contrato" id="tem_contrato" value="1"
+                        <?= isset($_POST['tem_contrato']) ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="tem_contrato">
+                        Tem contrato de manutenção associado
+                    </label>
+                </div>
             </div>
 
             <div class="mb-3">

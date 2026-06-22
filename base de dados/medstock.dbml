@@ -6,19 +6,19 @@
 
 Table equipamento {
   id int [pk, increment]
-  codigo_interno varchar
+  codigo_interno varchar [unique, note: 'Código interno único de inventário']
   nome varchar
   categoria varchar
   marca varchar
   modelo varchar
-  num_serie varchar
+  num_serie varchar [unique, note: 'Número de série único por fabricante/modelo']
   fabricante varchar
   data_aquisicao date
   ano_fabrico int
   custo decimal
-  tipo_entrada varchar
-  estado varchar
-  criticidade varchar
+  tipo_entrada varchar [note: 'Compra, Doação, Aluguer, Empréstimo']
+  estado varchar [note: 'Ativo, Em manutenção, Inativo, Em calibração, Em quarentena, Abatido']
+  criticidade varchar [note: 'Baixa, Média, Alta, Suporte de vida']
   observacoes text
   id_localizacao int [ref: > localizacao.id]
   equipamento_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
@@ -70,6 +70,7 @@ Table garantia_contrato {
   id_equipamento int [ref: > equipamento.id]
   data_inicio date
   data_fim date
+  tem_contrato boolean [default: 0, note: 'Indica se existe contrato de manutenção associado']
   tipo_contrato varchar [note: 'Garantia, Contrato de Manutenção, Assistência Técnica']
   entidade_responsavel varchar
   periodicidade varchar [note: 'Mensal, Trimestral, Semestral, Anual']
@@ -112,4 +113,27 @@ Table gestao_site {
   valor text
 
   Note: 'Conteúdos editáveis da página pública (chave-valor)'
+}
+
+Table mensagem_contacto {
+  id int [pk, increment]
+  nome varchar
+  email varchar
+  telemovel varchar
+  mensagem text
+  mensagem_lida boolean [default: 0, note: '0 = não lida, 1 = lida']
+  created_at datetime [default: `CURRENT_TIMESTAMP`]
+
+  Note: 'Mensagens enviadas através do formulário de contacto da área pública'
+}
+
+Table logs {
+  id int [pk, increment]
+  tipo_evento varchar [note: 'LOGIN_OK, LOGIN_FALHOU, ERRO_BD, DADOS_ALTERADOS']
+  descricao varchar
+  agente_id int [ref: > agents.id, note: 'null se o evento não está associado a um agente autenticado']
+  ip varchar
+  created_at datetime [default: `CURRENT_TIMESTAMP`]
+
+  Note: 'Registo de eventos do sistema: autenticações e alterações de dados'
 }

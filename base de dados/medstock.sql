@@ -21,12 +21,12 @@ CREATE TABLE IF NOT EXISTS localizacao (
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS equipamento (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    codigo_interno VARCHAR(50),
+    codigo_interno VARCHAR(50) UNIQUE,
     nome VARCHAR(150) NOT NULL,
     categoria VARCHAR(100),
     marca VARCHAR(100),
     modelo VARCHAR(100),
-    num_serie VARCHAR(100),
+    num_serie VARCHAR(100) UNIQUE,
     fabricante VARCHAR(100),
     data_aquisicao DATE,
     ano_fabrico INT,
@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS garantia_contrato (
     id_equipamento INT,
     data_inicio DATE,
     data_fim DATE,
+    tem_contrato TINYINT(1) DEFAULT 0,
     tipo_contrato VARCHAR(50),
     entidade_responsavel VARCHAR(150),
     periodicidade VARCHAR(50),
@@ -122,4 +123,30 @@ CREATE TABLE IF NOT EXISTS agents (
 CREATE TABLE IF NOT EXISTS gestao_site (
     chave VARCHAR(100) PRIMARY KEY,
     valor TEXT
+);
+
+-- ------------------------------------------------------------
+-- Tabela: mensagem_contacto (formulário de contacto público)
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS mensagem_contacto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    telemovel VARCHAR(20) NOT NULL,
+    mensagem TEXT NOT NULL,
+    mensagem_lida TINYINT(1) NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ------------------------------------------------------------
+-- Tabela: logs (registo de eventos do sistema)
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_evento VARCHAR(50) NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    agente_id INT NULL,
+    ip VARCHAR(45) NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (agente_id) REFERENCES agents(id) ON DELETE SET NULL
 );

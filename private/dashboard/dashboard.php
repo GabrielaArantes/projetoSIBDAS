@@ -53,6 +53,17 @@ try {
     $stmt = $ligacao->query("SELECT categoria, COUNT(*) as total FROM equipamento GROUP BY categoria");
     $por_categoria = $stmt->fetchAll(PDO::FETCH_OBJ);
 
+    // Dados completos para o 1241094.js (estado, serviço, categoria, criticidade, garantia, documentação)
+    $stmt = $ligacao->query(
+        "SELECT e.estado, l.servico, e.categoria, e.criticidade,
+                gc.data_fim AS garantia_fim,
+                (SELECT COUNT(*) FROM documento d WHERE d.id_equipamento = e.id) > 0 AS temDoc
+         FROM equipamento e
+         LEFT JOIN localizacao l ON e.id_localizacao = l.id
+         LEFT JOIN garantia_contrato gc ON gc.id_equipamento = e.id"
+    );
+    $dados_js = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     $ligacao = null;
 } catch (PDOException $err) {
 }
@@ -155,7 +166,19 @@ try {
 
     </main>
 
-    <script src="/projetoSIBDAS/assets/js/chart.umd.min.js"></script>
+    <script>
+        // Dados reais da BD passados ao 1241094.js (carregado no footer)
+        var dadosEquipamentos = <?= json_encode(array_map(function($r) {
+            return [
+                'estado'       => $r['estado'] ?? '',
+                'servico'      => $r['servico'] ?? 'Sem serviço',
+                'categoria'    => $r['categoria'] ?? 'Sem categoria',
+                'criticidade'  => $r['criticidade'] ?? '',
+                'garantia_fim' => $r['garantia_fim'] ?? '',
+                'temDoc'       => (bool)$r['temDoc']
+            ];
+        }, $dados_js)) ?>;
+    </script>
     <script>
         const dadosEstado = <?= json_encode(array_map(fn($r) => ['estado' => $r->estado, 'total' => $r->total], $por_estado)) ?>;
         const dadosServico = <?= json_encode(array_map(fn($r) => ['servico' => $r->servico ?? 'Sem serviço', 'total' => $r->total], $por_servico)) ?>;

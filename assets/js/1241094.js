@@ -1,9 +1,6 @@
-
-var equipamentos = [
-    { estado: "Ativo",         servico: "Urgência", categoria: "Monitorização", criticidade: "Alta",           garantia_fim: "2024-05-10", temDoc: true  },
-    { estado: "Em manutenção", servico: "UCI",      categoria: "Suporte de Vida", criticidade: "Suporte de vida", garantia_fim: "2023-12-01", temDoc: false },
-    { estado: "Inativo",       servico: "Medicina", categoria: "Diagnóstico",   criticidade: "Média",          garantia_fim: "2025-02-20", temDoc: true  }
-];
+// dadosEquipamentos é definido no dashboard.php e passado via variável JS inline.
+// Em páginas que não sejam o dashboard, a variável não existe e o array fica vazio.
+var equipamentos = (typeof dadosEquipamentos !== 'undefined') ? dadosEquipamentos : [];
 
 function contarAtivos() {
     var total = 0;

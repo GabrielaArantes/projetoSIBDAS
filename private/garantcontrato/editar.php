@@ -53,11 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $stmt = $ligacao->prepare("UPDATE garantia_contrato SET id_equipamento=?, data_inicio=?, data_fim=?, tipo_contrato=?, entidade_responsavel=?, periodicidade=?, observacoes=? WHERE id=?");
+            $stmt = $ligacao->prepare("UPDATE garantia_contrato SET id_equipamento=?, data_inicio=?, data_fim=?, tem_contrato=?, tipo_contrato=?, entidade_responsavel=?, periodicidade=?, observacoes=? WHERE id=?");
             $stmt->execute([
                 $_POST['equipamento'],
                 $_POST['inicio'] ?: null,
                 $_POST['fim'] ?: null,
+                isset($_POST['tem_contrato']) ? 1 : 0,
                 $_POST['tipo'],
                 $_POST['entidade'],
                 $_POST['periodicidade'],
@@ -67,9 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $ligacao = null;
             $sucesso = "Garantia/Contrato atualizado com sucesso!";
-
-            $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Garantia/Contrato editado (id: ' . $id . ')', $agente_id);
 
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
@@ -143,6 +141,16 @@ try {
             <div class="mb-3">
                 <label class="form-label">Data de fim</label>
                 <input type="date" class="form-control" name="fim" value="<?= htmlspecialchars($gc->data_fim ?? '') ?>">
+            </div>
+
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="tem_contrato" id="tem_contrato" value="1"
+                        <?= ($gc->tem_contrato ?? 0) ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="tem_contrato">
+                        Tem contrato de manutenção associado
+                    </label>
+                </div>
             </div>
 
             <div class="mb-3">

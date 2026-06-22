@@ -558,7 +558,8 @@ main {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.pagprivada .user-button:hover .user-dropdown {
+.pagprivada .user-button:hover .user-dropdown,
+.pagprivada .user-dropdown.aberto {
     display: block;
 }
 
@@ -621,7 +622,8 @@ main {
     gap:15px;
 }
 
-.menu-wrapper:hover .menu-box {
+.menu-wrapper:hover .menu-box,
+.menu-box.aberto {
     display: grid;
 }
 

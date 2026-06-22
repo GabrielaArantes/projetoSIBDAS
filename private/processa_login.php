@@ -74,6 +74,7 @@ try {
     $_SESSION['utilizador'] = $agente->nome;
     $_SESSION['email'] = $agente->email_decifrado;
     $_SESSION['perfil'] = $agente->perfil;
+    $_SESSION['agente_id'] = $agente->id;
 
     $ligacao = null;
 } catch (PDOException $e) {
