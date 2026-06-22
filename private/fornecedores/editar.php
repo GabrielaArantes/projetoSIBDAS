@@ -56,6 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ligacao = null;
             $sucesso = "Fornecedor atualizado com sucesso!";
 
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Fornecedor editado (id: ' . $id . '): ' . ($_POST['nome_empresa'] ?? ''), $agente_id);
+
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
         }

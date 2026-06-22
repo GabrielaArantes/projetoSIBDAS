@@ -187,6 +187,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             $ligacao = null;
+
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Equipamento inserido: ' . $designacao . ' (código: ' . $codigo_interno . ')', $agente_id);
+
             header("Location: listar.php");
             exit;
         } catch (PDOException $err) {

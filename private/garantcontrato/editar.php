@@ -68,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ligacao = null;
             $sucesso = "Garantia/Contrato atualizado com sucesso!";
 
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Garantia/Contrato editado (id: ' . $id . ')', $agente_id);
+
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
         }

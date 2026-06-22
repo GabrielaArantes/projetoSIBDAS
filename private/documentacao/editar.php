@@ -112,6 +112,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ligacao = null;
             $sucesso = "Documento atualizado com sucesso!";
 
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Documento editado (id: ' . $id . '): ' . ($_POST['nome'] ?? ''), $agente_id);
+
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
         }

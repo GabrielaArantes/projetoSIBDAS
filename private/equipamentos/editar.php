@@ -134,6 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ligacao = null;
             $sucesso = "Equipamento atualizado com sucesso!";
 
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Equipamento editado (id: ' . $id . '): ' . ($_POST['designacao'] ?? ''), $agente_id);
+
             // Recarregar fornecedores associados, para refletir a alteração no formulário
             $fornecedoresAssociados = $fornecedoresEscolhidos;
 

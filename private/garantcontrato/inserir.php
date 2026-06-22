@@ -73,6 +73,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
 
             $ligacao = null;
+
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Garantia/Contrato inserido para equipamento id: ' . $equipamento . ' (tipo: ' . $tipo . ')', $agente_id);
+
             header("Location: listar.php");
             exit;
 

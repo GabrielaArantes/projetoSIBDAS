@@ -54,6 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ligacao = null;
             $sucesso = "Localização atualizada com sucesso!";
 
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Localização editada (id: ' . $id . '): ' . ($_POST['edificio'] ?? '') . ' - ' . ($_POST['servico'] ?? ''), $agente_id);
+
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
         }
