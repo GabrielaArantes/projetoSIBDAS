@@ -33,11 +33,22 @@ $ligacao = null;
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Garantias e Contratos</h1>
-            <?php if ($pode_gerir) : ?>
-                <a href="inserir.php" class="btn btn-success">
-                    <i class="fa-solid fa-plus"></i> Adicionar
+            <div class="d-flex gap-2">
+                <?php if ($pode_gerir) : ?>
+                    <a href="inserir.php" class="btn btn-success">
+                        <i class="fa-solid fa-plus"></i> Adicionar
+                    </a>
+                <?php endif; ?>
+                <a href="exportar.php?formato=csv" class="btn btn-outline-success" title="Exportar CSV">
+                    <i class="fa-solid fa-file-csv"></i> CSV
                 </a>
-            <?php endif; ?>
+                <a href="exportar.php?formato=json" class="btn btn-outline-success" title="Exportar JSON">
+                    <i class="fa-solid fa-file-code"></i> JSON
+                </a>
+                <a href="exportar.php?formato=pdf" class="btn btn-outline-success" title="Exportar PDF" target="_blank">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </a>
+            </div>
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
@@ -131,7 +142,6 @@ $ligacao = null;
             </div>
         <?php endif; ?>
 
-
         <div class="col">
             <p class="mb-5">Total: <strong><?= count($resultados) ?></strong></p>
         </div>
@@ -204,11 +214,8 @@ $ligacao = null;
             $('#filtro-aplicar').on('click', function() {
                 const tipo = $('#filtro-tipo').val();
                 const periodicidade = $('#filtro-periodicidade').val();
-
-                // Coluna 1 = Tipo, Coluna 2 = Periodicidade
                 tabela.column(1).search(tipo);
                 tabela.column(2).search(periodicidade);
-
                 tabela.draw();
             });
 
@@ -220,6 +227,5 @@ $ligacao = null;
             });
         });
     </script>
-
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>

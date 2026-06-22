@@ -57,6 +57,7 @@ try {
 
     // Verifica se o utilizador existe e se a password está correta
     if (!$agente || $password !== $agente->password) {
+        registar_log('LOGIN_FALHOU', 'Tentativa de login falhada para o email: ' . $username);
         $_SESSION['server_error'] = 'Login inválido';
         header('Location: ../public/login.php');
         return;
@@ -66,6 +67,9 @@ try {
     $stmt = $ligacao->prepare("UPDATE agents SET last_login = NOW() WHERE id = ?");
     $stmt->execute([$agente->id]);
 
+    // Registar login bem-sucedido
+    registar_log('LOGIN_OK', 'Login efetuado com sucesso pelo agente: ' . $agente->nome, $agente->id);
+
     // Guardar dados essenciais na sessão (email já desencriptado)
     $_SESSION['utilizador'] = $agente->nome;
     $_SESSION['email'] = $agente->email_decifrado;
@@ -73,6 +77,7 @@ try {
 
     $ligacao = null;
 } catch (PDOException $e) {
+    registar_log('ERRO_BD', 'Erro ao ligar à base de dados durante o login: ' . $e->getMessage());
     $_SESSION['server_error'] = 'Erro ao ligar à base de dados.';
     header('Location: ../public/login.php');
     return;

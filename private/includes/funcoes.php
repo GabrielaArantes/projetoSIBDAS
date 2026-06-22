@@ -68,3 +68,30 @@ function aes_decrypt(mixed $value) {
         OPENSSL_IV
     );
 }
+
+function registar_log(string $tipo_evento, string $descricao, ?int $agente_id = null)
+{
+    try {
+        $ligacao = new PDO(
+            "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+            MYSQL_USERNAME,
+            MYSQL_PASSWORD,
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        );
+
+        $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+        $stmt = $ligacao->prepare(
+            "INSERT INTO logs (tipo_evento, descricao, agente_id, ip)
+             VALUES (:tipo, :descricao, :agente_id, :ip)"
+        );
+        $stmt->execute([
+            ':tipo'      => $tipo_evento,
+            ':descricao' => $descricao,
+            ':agente_id' => $agente_id,
+            ':ip'        => $ip
+        ]);
+    } catch (PDOException $e) {
+        // Falha silenciosa — o log não deve interromper o fluxo da aplicação
+    }
+}

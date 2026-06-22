@@ -33,11 +33,22 @@ $ligacao = null;
     <main class="conteudo">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Equipamentos</h1>
-            <?php if ($pode_gerir) : ?>
-                <a href="inserir.php" class="btn btn-success">
-                    <i class="fa-solid fa-plus"></i> Adicionar Equipamento
+            <div class="d-flex gap-2">
+                <?php if ($pode_gerir) : ?>
+                    <a href="inserir.php" class="btn btn-success">
+                        <i class="fa-solid fa-plus"></i> Adicionar Equipamento
+                    </a>
+                <?php endif; ?>
+                <a href="exportar.php?formato=csv" class="btn btn-outline-success" title="Exportar CSV">
+                    <i class="fa-solid fa-file-csv"></i> CSV
                 </a>
-            <?php endif; ?>
+                <a href="exportar.php?formato=json" class="btn btn-outline-success" title="Exportar JSON">
+                    <i class="fa-solid fa-file-code"></i> JSON
+                </a>
+                <a href="exportar.php?formato=pdf" class="btn btn-outline-success" title="Exportar PDF" target="_blank">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </a>
+            </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -224,33 +235,19 @@ $ligacao = null;
                 }
             });
 
-            // Esconder a caixa de pesquisa nativa que o DataTables cria sozinho
-            // (mantemos só a nossa caixa "Pesquisar..." com o nosso próprio estilo)
             $('#tabela-equipamentos_filter').hide();
 
-            // ----------------------------------------------------------
-            // Pesquisa simples (caixa "Pesquisar...") ligada à pesquisa global do DataTables
-            // ----------------------------------------------------------
             $('#filtro-pesquisa').on('keyup', function() {
                 tabela.search(this.value).draw();
             });
 
-            // ----------------------------------------------------------
-            // Filtro avançado (menu "Filtrar") usando a pesquisa por
-            // coluna do próprio DataTables (column().search())
-            // ----------------------------------------------------------
             $('#filtro-aplicar').on('click', function() {
                 const categoria = $('#filtro-categoria').val();
                 const localizacao = $('#filtro-localizacao').val();
                 const estado = $('#filtro-estado').val();
 
-                // Coluna 1 = Categoria
                 tabela.column(1).search(categoria);
-
-                // Coluna 2 = Localização
                 tabela.column(2).search(localizacao);
-
-                // Coluna 3 = Estado
                 tabela.column(3).search(estado);
 
                 tabela.draw();

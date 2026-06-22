@@ -33,11 +33,22 @@ $ligacao = null;
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Fornecedores</h1>
-            <?php if ($pode_gerir) : ?>
-                <a href="inserir.php" class="btn btn-success">
-                    <i class="fa-solid fa-plus"></i> Adicionar Fornecedor
+            <div class="d-flex gap-2">
+                <?php if ($pode_gerir) : ?>
+                    <a href="inserir.php" class="btn btn-success">
+                        <i class="fa-solid fa-plus"></i> Adicionar Fornecedor
+                    </a>
+                <?php endif; ?>
+                <a href="exportar.php?formato=csv" class="btn btn-outline-success" title="Exportar CSV">
+                    <i class="fa-solid fa-file-csv"></i> CSV
                 </a>
-            <?php endif; ?>
+                <a href="exportar.php?formato=json" class="btn btn-outline-success" title="Exportar JSON">
+                    <i class="fa-solid fa-file-code"></i> JSON
+                </a>
+                <a href="exportar.php?formato=pdf" class="btn btn-outline-success" title="Exportar PDF" target="_blank">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </a>
+            </div>
         </div>
 
         <div class="d-flex align-items-center gap-3 mb-4">
@@ -128,7 +139,6 @@ $ligacao = null;
             </div>
         <?php endif; ?>
 
-
         <div class="col">
             <p class="mb-5">Total: <strong><?= count($resultados) ?></strong></p>
         </div>
@@ -168,7 +178,6 @@ $ligacao = null;
         });
     </script>
     <script>
-        //nota
         $(document).ready(function() {
             const tabela = $('#tabela-fornecedores').DataTable({
                 pageLength: 5,
@@ -195,20 +204,15 @@ $ligacao = null;
                 }
             });
 
-            // Esconder a caixa de pesquisa nativa do DataTables (usamos a nossa própria)
             $('#tabela-fornecedores_filter').hide();
 
-            // Pesquisa simples (caixa "Pesquisar fornecedor...") ligada à pesquisa global
             $('#filtro-pesquisa').on('keyup', function() {
                 tabela.search(this.value).draw();
             });
 
             $('#filtro-aplicar').on('click', function() {
                 const tipo = $('#filtro-tipo').val();
-
-                // Coluna 4 = Tipo
                 tabela.column(4).search(tipo);
-
                 tabela.draw();
             });
 
