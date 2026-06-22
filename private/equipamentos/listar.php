@@ -79,6 +79,8 @@ function badge_criticidade(string $criticidade): string {
                                 <option>Ativo</option>
                                 <option>Inativo</option>
                                 <option>Em manutenção</option>
+                                <option>Em calibração</option>
+                                <option>Em quarentena</option>
                                 <option>Abatido</option>
                             </select>
                         </div>

@@ -134,9 +134,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ligacao = null;
             $sucesso = "Equipamento atualizado com sucesso!";
 
-            $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Equipamento editado (id: ' . $id . '): ' . ($_POST['designacao'] ?? ''), $agente_id);
-
             // Recarregar fornecedores associados, para refletir a alteração no formulário
             $fornecedoresAssociados = $fornecedoresEscolhidos;
 
@@ -271,7 +268,7 @@ try {
                         <label>Estado Atual <span class="text-danger">*</span></label>
                         <select name="estado" class="form-select mb-2" required>
                             <option value="">Selecione o estado</option>
-                            <?php foreach (['Ativo', 'Em manutenção', 'Inativo', 'Em calibração', 'Em quarentena', 'Abatido'] as $est) : ?>
+                            <?php foreach (['Ativo', 'Em manutenção', 'Em calibração', 'Em quarentena', 'Abatido'] as $est) : ?>
                                 <option value="<?= $est ?>" <?= ($equipamento->estado ?? '') === $est ? 'selected' : '' ?>><?= $est ?></option>
                             <?php endforeach; ?>
                         </select>

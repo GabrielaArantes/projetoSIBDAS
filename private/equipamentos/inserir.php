@@ -187,10 +187,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             $ligacao = null;
-
-            $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Equipamento inserido: ' . $designacao . ' (código: ' . $codigo_interno . ')', $agente_id);
-
             header("Location: listar.php");
             exit;
         } catch (PDOException $err) {
@@ -331,7 +327,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="form-label fw-bold">Estado Atual</label>
                         <select name="estado" class="form-select" required>
                             <option value="">Selecione o estado</option>
-                            <?php foreach (['Ativo', 'Em manutenção', 'Inativo', 'Em calibração', 'Em quarentena', 'Abatido'] as $op) : ?>
+                            <?php foreach (['Ativo', 'Em manutenção', 'Em calibração', 'Em quarentena', 'Abatido'] as $op) : ?>
                                 <option value="<?= $op ?>" <?= (($_POST['estado'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -451,7 +447,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label class="form-label fw-bold">Tipo de documento</label>
                             <select class="form-select" name="doc_tipo">
                                 <option value="">Selecione...</option>
-                                <?php foreach (['Manual', 'Certificado', 'Relatório Técnico', 'Outro'] as $op) : ?>
+                                <?php foreach (['Manual de Utilizador', 'Manual de Serviço', 'Certificado de Calibração', 'Contrato de Manutenção', 'Fatura', 'Declaração de Conformidade', 'Relatório Técnico'] as $op) : ?>
                                     <option value="<?= $op ?>" <?= (($_POST['doc_tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
                                 <?php endforeach; ?>
                             </select>

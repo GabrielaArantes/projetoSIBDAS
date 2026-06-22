@@ -112,9 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ligacao = null;
             $sucesso = "Documento atualizado com sucesso!";
 
-            $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Documento editado (id: ' . $id . '): ' . ($_POST['nome'] ?? ''), $agente_id);
-
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
         }
@@ -178,7 +175,12 @@ try {
 
                 <div class="mb-3">
                     <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="tipo" value="<?= htmlspecialchars($documento->tipo ?? '') ?>" required>
+                    <select class="form-select" name="tipo" required>
+                        <option value="">Selecione o tipo...</option>
+                        <?php foreach (['Manual de Utilizador', 'Manual de Serviço', 'Certificado de Calibração', 'Contrato de Manutenção', 'Fatura', 'Declaração de Conformidade', 'Relatório Técnico'] as $op) : ?>
+                            <option value="<?= $op ?>" <?= ($documento->tipo ?? '') === $op ? 'selected' : '' ?>><?= $op ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="mb-3">

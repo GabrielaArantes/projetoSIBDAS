@@ -63,9 +63,12 @@ $ligacao = null;
                         <label>Tipo</label>
                         <select class="form-select" id="filtro-tipo" name="tipo">
                             <option value="">Todos</option>
-                            <option>Manual</option>
+                            <option>Manual de Utilizador</option>
+                            <option>Manual de Serviço</option>
+                            <option>Certificado de Calibração</option>
+                            <option>Contrato de Manutenção</option>
                             <option>Fatura</option>
-                            <option>Certificado</option>
+                            <option>Declaração de Conformidade</option>
                             <option>Relatório Técnico</option>
                         </select>
                     </div>

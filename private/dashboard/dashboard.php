@@ -12,7 +12,7 @@ $inativos = 0;
 $sem_documentacao = 0;
 $garantias_expiradas = 0;
 $garantias_a_expirar = [];
-$por_estado = [];
+$equipamentos_sem_doc = [];$por_estado = [];
 $por_servico = [];
 $por_categoria = [];
 $dados_js = [];
@@ -37,7 +37,7 @@ try {
     // Inativos
     $inativos = $ligacao->query("SELECT COUNT(*) FROM equipamento WHERE estado = 'Inativo'")->fetchColumn();
 
-    // Sem documentação
+    // Sem documentação (contagem)
     $sem_documentacao = $ligacao->query("SELECT COUNT(*) FROM equipamento e WHERE NOT EXISTS (SELECT 1 FROM documento d WHERE d.id_equipamento = e.id)")->fetchColumn();
 
     // Garantias expiradas
@@ -66,7 +66,7 @@ try {
     $stmt = $ligacao->query("SELECT categoria, COUNT(*) as total FROM equipamento GROUP BY categoria");
     $por_categoria = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    // Dados completos para o 1241094.js (estado, serviço, categoria, criticidade, garantia, documentação)
+    // Dados completos para o 1241094.js
     $stmt = $ligacao->query(
         "SELECT e.estado, l.servico, e.categoria, e.criticidade,
                 gc.data_fim AS garantia_fim,
@@ -162,6 +162,8 @@ try {
         </div>
         <?php endif; ?>
 
+
+
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 h-100">
@@ -199,7 +201,6 @@ try {
 
     <script src="/projetoSIBDAS/assets/js/chart.umd.min.js"></script>
     <script>
-        // Dados reais da BD passados ao 1241094.js (carregado no footer)
         var dadosEquipamentos = <?= json_encode(array_map(function($r) {
             return [
                 'estado'       => $r['estado'] ?? '',
@@ -222,10 +223,7 @@ try {
             type: 'doughnut',
             data: {
                 labels: dadosEstado.map(d => d.estado),
-                datasets: [{
-                    data: dadosEstado.map(d => d.total),
-                    backgroundColor: cores
-                }]
+                datasets: [{ data: dadosEstado.map(d => d.total), backgroundColor: cores }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
@@ -234,11 +232,7 @@ try {
             type: 'bar',
             data: {
                 labels: dadosServico.map(d => d.servico),
-                datasets: [{
-                    label: 'Equipamentos',
-                    data: dadosServico.map(d => d.total),
-                    backgroundColor: '#198754'
-                }]
+                datasets: [{ label: 'Equipamentos', data: dadosServico.map(d => d.total), backgroundColor: '#198754' }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
@@ -247,11 +241,7 @@ try {
             type: 'bar',
             data: {
                 labels: dadosCategoria.map(d => d.categoria),
-                datasets: [{
-                    label: 'Equipamentos',
-                    data: dadosCategoria.map(d => d.total),
-                    backgroundColor: '#0d6efd'
-                }]
+                datasets: [{ label: 'Equipamentos', data: dadosCategoria.map(d => d.total), backgroundColor: '#0d6efd' }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });

@@ -54,7 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($erros)) {
-        $tipo = ucwords(strtolower($tipo));
         $nome = ucwords(strtolower($nome));
     }
 
@@ -96,10 +95,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
 
             $ligacao = null;
-
-            $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Documento inserido: ' . $nome . ' (tipo: ' . $tipo . ')', $agente_id);
-
             header("Location: listar.php");
             exit;
 
@@ -150,8 +145,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="mb-3">
                     <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="tipo"
-                        value="<?= htmlspecialchars($_POST['tipo'] ?? '') ?>" required>
+                    <select class="form-select" name="tipo" required>
+                        <option value="">Selecione o tipo...</option>
+                        <?php foreach (['Manual de Utilizador', 'Manual de Serviço', 'Certificado de Calibração', 'Contrato de Manutenção', 'Fatura', 'Declaração de Conformidade', 'Relatório Técnico'] as $op) : ?>
+                            <option value="<?= $op ?>" <?= (($_POST['tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="mb-3">
