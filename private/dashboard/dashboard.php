@@ -11,9 +11,11 @@ $em_manutencao = 0;
 $inativos = 0;
 $sem_documentacao = 0;
 $garantias_expiradas = 0;
+$garantias_a_expirar = [];
 $por_estado = [];
 $por_servico = [];
 $por_categoria = [];
+$dados_js = [];
 
 try {
     $ligacao = new PDO(
@@ -40,6 +42,17 @@ try {
 
     // Garantias expiradas
     $garantias_expiradas = $ligacao->query("SELECT COUNT(*) FROM garantia_contrato WHERE data_fim < CURDATE()")->fetchColumn();
+
+    // Garantias a expirar nos próximos 30 dias
+    $stmt = $ligacao->query(
+        "SELECT e.nome AS equipamento, gc.data_fim, gc.tipo_contrato
+         FROM garantia_contrato gc
+         LEFT JOIN equipamento e ON gc.id_equipamento = e.id
+         WHERE gc.data_fim >= CURDATE()
+           AND gc.data_fim <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+         ORDER BY gc.data_fim ASC"
+    );
+    $garantias_a_expirar = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     // Por estado (para gráfico)
     $stmt = $ligacao->query("SELECT estado, COUNT(*) as total FROM equipamento GROUP BY estado");
@@ -131,6 +144,24 @@ try {
             </div>
         </div>
 
+        <?php if (!empty($garantias_a_expirar)) : ?>
+        <div class="alert alert-warning d-flex align-items-start gap-3 mt-2" role="alert">
+            <i class="fa-solid fa-triangle-exclamation fa-lg mt-1"></i>
+            <div>
+                <strong>Garantias a expirar nos próximos 30 dias</strong>
+                <ul class="mb-0 mt-1">
+                    <?php foreach ($garantias_a_expirar as $g) : ?>
+                        <li>
+                            <strong><?= htmlspecialchars($g->equipamento) ?></strong>
+                            — <?= htmlspecialchars($g->tipo_contrato ?? 'Garantia') ?>
+                            — expira em <strong><?= date('d/m/Y', strtotime($g->data_fim)) ?></strong>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 h-100">
@@ -166,6 +197,7 @@ try {
 
     </main>
 
+    <script src="/projetoSIBDAS/assets/js/chart.umd.min.js"></script>
     <script>
         // Dados reais da BD passados ao 1241094.js (carregado no footer)
         var dadosEquipamentos = <?= json_encode(array_map(function($r) {
