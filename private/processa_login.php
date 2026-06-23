@@ -56,7 +56,7 @@ try {
     $agente = $comando->fetch(PDO::FETCH_OBJ);
 
     // Verifica se o utilizador existe e se a password está correta
-    if (!$agente || $password !== $agente->password) {
+    if (!$agente || !password_verify($password, $agente->password)) {
         registar_log('LOGIN_FALHOU', 'Tentativa de login falhada para o email: ' . $username);
         $_SESSION['server_error'] = 'Login inválido';
         header('Location: ../public/login.php');

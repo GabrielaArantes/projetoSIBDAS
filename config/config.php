@@ -1,6 +1,6 @@
 <?php
 
-define('BASE_URL', '/projetoSIBDAS');
+define('BASE_URL', '/sibdas/1241094/medstock');
 
 define('MYSQL_HOST', 'vsgate-s1.dei.isep.ipp.pt');
 define('MYSQL_PORT', '10464');

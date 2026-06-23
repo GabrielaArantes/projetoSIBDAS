@@ -199,7 +199,7 @@ try {
 
     </main>
 
-    <script src="/projetoSIBDAS/assets/js/chart.umd.min.js"></script>
+    <script src="/sibdas/1241094/medstock/assets/js/chart.umd.min.js"></script>
     <script>
         var dadosEquipamentos = <?= json_encode(array_map(function($r) {
             return [
