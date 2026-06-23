@@ -16,23 +16,16 @@ try {
     );
     $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $resultados = $ligacao->query("SELECT e.*, l.servico FROM equipamento e LEFT JOIN localizacao l ON e.id_localizacao = l.id")->fetchAll(PDO::FETCH_OBJ);
+    $categorias_filtro = $ligacao->query("SELECT nome FROM categorias_equipamento ORDER BY nome")->fetchAll(PDO::FETCH_COLUMN);
+    $servicos_filtro   = $ligacao->query("SELECT DISTINCT servico FROM localizacao WHERE localizacao_ativo = 1 AND servico IS NOT NULL ORDER BY servico")->fetchAll(PDO::FETCH_COLUMN);
     $erro = '';
 } catch (PDOException $err) {
     $erro = "Aconteceu um erro na ligação à base de dados.";
     $resultados = [];
+    $categorias_filtro = [];
+    $servicos_filtro = [];
 }
 $ligacao = null;
-
-// Função auxiliar para devolver a classe Bootstrap do badge de criticidade
-function badge_criticidade(string $criticidade): string {
-    return match($criticidade) {
-        'Suporte de vida' => 'bg-danger',
-        'Alta'            => 'bg-warning text-dark',
-        'Média'           => 'bg-primary',
-        'Baixa'           => 'bg-success',
-        default           => 'bg-secondary'
-    };
-}
 ?>
 
 <?php include __DIR__ . '/../includes/header.php'; ?>
@@ -88,34 +81,18 @@ function badge_criticidade(string $criticidade): string {
                             <label>Categoria</label>
                             <select class="form-select" id="filtro-categoria" name="categoria">
                                 <option value="">Todas</option>
-                                <option>Monitorização</option>
-                                <option>Imagiologia</option>
-                                <option>Laboratório</option>
-                                <option>Cirurgia</option>
-                                <option>Suporte de Vida</option>
-                                <option>Outros</option>
+                                <?php foreach ($categorias_filtro as $cat) : ?>
+                                    <option><?= htmlspecialchars($cat) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div>
                             <label>Localização</label>
                             <select class="form-select" id="filtro-localizacao" name="localizacao">
                                 <option value="">Todas</option>
-                                <option>Urgência</option>
-                                <option>Bloco Operatório</option>
-                                <option>UCI</option>
-                                <option>Internamento</option>
-                                <option>Consultas</option>
-                                <option>Armazém</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Criticidade</label>
-                            <select class="form-select" id="filtro-criticidade" name="criticidade">
-                                <option value="">Todas</option>
-                                <option>Baixa</option>
-                                <option>Média</option>
-                                <option>Alta</option>
-                                <option>Suporte de vida</option>
+                                <?php foreach ($servicos_filtro as $srv) : ?>
+                                    <option><?= htmlspecialchars($srv) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="d-flex justify-content-end gap-2 mt-2">
@@ -142,7 +119,6 @@ function badge_criticidade(string $criticidade): string {
                         <th>Categoria</th>
                         <th>Localização</th>
                         <th>Estado</th>
-                        <th>Criticidade</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -157,11 +133,6 @@ function badge_criticidade(string $criticidade): string {
                                 <?php if ($eq->equipamento_ativo == 0) : ?>
                                     <span class="badge bg-secondary ms-1">Inativo</span>
                                 <?php endif; ?>
-                            </td>
-                            <td>
-                                <span class="badge <?= badge_criticidade($eq->criticidade ?? '') ?>">
-                                    <?= htmlspecialchars($eq->criticidade ?? 'N/D') ?>
-                                </span>
                             </td>
                             <td>
                                 <a href="detalhes.php?id=<?= aes_encrypt($eq->id) ?>" class="btn btn-primary btn-sm">
@@ -271,25 +242,22 @@ function badge_criticidade(string $criticidade): string {
             });
 
             $('#filtro-aplicar').on('click', function() {
-                const categoria    = $('#filtro-categoria').val();
-                const localizacao  = $('#filtro-localizacao').val();
-                const estado       = $('#filtro-estado').val();
-                const criticidade  = $('#filtro-criticidade').val();
+                const categoria = $('#filtro-categoria').val();
+                const localizacao = $('#filtro-localizacao').val();
+                const estado = $('#filtro-estado').val();
 
                 tabela.column(1).search(categoria);
                 tabela.column(2).search(localizacao);
                 tabela.column(3).search(estado);
-                tabela.column(4).search(criticidade);
 
                 tabela.draw();
             });
 
             $('#filtro-limpar').on('click', function() {
-                $('#filtro-estado, #filtro-categoria, #filtro-localizacao, #filtro-criticidade').val('');
+                $('#filtro-estado, #filtro-categoria, #filtro-localizacao').val('');
                 tabela.column(1).search('');
                 tabela.column(2).search('');
                 tabela.column(3).search('');
-                tabela.column(4).search('');
                 tabela.draw();
             });
         });
