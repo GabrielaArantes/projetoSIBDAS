@@ -1,30 +1,66 @@
 // ============================================================
-// MedStock — Diagrama da Base de Dados
+// MedStock — Diagrama da Base de Dados (DBML)
 // Projeto SIBDAS — Gestão de Inventário de Equipamento Hospitalar
 // Usar em: https://dbdiagram.io
 // ============================================================
 
-Table equipamento {
-  id int [pk, increment]
-  codigo_interno varchar [unique, note: 'Código interno único de inventário']
-  nome varchar
-  categoria varchar
-  marca varchar
-  modelo varchar
-  num_serie varchar [unique, note: 'Número de série único por fabricante/modelo']
-  fabricante varchar
-  data_aquisicao date
-  ano_fabrico int
-  custo decimal
-  tipo_entrada varchar [note: 'Compra, Doação, Aluguer, Empréstimo']
-  estado varchar [note: 'Ativo, Em manutenção, Inativo, Em calibração, Em quarentena, Abatido']
-  criticidade varchar [note: 'Baixa, Média, Alta, Suporte de vida']
-  observacoes text
-  id_localizacao int [ref: > localizacao.id]
-  equipamento_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+// --- Tabelas de lookup ---
 
-  Note: 'Equipamento hospitalar registado no sistema'
+Table categorias_equipamento {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Categorias dos equipamentos médicos (3NF)'
 }
+
+Table estados_equipamento {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Estados operacionais dos equipamentos (3NF)'
+}
+
+Table criticidades {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Níveis de criticidade dos equipamentos (3NF)'
+}
+
+Table tipos_entrada {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Tipos de entrada dos equipamentos (3NF)'
+}
+
+Table tipos_fornecedor {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Tipos de fornecedor (3NF)'
+}
+
+Table tipos_documento {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Tipos de documento (3NF)'
+}
+
+Table tipos_contrato {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Tipos de contrato/garantia (3NF)'
+}
+
+Table periodicidades {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Periodicidades de manutenção (3NF)'
+}
+
+Table perfis {
+  id int [pk, increment]
+  nome varchar [unique]
+  Note: 'Perfis de acesso dos utilizadores (3NF)'
+}
+
+// --- Tabelas principais ---
 
 Table localizacao {
   id int [pk, increment]
@@ -32,9 +68,33 @@ Table localizacao {
   piso varchar
   servico varchar
   sala varchar
-  localizacao_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
+  localizacao_ativo boolean [default: 1]
+  Note: 'Localizações físicas dos equipamentos no hospital'
+}
 
-  Note: 'Localização física dos equipamentos no hospital'
+Table equipamento {
+  id int [pk, increment]
+  codigo_interno varchar [unique]
+  nome varchar
+  categoria varchar [note: 'valor desnormalizado — sincronizado com id_categoria']
+  id_categoria int [ref: > categorias_equipamento.id]
+  marca varchar
+  modelo varchar
+  num_serie varchar [unique]
+  fabricante varchar
+  data_aquisicao date
+  ano_fabrico int
+  custo decimal
+  tipo_entrada varchar [note: 'valor desnormalizado — sincronizado com id_tipo_entrada']
+  id_tipo_entrada int [ref: > tipos_entrada.id]
+  estado varchar [note: 'valor desnormalizado — sincronizado com id_estado']
+  id_estado int [ref: > estados_equipamento.id]
+  criticidade varchar [note: 'valor desnormalizado — sincronizado com id_criticidade']
+  id_criticidade int [ref: > criticidades.id]
+  observacoes text
+  id_localizacao int [ref: > localizacao.id]
+  equipamento_ativo boolean [default: 1]
+  Note: 'Equipamentos médicos registados no sistema'
 }
 
 Table fornecedor {
@@ -47,22 +107,20 @@ Table fornecedor {
   website varchar
   pessoa_contacto varchar
   telefone_contacto varchar
-  tipo varchar [note: 'Fabricante, Distribuidor, Assistência Técnica, Fornecedor de Consumíveis']
+  tipo varchar [note: 'valor desnormalizado — sincronizado com id_tipo_fornecedor']
+  id_tipo_fornecedor int [ref: > tipos_fornecedor.id]
   observacoes text
-  fornecedor_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
-
+  fornecedor_ativo boolean [default: 1]
   Note: 'Fornecedores e entidades relacionadas com os equipamentos'
 }
 
 Table equipamento_fornecedor {
   id_equipamento int [ref: > equipamento.id]
   id_fornecedor int [ref: > fornecedor.id]
-
   indexes {
     (id_equipamento, id_fornecedor) [pk]
   }
-
-  Note: 'Tabela de associação muitos-para-muitos entre equipamentos e fornecedores'
+  Note: 'Associação M:N entre equipamentos e fornecedores'
 }
 
 Table garantia_contrato {
@@ -70,49 +128,49 @@ Table garantia_contrato {
   id_equipamento int [ref: > equipamento.id]
   data_inicio date
   data_fim date
-  tem_contrato boolean [default: 0, note: 'Indica se existe contrato de manutenção associado']
-  tipo_contrato varchar [note: 'Garantia, Contrato de Manutenção, Assistência Técnica']
+  tem_contrato boolean [default: 0]
+  tipo_contrato varchar [note: 'valor desnormalizado — sincronizado com id_tipo_contrato']
+  id_tipo_contrato int [ref: > tipos_contrato.id]
   entidade_responsavel varchar
-  periodicidade varchar [note: 'Mensal, Trimestral, Semestral, Anual']
+  periodicidade varchar [note: 'valor desnormalizado — sincronizado com id_periodicidade']
+  id_periodicidade int [ref: > periodicidades.id]
   observacoes text
-  garantia_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
-
-  Note: 'Garantias e contratos de manutenção associados a equipamentos'
+  garantia_ativo boolean [default: 1]
+  Note: 'Garantias e contratos de manutenção'
 }
 
 Table documento {
   id int [pk, increment]
   id_equipamento int [ref: > equipamento.id]
-  tipo varchar [note: 'Manual, Fatura, Certificado, Relatório Técnico']
+  tipo varchar [note: 'valor desnormalizado — sincronizado com id_tipo_documento']
+  id_tipo_documento int [ref: > tipos_documento.id]
   nome varchar
   data_documento date
   data_validade date
-  ficheiro varchar [note: 'nome do ficheiro guardado no servidor']
-  ficheiro_nome_original varchar [note: 'nome original do ficheiro enviado pelo utilizador']
-  documento_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
-
-  Note: 'Documentação associada a equipamentos (manuais, faturas, certificados...)'
+  ficheiro varchar
+  ficheiro_nome_original varchar
+  documento_ativo boolean [default: 1]
+  Note: 'Documentação associada a equipamentos'
 }
 
 Table agents {
   id int [pk, increment]
   nome varchar
-  email varbinary [note: 'encriptado com AES_ENCRYPT()']
+  email varbinary [note: 'encriptado com AES']
   password varchar
-  perfil varchar [note: 'Administrador, Técnico, Profissional de Saude']
+  perfil varchar [note: 'valor desnormalizado — sincronizado com id_perfil']
+  id_perfil int [ref: > perfis.id]
   last_login datetime
   created_at datetime [default: `CURRENT_TIMESTAMP`]
   updated_at datetime
-  agent_ativo boolean [default: 1, note: 'soft-delete: 1 = ativo, 0 = inativo']
-
-  Note: 'Utilizadores do sistema (agentes) com autenticação e perfis de acesso'
+  agent_ativo boolean [default: 1]
+  Note: 'Utilizadores do sistema com autenticação e perfis de acesso'
 }
 
 Table gestao_site {
   chave varchar [pk]
   valor text
-
-  Note: 'Conteúdos editáveis da página pública (chave-valor)'
+  Note: 'Conteúdos editáveis da página pública'
 }
 
 Table mensagem_contacto {
@@ -121,19 +179,17 @@ Table mensagem_contacto {
   email varchar
   telemovel varchar
   mensagem text
-  mensagem_lida boolean [default: 0, note: '0 = não lida, 1 = lida']
+  mensagem_lida boolean [default: 0]
   created_at datetime [default: `CURRENT_TIMESTAMP`]
-
-  Note: 'Mensagens enviadas através do formulário de contacto da área pública'
+  Note: 'Mensagens do formulário de contacto público'
 }
 
 Table logs {
   id int [pk, increment]
   tipo_evento varchar [note: 'LOGIN_OK, LOGIN_FALHOU, ERRO_BD, DADOS_ALTERADOS']
   descricao varchar
-  agente_id int [ref: > agents.id, note: 'null se o evento não está associado a um agente autenticado']
+  agente_id int [ref: > agents.id]
   ip varchar
   created_at datetime [default: `CURRENT_TIMESTAMP`]
-
-  Note: 'Registo de eventos do sistema: autenticações e alterações de dados'
+  Note: 'Registo de eventos do sistema'
 }

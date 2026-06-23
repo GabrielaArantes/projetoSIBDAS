@@ -46,7 +46,6 @@ function redirect_if_not_role(array $perfis_permitidos, $redirect_to = '/private
     }
 }
 
-
 function aes_encrypt(string $value) {
     return bin2hex(openssl_encrypt(
         $value,
@@ -58,7 +57,7 @@ function aes_encrypt(string $value) {
 }
 
 function aes_decrypt(mixed $value) {
-    if (!is_string($value) || strlen($value) % 2 !== 0) return false; // proteção básica
+    if (!is_string($value) || strlen($value) % 2 !== 0) return false;
 
     return openssl_decrypt(
         hex2bin($value),
@@ -92,6 +91,40 @@ function registar_log(string $tipo_evento, string $descricao, ?int $agente_id = 
             ':ip'        => $ip
         ]);
     } catch (PDOException $e) {
-        // Falha silenciosa — o log não deve interromper o fluxo da aplicação
+        // Falha silenciosa
     }
 }
+
+// ============================================================
+// Funções auxiliares para carregar tabelas de lookup da BD
+// ============================================================
+
+function get_pdo(): PDO
+{
+    return new PDO(
+        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
+        MYSQL_USERNAME,
+        MYSQL_PASSWORD,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ]
+    );
+}
+
+function get_lookup(string $tabela): array
+{
+    try {
+        $pdo = get_pdo();
+        return $pdo->query("SELECT id, nome FROM `$tabela` ORDER BY id")->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+function get_categorias(): array       { return get_lookup('categorias_equipamento'); }
+function get_estados(): array          { return get_lookup('estados_equipamento'); }
+function get_criticidades(): array     { return get_lookup('criticidades'); }
+function get_tipos_entrada(): array    { return get_lookup('tipos_entrada'); }
+function get_tipos_fornecedor(): array { return get_lookup('tipos_fornecedor'); }
+function get_tipos_documento(): array  { return get_lookup('tipos_documento'); }
+function get_tipos_contrato(): array   { return get_lookup('tipos_contrato'); }
+function get_periodicidades(): array   { return get_lookup('periodicidades'); }
+function get_perfis(): array           { return get_lookup('perfis'); }

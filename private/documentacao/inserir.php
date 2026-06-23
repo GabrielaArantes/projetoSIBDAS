@@ -5,34 +5,25 @@ start_session();
 
 $equipamentos = [];
 try {
-    $ligacao = new PDO(
-        "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-        MYSQL_USERNAME,
-        MYSQL_PASSWORD
-    );
-    $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $equipamentos = $ligacao->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll(PDO::FETCH_OBJ);
-    $ligacao = null;
-} catch (PDOException $err) {
-}
+    $pdo = get_pdo();
+    $equipamentos = $pdo->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll();
+} catch (PDOException $err) {}
+
+$tipos_documento = get_tipos_documento();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $tipo        = $_POST["tipo"]        ?? "";
-    $nome        = $_POST["nome"]        ?? "";
-    $data        = $_POST["data"]        ?? "";
+    $id_tipo     = $_POST["id_tipo"]     ?? "";
+    $nome        = trim($_POST["nome"]   ?? "");
+    $data        = trim($_POST["data"]   ?? "");
     $validade    = $_POST["validade"]    ?? "";
     $equipamento = $_POST["equipamento"] ?? "";
 
     $erros = [];
     $erro_sistema = "";
 
-    $tipo = trim($tipo);
-    $nome = trim($nome);
-    $data = trim($data);
-
-    if (empty($tipo)) $erros[] = "O Tipo de Documento é obrigatório.";
-    if (empty($nome)) $erros[] = "O Nome do Documento é obrigatório.";
+    if (empty($id_tipo)) $erros[] = "O Tipo de Documento é obrigatório.";
+    if (empty($nome))    $erros[] = "O Nome do Documento é obrigatório.";
 
     if (empty($data)) {
         $erros[] = "A Data do Documento é obrigatória.";
@@ -45,167 +36,118 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($validade) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $validade))
-        $erros[] = "Formato de data de validade inválido. Use AAAA-MM-DD.";
+        $erros[] = "Formato de data de validade inválido.";
 
     if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
+    if (empty($_FILES['ficheiro']['name'])) $erros[] = "O Ficheiro é obrigatório.";
 
-    if (empty($_FILES['ficheiro']['name'])) {
-        $erros[] = "O Ficheiro é obrigatório.";
-    }
+    if (empty($erros)) $nome = ucwords(strtolower($nome));
 
-    if (empty($erros)) {
-        $nome = ucwords(strtolower($nome));
-    }
-
-    // Processar o upload do ficheiro
     $nomeFicheiro = '';
     $nomeOriginal = '';
     if (empty($erros)) {
         $nomeOriginal = $_FILES['ficheiro']['name'];
-        $extensao = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
+        $extensao     = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
         $nomeFicheiro = uniqid('doc_') . '.' . $extensao;
-        $destino = __DIR__ . '/../../assets/uploads/documentos/' . $nomeFicheiro;
-
-        if (!move_uploaded_file($_FILES['ficheiro']['tmp_name'], $destino)) {
+        $destino      = __DIR__ . '/../../assets/uploads/documentos/' . $nomeFicheiro;
+        if (!move_uploaded_file($_FILES['ficheiro']['tmp_name'], $destino))
             $erros[] = "Erro ao guardar o ficheiro. Tente novamente.";
-        }
     }
 
-    // 4. Guardar na base de dados
     if (empty($erros)) {
         try {
-            $ligacao = new PDO(
-                "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",
-                MYSQL_USERNAME,
-                MYSQL_PASSWORD
+            $pdo = get_pdo();
+            $stmt = $pdo->prepare(
+                "INSERT INTO documento (id_equipamento, tipo, id_tipo_documento, nome, data_documento, data_validade, ficheiro, ficheiro_nome_original)
+                 VALUES (?, (SELECT nome FROM tipos_documento WHERE id=?), ?, ?, ?, ?, ?, ?)"
             );
-            $ligacao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $sql = "INSERT INTO documento (id_equipamento, tipo, nome, data_documento, data_validade, ficheiro, ficheiro_nome_original)
-                    VALUES (:id_equipamento, :tipo, :nome, :data, :validade, :ficheiro, :ficheiro_nome_original)";
-            $stmt = $ligacao->prepare($sql);
             $stmt->execute([
-                ':id_equipamento'         => $equipamento,
-                ':tipo'                   => $tipo,
-                ':nome'                   => $nome,
-                ':data'                   => $data,
-                ':validade'               => $validade ?: null,
-                ':ficheiro'               => $nomeFicheiro,
-                ':ficheiro_nome_original' => $nomeOriginal
+                $equipamento, $id_tipo, $id_tipo, $nome, $data,
+                $validade ?: null, $nomeFicheiro, $nomeOriginal
             ]);
 
-            $ligacao = null;
+            $agente_id = $_SESSION['agente_id'] ?? null;
+            registar_log('DADOS_ALTERADOS', 'Documento inserido: ' . $nome, $agente_id);
+
             header("Location: listar.php");
             exit;
-
         } catch (PDOException $err) {
             $erro_sistema = "Erro ao gravar os dados: " . $err->getMessage();
         }
-        $ligacao = null;
     }
 }
 ?>
-
 <?php include __DIR__ . '/../includes/header.php'; ?>
-
 <body class="pagprivada">
+<?php include __DIR__ . '/../includes/nav.php'; ?>
 
-    <?php include __DIR__ . '/../includes/nav.php'; ?>
+<main class="conteudo">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Inserir Documentação</h1>
+        <a href="listar.php" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+    </div>
 
-    <main class="conteudo">
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Inserir Documentação</h1>
-            <a href="listar.php" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left"></i> Voltar
-            </a>
+    <?php if (!empty($erros)) : ?>
+        <div class="alert alert-danger"><strong>Foram encontrados os seguintes erros:</strong>
+            <ul class="mb-0"><?php foreach ($erros as $erro) : ?><li><?= htmlspecialchars($erro) ?></li><?php endforeach; ?></ul>
         </div>
+    <?php endif; ?>
+    <?php if (!empty($erro_sistema)) : ?>
+        <div class="alert alert-danger"><strong>Erro:</strong> <p><?= htmlspecialchars($erro_sistema) ?></p></div>
+    <?php endif; ?>
 
-        <?php if (!empty($erros)) : ?>
-            <div class="alert alert-danger" role="alert">
-                <strong>Foram encontrados os seguintes erros:</strong>
-                <ul class="mb-0">
-                    <?php foreach ($erros as $erro) : ?>
-                        <li><?= htmlspecialchars($erro) ?></li>
+    <div class="shadow p-4 rounded bg-white" style="max-width: 700px; margin: auto;">
+        <form method="POST" action="inserir.php" enctype="multipart/form-data" novalidate>
+
+            <div class="mb-3">
+                <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
+                <select class="form-select" name="id_tipo" required>
+                    <option value="">Selecione o tipo...</option>
+                    <?php foreach ($tipos_documento as $op) : ?>
+                        <option value="<?= $op->id ?>" <?= (($_POST['id_tipo'] ?? '') == $op->id) ? 'selected' : '' ?>><?= htmlspecialchars($op->nome) ?></option>
                     <?php endforeach; ?>
-                </ul>
+                </select>
             </div>
-        <?php endif; ?>
 
-        <?php if (!empty($erro_sistema)) : ?>
-            <div class="alert alert-danger" role="alert">
-                <strong>Erro:</strong>
-                <p><?= htmlspecialchars($erro_sistema) ?></p>
+            <div class="mb-3">
+                <label class="form-label">Nome do Documento <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="nome" value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>" required>
             </div>
-        <?php endif; ?>
 
-        <div class="shadow p-4 rounded bg-white" style="max-width: 700px; margin: auto;">
+            <div class="mb-3">
+                <label class="form-label">Data do Documento <span class="text-danger">*</span></label>
+                <input type="text" id="data_doc" class="form-control" name="data" value="<?= htmlspecialchars($_POST['data'] ?? '') ?>" required>
+            </div>
 
-            <form method="POST" action="inserir.php" enctype="multipart/form-data" novalidate>
+            <div class="mb-3">
+                <label class="form-label">Data de Validade (opcional)</label>
+                <input type="text" id="data_validade" class="form-control" name="validade" value="<?= htmlspecialchars($_POST['validade'] ?? '') ?>">
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
-                    <select class="form-select" name="tipo" required>
-                        <option value="">Selecione o tipo...</option>
-                        <?php foreach (['Manual de Utilizador', 'Manual de Serviço', 'Certificado de Calibração', 'Contrato de Manutenção', 'Fatura', 'Declaração de Conformidade', 'Relatório Técnico'] as $op) : ?>
-                            <option value="<?= $op ?>" <?= (($_POST['tipo'] ?? '') == $op) ? 'selected' : '' ?>><?= $op ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <div class="mb-3">
+                <label class="form-label">Equipamento Associado <span class="text-danger">*</span></label>
+                <select class="form-select" name="equipamento" required>
+                    <option value="">Selecione...</option>
+                    <?php foreach ($equipamentos as $eq) : ?>
+                        <option value="<?= $eq->id ?>" <?= (($_POST['equipamento'] ?? '') == $eq->id) ? 'selected' : '' ?>><?= htmlspecialchars($eq->nome) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Nome do Documento <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="nome"
-                        value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>" required>
-                </div>
+            <div class="mb-3">
+                <label class="form-label">Ficheiro <span class="text-danger">*</span></label>
+                <input type="file" class="form-control" name="ficheiro" accept=".pdf,.jpg,.png,.doc,.docx" required>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Data do Documento <span class="text-danger">*</span></label>
-                    <input type="text" id="data_doc" class="form-control" name="data"
-                        value="<?= htmlspecialchars($_POST['data'] ?? '') ?>" required>
-                </div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+            </div>
+        </form>
+    </div>
+</main>
 
-                <div class="mb-3">
-                    <label class="form-label">Data de Validade (opcional)</label>
-                    <input type="text" id="data_validade" class="form-control" name="validade"
-                        value="<?= htmlspecialchars($_POST['validade'] ?? '') ?>">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Equipamento Associado <span class="text-danger">*</span></label>
-                    <select class="form-select" name="equipamento" required>
-                        <option value="">Selecione...</option>
-                        <?php foreach ($equipamentos as $eq) : ?>
-                            <option value="<?= $eq->id ?>" <?= (($_POST['equipamento'] ?? '') == $eq->id) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($eq->nome) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Ficheiro <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" name="ficheiro" accept=".pdf,.jpg,.png,.doc,.docx" required>
-                </div>
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-success px-4">
-                        <i class="fa-solid fa-floppy-disk me-2"></i>Guardar
-                    </button>
-                </div>
-
-            </form>
-
-        </div>
-
-    </main>
-
-    <script>
-        flatpickr("#data_doc", {
-            dateFormat: "Y-m-d"
-        });
-        flatpickr("#data_validade", {
-            dateFormat: "Y-m-d"
-        });
-    </script>
-
-    <?php include __DIR__ . '/../includes/footer.php'; ?>
+<script>
+    flatpickr("#data_doc", { dateFormat: "Y-m-d" });
+    flatpickr("#data_validade", { dateFormat: "Y-m-d" });
+</script>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
