@@ -49,16 +49,7 @@ try {
 
     <main class="conteudo">
 
-        <h1 class="mb-4">
-            Detalhes da Garantia e Contrato
-            <?php if ($gc) : ?>
-                <?php if ($gc->garantia_ativo == 1) : ?>
-                    <span class="badge bg-success">Ativo</span>
-                <?php else : ?>
-                    <span class="badge bg-secondary">Inativo</span>
-                <?php endif; ?>
-            <?php endif; ?>
-        </h1>
+        <h1 class="mb-4">Detalhes da Garantia e Contrato</h1>
 
         <?php if (!empty($erro)) : ?>
             <div class="alert alert-danger"><?= $erro ?></div>

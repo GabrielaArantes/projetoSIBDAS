@@ -45,8 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = "Formato de data de início inválido.";
     if (!empty($fim) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fim))
         $erros[] = "Formato de data de fim inválido.";
-    if (!empty($inicio) && !empty($fim) && $fim < $inicio)
-        $erros[] = "A data de fim não pode ser anterior à data de início.";
+    if (!empty($inicio) && $inicio > date('Y-m-d'))
+        $erros[] = "A data de início não pode ser uma data futura.";
+    if (!empty($inicio) && !empty($fim) && $fim <= $inicio)
+        $erros[] = "A data de fim deve ser posterior à data de início.";
 
     if (empty($erros)) {
         try {

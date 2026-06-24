@@ -71,13 +71,6 @@ try {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>
                 Detalhes do Equipamento
-                <?php if ($equipamento) : ?>
-                    <?php if ($equipamento->equipamento_ativo == 1) : ?>
-                        <span class="badge bg-success">Ativo</span>
-                    <?php else : ?>
-                        <span class="badge bg-secondary">Inativo</span>
-                    <?php endif; ?>
-                <?php endif; ?>
             </h1>
             <a href="listar.php" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left me-2"></i>Voltar
@@ -118,14 +111,14 @@ try {
                         <p><strong>Categoria / Grupo:</strong> <?= htmlspecialchars($equipamento->categoria) ?></p>
                         <p><strong>Marca:</strong> <?= htmlspecialchars($equipamento->marca) ?></p>
                         <p><strong>Modelo:</strong> <?= htmlspecialchars($equipamento->modelo) ?></p>
-                        <p><strong>Número de Série:</strong> <?= htmlspecialchars($equipamento->num_serie) ?></p>
-                        <p><strong>Fabricante:</strong> <?= htmlspecialchars($equipamento->fabricante) ?></p>
+                        <p><strong>Número de Série:</strong> <?= htmlspecialchars($equipamento->num_serie ?? '') ?></p>
+                        <p><strong>Fabricante:</strong> <?= htmlspecialchars($equipamento->fabricante ?? '') ?></p>
                         <p><strong>Data de Aquisição:</strong> <?= $equipamento->data_aquisicao ? date('d/m/Y', strtotime($equipamento->data_aquisicao)) : '-' ?></p>
-                        <p><strong>Ano de Fabrico:</strong> <?= htmlspecialchars($equipamento->ano_fabrico) ?></p>
+                        <p><strong>Ano de Fabrico:</strong> <?= $equipamento->ano_fabrico ? htmlspecialchars($equipamento->ano_fabrico) : '-' ?></p>
                         <p><strong>Custo de Aquisição:</strong> <?= $equipamento->custo ? number_format($equipamento->custo, 2, ',', '.') . ' €' : '-' ?></p>
-                        <p><strong>Tipo de Entrada:</strong> <?= htmlspecialchars($equipamento->tipo_entrada) ?></p>
-                        <p><strong>Estado Atual:</strong> <?= htmlspecialchars($equipamento->estado) ?></p>
-                        <p><strong>Criticidade:</strong> <?= htmlspecialchars($equipamento->criticidade) ?></p>
+                        <p><strong>Tipo de Entrada:</strong> <?= htmlspecialchars($equipamento->tipo_entrada ?? '') ?></p>
+                        <p><strong>Estado Atual:</strong> <?= htmlspecialchars($equipamento->estado ?? '') ?></p>
+                        <p><strong>Criticidade:</strong> <?= htmlspecialchars($equipamento->criticidade ?? '') ?></p>
                         <p><strong>Observações:</strong> <?= $equipamento->observacoes ? htmlspecialchars($equipamento->observacoes) : '-' ?></p>
                     </div>
                 </div>
@@ -134,13 +127,13 @@ try {
                     <div class="p-3 border rounded bg-light">
                         <h5 class="fw-bold mb-3">Fornecedor</h5>
                         <?php if ($fornecedor) : ?>
-                            <p><strong>Nome:</strong> <?= htmlspecialchars($fornecedor->nome) ?></p>
-                            <p><strong>NIF:</strong> <?= htmlspecialchars($fornecedor->nif) ?></p>
-                            <p><strong>Email:</strong> <?= htmlspecialchars($fornecedor->email) ?></p>
-                            <p><strong>Telefone:</strong> <?= htmlspecialchars($fornecedor->telefone) ?></p>
-                            <p><strong>Morada:</strong> <?= htmlspecialchars($fornecedor->morada) ?></p>
-                            <p><strong>Tipo:</strong> <?= htmlspecialchars($fornecedor->tipo) ?></p>
-                            <p><strong>Pessoa de Contacto:</strong> <?= htmlspecialchars($fornecedor->pessoa_contacto) ?></p>
+                            <p><strong>Nome:</strong> <?= htmlspecialchars($fornecedor->nome ?? '') ?></p>
+                            <p><strong>NIF:</strong> <?= htmlspecialchars($fornecedor->nif ?? '') ?></p>
+                            <p><strong>Email:</strong> <?= htmlspecialchars($fornecedor->email ?? '') ?></p>
+                            <p><strong>Telefone:</strong> <?= htmlspecialchars($fornecedor->telefone ?? '') ?></p>
+                            <p><strong>Morada:</strong> <?= $fornecedor->morada ? htmlspecialchars($fornecedor->morada) : '-' ?></p>
+                            <p><strong>Tipo:</strong> <?= htmlspecialchars($fornecedor->tipo ?? '') ?></p>
+                            <p><strong>Pessoa de Contacto:</strong> <?= $fornecedor->pessoa_contacto ? htmlspecialchars($fornecedor->pessoa_contacto) : '-' ?></p>
                         <?php else : ?>
                             <p class="text-muted">Nenhum fornecedor associado.</p>
                         <?php endif; ?>
@@ -163,9 +156,9 @@ try {
                         <?php if ($garantia) : ?>
                             <p><strong>Data de início:</strong> <?= $garantia->data_inicio ? date('d/m/Y', strtotime($garantia->data_inicio)) : '-' ?></p>
                             <p><strong>Data de fim:</strong> <?= $garantia->data_fim ? date('d/m/Y', strtotime($garantia->data_fim)) : '-' ?></p>
-                            <p><strong>Tipo de contrato:</strong> <?= htmlspecialchars($garantia->tipo_contrato) ?></p>
-                            <p><strong>Entidade responsável:</strong> <?= htmlspecialchars($garantia->entidade_responsavel) ?></p>
-                            <p><strong>Periodicidade:</strong> <?= htmlspecialchars($garantia->periodicidade) ?></p>
+                            <p><strong>Tipo de contrato:</strong> <?= $garantia->tipo_contrato ? htmlspecialchars($garantia->tipo_contrato) : '-' ?></p>
+                            <p><strong>Entidade responsável:</strong> <?= $garantia->entidade_responsavel ? htmlspecialchars($garantia->entidade_responsavel) : '-' ?></p>
+                            <p><strong>Periodicidade:</strong> <?= $garantia->periodicidade ? htmlspecialchars($garantia->periodicidade) : '-' ?></p>
                             <p><strong>Observações:</strong> <?= $garantia->observacoes ? htmlspecialchars($garantia->observacoes) : '-' ?></p>
                         <?php else : ?>
                             <p class="text-muted">Nenhuma garantia ou contrato associado.</p>

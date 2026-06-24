@@ -50,16 +50,7 @@ try {
     <main class="conteudo">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>
-                Detalhes da Documentação
-                <?php if ($documento) : ?>
-                    <?php if ($documento->documento_ativo == 1) : ?>
-                        <span class="badge bg-success">Ativo</span>
-                    <?php else : ?>
-                        <span class="badge bg-secondary">Inativo</span>
-                    <?php endif; ?>
-                <?php endif; ?>
-            </h1>
+            <h1>Detalhes da Documentação</h1>
             <div class="d-flex gap-2">
                 <a href="listar.php" class="btn btn-secondary">
                     <i class="fa-solid fa-arrow-left"></i> Voltar

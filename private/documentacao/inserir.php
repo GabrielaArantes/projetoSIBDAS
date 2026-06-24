@@ -17,13 +17,12 @@ try {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $erros = array_merge(
-        validar_nome($_POST['nome'] ?? ''),
+        validar_nome_documento($_POST['nome'] ?? ''),
         validar_select_obrigatorio($_POST['id_tipo'] ?? '', 'Tipo de Documento'),
         validar_data($_POST['data'] ?? '', 'Data do Documento'),
-        validar_select_obrigatorio($_POST['equipamento'] ?? '', 'Equipamento Associado')
+        validar_select_obrigatorio($_POST['equipamento'] ?? '', 'Equipamento Associado'),
+        validar_ficheiro_documento($_FILES['ficheiro'] ?? [])
     );
-
-    if (empty($_FILES['ficheiro']['name'])) $erros[] = "O Ficheiro é obrigatório.";
 
     $nomeFicheiro = '';
     $nomeOriginal = '';
@@ -98,6 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-3">
                 <label class="form-label">Nome do Documento <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" name="nome" value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>" required>
+                <div class="form-text">Não pode conter números.</div>
             </div>
 
             <div class="mb-3">
@@ -122,7 +122,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="mb-3">
                 <label class="form-label">Ficheiro <span class="text-danger">*</span></label>
-                <input type="file" class="form-control" name="ficheiro" accept=".pdf,.jpg,.png,.doc,.docx" required>
+                <input type="file" class="form-control" name="ficheiro" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                <div class="form-text">Formatos aceites: PDF, JPG, PNG, DOC, DOCX.</div>
             </div>
 
             <div class="d-flex justify-content-end mt-4">

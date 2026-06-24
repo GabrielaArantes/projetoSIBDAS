@@ -57,13 +57,6 @@ try {
 
         <h1 class="mb-4">
             Detalhes da Localização
-            <?php if ($localizacao) : ?>
-                <?php if ($localizacao->localizacao_ativo == 1) : ?>
-                    <span class="badge bg-success">Ativo</span>
-                <?php else : ?>
-                    <span class="badge bg-secondary">Inativo</span>
-                <?php endif; ?>
-            <?php endif; ?>
         </h1>
 
         <?php if (!empty($erro)) : ?>

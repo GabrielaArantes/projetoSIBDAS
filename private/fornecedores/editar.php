@@ -10,8 +10,8 @@ if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
 }
 
 $sucesso = '';
-$erro    = '';
-$erros   = [];
+$erro = '';
+$erros = [];
 $fornecedor = null;
 
 $idEncrypted = $_GET['id'] ?? null;
@@ -22,18 +22,45 @@ $id = (int)$id;
 $tipos_fornecedor = get_tipos_fornecedor();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $erros = array_merge(
-        validar_nome($_POST['nome_empresa'] ?? ''),
-        validar_nif($_POST['nif'] ?? ''),
-        validar_telefone($_POST['telefone'] ?? ''),
-        validar_email($_POST['email'] ?? ''),
-        validar_select_obrigatorio($_POST['id_tipo_fornecedor'] ?? '', 'Tipo de Fornecedor'),
-        validar_telefone_opcional($_POST['telefone_contacto'] ?? '', 'Telefone da Pessoa de Contacto')
-    );
+
+    $nome_empresa    = trim($_POST['nome_empresa'] ?? '');
+    $nif             = trim($_POST['nif'] ?? '');
+    $telefone        = trim($_POST['telefone'] ?? '');
+    $email           = trim($_POST['email'] ?? '');
+    $tel_contacto    = trim($_POST['telefone_contacto'] ?? '');
+    $id_tipo         = $_POST['id_tipo_fornecedor'] ?? '';
+
+    $erros = [];
+
+    if (empty($nome_empresa)) $erros[] = "O Nome da Empresa é obrigatório.";
+
+    if (empty($nif)) {
+        $erros[] = "O NIF é obrigatório.";
+    } elseif (!preg_match('/^\d{9}$/', $nif)) {
+        $erros[] = "O NIF deve ter exatamente 9 dígitos.";
+    }
+
+    if (empty($telefone)) {
+        $erros[] = "O Telefone é obrigatório.";
+    } elseif (!preg_match('/^[29]\d{8}$/', $telefone)) {
+        $erros[] = "O Telefone deve ter 9 dígitos e começar por 9 ou 2.";
+    }
+
+    if (empty($email)) {
+        $erros[] = "O Email é obrigatório.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $erros[] = "O endereço de email não é válido.";
+    }
+
+    if (empty($id_tipo)) $erros[] = "O Tipo de Fornecedor é obrigatório.";
+
+    if (!empty($tel_contacto) && !preg_match('/^[29]\d{8}$/', $tel_contacto)) {
+        $erros[] = "O Telefone da Pessoa de Contacto deve ter 9 dígitos e começar por 9 ou 2.";
+    }
 
     if (empty($erros)) {
         try {
-            $pdo  = get_pdo();
+            $pdo = get_pdo();
             $stmt = $pdo->prepare(
                 "UPDATE fornecedor SET nome=?, nif=?, telefone=?, email=?, morada=?, website=?,
                  pessoa_contacto=?, telefone_contacto=?,
@@ -41,22 +68,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                  observacoes=? WHERE id=?"
             );
             $stmt->execute([
-                ucwords(strtolower($_POST['nome_empresa'])),
-                $_POST['nif'],
-                $_POST['telefone'],
-                strtolower($_POST['email']),
+                ucwords(strtolower($nome_empresa)),
+                $nif,
+                $telefone,
+                strtolower($email),
                 $_POST['morada'],
                 $_POST['website'],
                 ucwords(strtolower($_POST['pessoa_contacto'] ?? '')),
-                $_POST['telefone_contacto'],
-                $_POST['id_tipo_fornecedor'], $_POST['id_tipo_fornecedor'],
+                $tel_contacto,
+                $id_tipo, $id_tipo,
                 $_POST['observacoes'],
                 $id
             ]);
 
-            $sucesso   = "Fornecedor atualizado com sucesso!";
+            $sucesso = "Fornecedor atualizado com sucesso!";
             $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Fornecedor editado (id: ' . $id . '): ' . ($_POST['nome_empresa'] ?? ''), $agente_id);
+            registar_log('DADOS_ALTERADOS', 'Fornecedor editado (id: ' . $id . '): ' . $nome_empresa, $agente_id);
 
         } catch (PDOException $err) {
             $erro = "Erro ao atualizar: " . $err->getMessage();
@@ -65,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 try {
-    $pdo  = get_pdo();
+    $pdo = get_pdo();
     $stmt = $pdo->prepare("SELECT * FROM fornecedor WHERE id = ?");
     $stmt->execute([$id]);
     $fornecedor = $stmt->fetch();
@@ -82,10 +109,10 @@ try {
     <h1 class="mb-4">Editar Fornecedor</h1>
 
     <?php if (!empty($sucesso)) : ?><div class="alert alert-success"><?= $sucesso ?></div><?php endif; ?>
-    <?php if (!empty($erro))    : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
-    <?php if (!empty($erros))   : ?>
-        <div class="alert alert-danger">
-            <?php foreach ($erros as $e) : ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+    <?php if (!empty($erro)) : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
+    <?php if (!empty($erros)) : ?>
+        <div class="alert alert-danger"><strong>Foram encontrados os seguintes erros:</strong>
+            <ul class="mb-0"><?php foreach ($erros as $e) : ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul>
         </div>
     <?php endif; ?>
 
