@@ -1,4 +1,5 @@
 <?php
+// Formulário de inserção de localização (edifício, piso, serviço, sala)
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/localizacao/listar.php');
 start_session();

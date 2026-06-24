@@ -1,4 +1,5 @@
 <?php
+// Página inicial da área privada após autenticação
 require_once 'includes/funcoes.php';
 redirect_if_not_logged();
 start_session();

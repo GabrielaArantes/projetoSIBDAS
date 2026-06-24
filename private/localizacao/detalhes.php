@@ -1,4 +1,5 @@
 <?php
+// Mostra os detalhes de uma localização e os equipamentos nela registados
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();

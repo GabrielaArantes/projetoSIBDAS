@@ -1,4 +1,5 @@
 <?php
+// Dashboard com indicadores do inventário em tempo real e gráficos de distribuição
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();

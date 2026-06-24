@@ -1,4 +1,5 @@
 <?php
+// Formulário de inserção de equipamento com cinco separadores: dados, fornecedor, localização, garantia e documentação
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/equipamentos/listar.php');
 start_session();

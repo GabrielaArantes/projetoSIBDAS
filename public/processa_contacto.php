@@ -1,12 +1,15 @@
 <?php
+// Processa o formulário de contacto público e guarda a mensagem na base de dados
 session_start();
 require_once __DIR__ . '/../config/config.php';
 
+// Apenas aceita pedidos POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: index.php#contacto');
     exit;
 }
 
+// Recolhe e limpa os dados enviados pelo formulário
 $nome      = trim($_POST['nome'] ?? '');
 $email     = trim($_POST['email'] ?? '');
 $telemovel = trim($_POST['telemovel'] ?? '');
@@ -14,6 +17,7 @@ $mensagem  = trim($_POST['mensagem'] ?? '');
 
 $erros = [];
 
+// Valida os campos obrigatórios
 if (empty($nome)) {
     $erros[] = 'O Nome é obrigatório.';
 }
@@ -34,12 +38,14 @@ if (empty($mensagem)) {
     $erros[] = 'A Mensagem é obrigatória.';
 }
 
+// Se há erros, guarda-os na sessão e redireciona
 if (!empty($erros)) {
     $_SESSION['contacto_erros'] = $erros;
     header('Location: index.php#contacto');
     exit;
 }
 
+// Guarda a mensagem na base de dados
 try {
     $ligacao = new PDO(
         "mysql:host=" . MYSQL_HOST . ";port=" . MYSQL_PORT . ";dbname=" . MYSQL_DATABASE . ";charset=utf8",

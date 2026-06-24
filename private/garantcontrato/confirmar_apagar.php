@@ -1,4 +1,5 @@
 <?php
+// Página de confirmação antes de desativar uma garantia/contrato (soft-delete)
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/garantcontrato/listar.php');
 start_session();

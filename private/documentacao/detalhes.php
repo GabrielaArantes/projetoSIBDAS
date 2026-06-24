@@ -1,4 +1,5 @@
 <?php
+// Mostra os detalhes de um documento e permite abrir o ficheiro
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();

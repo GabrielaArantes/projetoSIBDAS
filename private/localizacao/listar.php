@@ -1,4 +1,5 @@
 <?php
+// Lista todas as localizações com pesquisa e filtros
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();

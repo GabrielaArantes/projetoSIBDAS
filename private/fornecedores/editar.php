@@ -1,4 +1,5 @@
 <?php
+// Formulário de edição de fornecedor com validação de NIF, telefone e email
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/fornecedores/listar.php');
 start_session();

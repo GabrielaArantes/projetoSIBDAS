@@ -1,4 +1,5 @@
 <?php
+// Formulário de edição de localização com os campos pré-preenchidos
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/localizacao/listar.php');
 start_session();

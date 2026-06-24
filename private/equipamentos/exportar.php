@@ -1,4 +1,5 @@
 <?php
+// Exporta a listagem de equipamentos em CSV, JSON ou PDF
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_logged();
 start_session();

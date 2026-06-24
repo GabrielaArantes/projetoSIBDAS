@@ -1,4 +1,5 @@
 <?php
+// Página de login da área privada
 require_once __DIR__ . '/../config/config.php';
 ?>
 

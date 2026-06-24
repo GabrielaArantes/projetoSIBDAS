@@ -1,4 +1,5 @@
 <?php
+// Formulário de inserção de documento com upload de ficheiro (PDF, JPG, PNG, DOC, DOCX)
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/documentacao/listar.php');
 start_session();

@@ -1,7 +1,8 @@
 <?php
+// Carrega as configurações globais da aplicação
 require_once __DIR__ . '/../../config/config.php';
 
-// Inicia a sessão se ainda não estiver iniciada
+// Inicia a sessão PHP se ainda não estiver ativa
 function start_session()
 {
     if (session_status() == PHP_SESSION_NONE) {
@@ -9,11 +10,13 @@ function start_session()
     }
 }
 
+// Verifica se existe uma sessão de utilizador ativa
 function check_session()
 {
     return isset($_SESSION['utilizador']);
 }
 
+// Redireciona para o login se o utilizador não estiver autenticado
 function redirect_if_not_logged($redirect_to = '/public/login.php')
 {
     start_session();
@@ -23,6 +26,7 @@ function redirect_if_not_logged($redirect_to = '/public/login.php')
     }
 }
 
+// Termina a sessão e redireciona para o login
 function logout_and_redirect($redirect_to = '/public/login.php')
 {
     start_session();
@@ -32,6 +36,7 @@ function logout_and_redirect($redirect_to = '/public/login.php')
     exit;
 }
 
+// Verifica se o utilizador tem o perfil necessário para aceder à página
 function redirect_if_not_role(array $perfis_permitidos, $redirect_to = '/private/dashboard/dashboard.php')
 {
     start_session();
@@ -46,6 +51,7 @@ function redirect_if_not_role(array $perfis_permitidos, $redirect_to = '/private
     }
 }
 
+// Encripta um valor com AES-256-CBC para uso seguro nos URLs
 function aes_encrypt(string $value) {
     return bin2hex(openssl_encrypt(
         $value,
@@ -56,6 +62,7 @@ function aes_encrypt(string $value) {
     ));
 }
 
+// Desencripta um valor recebido via URL
 function aes_decrypt(mixed $value) {
     if (!is_string($value) || strlen($value) % 2 !== 0) return false;
 
@@ -68,6 +75,7 @@ function aes_decrypt(mixed $value) {
     );
 }
 
+// Regista um evento no log do sistema (autenticações, alterações de dados, erros)
 function registar_log(string $tipo_evento, string $descricao, ?int $agente_id = null)
 {
     try {
@@ -91,14 +99,13 @@ function registar_log(string $tipo_evento, string $descricao, ?int $agente_id = 
             ':ip'        => $ip
         ]);
     } catch (PDOException $e) {
-        // Falha silenciosa
+        // Falha silenciosa para não interromper o fluxo da aplicação
     }
 }
 
-// ============================================================
 // Funções auxiliares para carregar tabelas de lookup da BD
-// ============================================================
 
+// Cria e devolve uma ligação PDO à base de dados
 function get_pdo(): PDO
 {
     return new PDO(
@@ -109,6 +116,7 @@ function get_pdo(): PDO
     );
 }
 
+// Carrega uma tabela de lookup genérica (id e nome)
 function get_lookup(string $tabela): array
 {
     try {
@@ -119,6 +127,7 @@ function get_lookup(string $tabela): array
     }
 }
 
+// Funções específicas para cada tabela de lookup utilizada nos formulários
 function get_categorias(): array       { return get_lookup('categorias_equipamento'); }
 function get_estados(): array          { return get_lookup('estados_equipamento'); }
 function get_criticidades(): array     { return get_lookup('criticidades'); }

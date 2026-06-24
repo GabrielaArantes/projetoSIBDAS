@@ -1,4 +1,5 @@
 <?php
+// Formulário de edição de equipamento com os campos pré-preenchidos e validações no servidor
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/equipamentos/listar.php');
 start_session();

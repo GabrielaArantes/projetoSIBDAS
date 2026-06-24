@@ -1,4 +1,5 @@
 <?php
+// Lista as mensagens de contacto recebidas pelo formulário público
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador'], '/private/dashboard/dashboard.php');
 start_session();

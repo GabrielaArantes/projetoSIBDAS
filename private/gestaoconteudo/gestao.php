@@ -1,4 +1,5 @@
 <?php
+// Permite ao Administrador editar os conteúdos da área pública sem alterar o HTML
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador'], '/private/dashboard/dashboard.php');
 start_session();

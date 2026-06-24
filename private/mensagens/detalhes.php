@@ -1,4 +1,5 @@
 <?php
+// Mostra o detalhe de uma mensagem de contacto
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador'], '/private/dashboard/dashboard.php');
 start_session();
