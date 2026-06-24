@@ -25,12 +25,12 @@ $defaults = [
     'fun3' => 'Localização e estado dos dispositivos',
     'fun4' => 'Alertas de manutenção e avarias',
     'footer_morada' => 'Morada',
-    'footer_cod_postal' => 'codigopostal, Porto',
+    'footer_cod_postal' => '4249-015, Porto',
     'footer_horario_semana' => '2ª a 6ª Feira: 7h - 21h',
     'footer_horario_sabado' => 'Sábado e Feriados: 9h - 15h',
     'footer_horario_domingo' => 'Domingos: Encerrados',
     'footer_email' => 'geral@medstock.pt',
-    'footer_telefone' => '+351 9xx xxx xxx',
+    'footer_telefone' => '+351 912 031 180',
 ];
 
 $conteudos = $defaults;

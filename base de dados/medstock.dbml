@@ -1,66 +1,81 @@
 // ============================================================
 // MedStock — Diagrama da Base de Dados (DBML)
 // Projeto SIBDAS — Gestão de Inventário de Equipamento Hospitalar
+// Gabriela Arantes — 1241094 — LEBIOM 2025-2026
 // Usar em: https://dbdiagram.io
 // ============================================================
 
-// --- Tabelas de lookup ---
+// --- Tabelas de lookup (3NF) ---
+
+Table perfis {
+  id int [pk, increment]
+  nome varchar
+  Note: 'Perfis de acesso dos utilizadores'
+}
 
 Table categorias_equipamento {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Categorias dos equipamentos médicos (3NF)'
+  Note: 'Categorias dos equipamentos médicos'
 }
 
 Table estados_equipamento {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Estados operacionais dos equipamentos (3NF)'
+  Note: 'Estados operacionais dos equipamentos'
 }
 
 Table criticidades {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Níveis de criticidade dos equipamentos (3NF)'
+  Note: 'Níveis de criticidade dos equipamentos'
 }
 
 Table tipos_entrada {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Tipos de entrada dos equipamentos (3NF)'
+  Note: 'Tipos de entrada dos equipamentos'
 }
 
 Table tipos_fornecedor {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Tipos de fornecedor (3NF)'
+  Note: 'Tipos de fornecedor'
 }
 
 Table tipos_documento {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Tipos de documento (3NF)'
+  Note: 'Tipos de documento'
 }
 
 Table tipos_contrato {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Tipos de contrato/garantia (3NF)'
+  Note: 'Tipos de contrato/garantia'
 }
 
 Table periodicidades {
   id int [pk, increment]
   nome varchar [unique]
-  Note: 'Periodicidades de manutenção (3NF)'
-}
-
-Table perfis {
-  id int [pk, increment]
-  nome varchar [unique]
-  Note: 'Perfis de acesso dos utilizadores (3NF)'
+  Note: 'Periodicidades de manutenção'
 }
 
 // --- Tabelas principais ---
+
+Table agents {
+  id int [pk, increment]
+  nome varchar [not null]
+  email varbinary [not null, Note: 'Encriptado com AES-256-CBC']
+  password varchar [not null, Note: 'Hash bcrypt via password_hash()']
+  perfil varchar [Note: 'Valor desnormalizado — sincronizado com id_perfil']
+  id_perfil int [ref: > perfis.id]
+  last_login datetime
+  created_at datetime [default: `CURRENT_TIMESTAMP`]
+  updated_at datetime
+  agent_ativo tinyint [default: 1]
+  Note: 'Utilizadores do sistema com autenticação e perfis de acesso'
+}
 
 Table localizacao {
   id int [pk, increment]
@@ -68,15 +83,15 @@ Table localizacao {
   piso varchar
   servico varchar
   sala varchar
-  localizacao_ativo boolean [default: 1]
+  localizacao_ativo tinyint [default: 1]
   Note: 'Localizações físicas dos equipamentos no hospital'
 }
 
 Table equipamento {
   id int [pk, increment]
-  codigo_interno varchar [unique]
-  nome varchar
-  categoria varchar [note: 'valor desnormalizado — sincronizado com id_categoria']
+  codigo_interno varchar [unique, Note: 'Código único de inventário']
+  nome varchar [not null]
+  categoria varchar [Note: 'Valor desnormalizado — sincronizado com id_categoria']
   id_categoria int [ref: > categorias_equipamento.id]
   marca varchar
   modelo varchar
@@ -85,21 +100,21 @@ Table equipamento {
   data_aquisicao date
   ano_fabrico int
   custo decimal
-  tipo_entrada varchar [note: 'valor desnormalizado — sincronizado com id_tipo_entrada']
+  tipo_entrada varchar [Note: 'Valor desnormalizado — sincronizado com id_tipo_entrada']
   id_tipo_entrada int [ref: > tipos_entrada.id]
-  estado varchar [note: 'valor desnormalizado — sincronizado com id_estado']
+  estado varchar [Note: 'Valor desnormalizado — sincronizado com id_estado']
   id_estado int [ref: > estados_equipamento.id]
-  criticidade varchar [note: 'valor desnormalizado — sincronizado com id_criticidade']
+  criticidade varchar [Note: 'Valor desnormalizado — sincronizado com id_criticidade']
   id_criticidade int [ref: > criticidades.id]
   observacoes text
   id_localizacao int [ref: > localizacao.id]
-  equipamento_ativo boolean [default: 1]
+  equipamento_ativo tinyint [default: 1]
   Note: 'Equipamentos médicos registados no sistema'
 }
 
 Table fornecedor {
   id int [pk, increment]
-  nome varchar
+  nome varchar [not null]
   nif varchar
   telefone varchar
   email varchar
@@ -107,10 +122,10 @@ Table fornecedor {
   website varchar
   pessoa_contacto varchar
   telefone_contacto varchar
-  tipo varchar [note: 'valor desnormalizado — sincronizado com id_tipo_fornecedor']
+  tipo varchar [Note: 'Valor desnormalizado — sincronizado com id_tipo_fornecedor']
   id_tipo_fornecedor int [ref: > tipos_fornecedor.id]
   observacoes text
-  fornecedor_ativo boolean [default: 1]
+  fornecedor_ativo tinyint [default: 1]
   Note: 'Fornecedores e entidades relacionadas com os equipamentos'
 }
 
@@ -128,43 +143,40 @@ Table garantia_contrato {
   id_equipamento int [ref: > equipamento.id]
   data_inicio date
   data_fim date
-  tem_contrato boolean [default: 0]
-  tipo_contrato varchar [note: 'valor desnormalizado — sincronizado com id_tipo_contrato']
+  tem_contrato tinyint [default: 0]
+  tipo_contrato varchar [Note: 'Valor desnormalizado — sincronizado com id_tipo_contrato']
   id_tipo_contrato int [ref: > tipos_contrato.id]
   entidade_responsavel varchar
-  periodicidade varchar [note: 'valor desnormalizado — sincronizado com id_periodicidade']
+  periodicidade varchar [Note: 'Valor desnormalizado — sincronizado com id_periodicidade']
   id_periodicidade int [ref: > periodicidades.id]
   observacoes text
-  garantia_ativo boolean [default: 1]
-  Note: 'Garantias e contratos de manutenção'
+  garantia_ativo tinyint [default: 1]
+  Note: 'Garantias e contratos de manutenção dos equipamentos'
 }
 
 Table documento {
   id int [pk, increment]
   id_equipamento int [ref: > equipamento.id]
-  tipo varchar [note: 'valor desnormalizado — sincronizado com id_tipo_documento']
+  tipo varchar [Note: 'Valor desnormalizado — sincronizado com id_tipo_documento']
   id_tipo_documento int [ref: > tipos_documento.id]
   nome varchar
   data_documento date
   data_validade date
   ficheiro varchar
   ficheiro_nome_original varchar
-  documento_ativo boolean [default: 1]
-  Note: 'Documentação associada a equipamentos'
+  documento_ativo tinyint [default: 1]
+  Note: 'Documentação associada aos equipamentos'
 }
 
-Table agents {
+Table mensagem_contacto {
   id int [pk, increment]
-  nome varchar
-  email varbinary [note: 'encriptado com AES']
-  password varchar
-  perfil varchar [note: 'valor desnormalizado — sincronizado com id_perfil']
-  id_perfil int [ref: > perfis.id]
-  last_login datetime
+  nome varchar [not null]
+  email varchar [not null]
+  telemovel varchar [not null]
+  mensagem text [not null]
+  mensagem_lida tinyint [default: 0]
   created_at datetime [default: `CURRENT_TIMESTAMP`]
-  updated_at datetime
-  agent_ativo boolean [default: 1]
-  Note: 'Utilizadores do sistema com autenticação e perfis de acesso'
+  Note: 'Mensagens do formulário de contacto público'
 }
 
 Table gestao_site {
@@ -173,23 +185,22 @@ Table gestao_site {
   Note: 'Conteúdos editáveis da página pública'
 }
 
-Table mensagem_contacto {
-  id int [pk, increment]
-  nome varchar
-  email varchar
-  telemovel varchar
-  mensagem text
-  mensagem_lida boolean [default: 0]
-  created_at datetime [default: `CURRENT_TIMESTAMP`]
-  Note: 'Mensagens do formulário de contacto público'
-}
-
 Table logs {
   id int [pk, increment]
-  tipo_evento varchar [note: 'LOGIN_OK, LOGIN_FALHOU, ERRO_BD, DADOS_ALTERADOS']
-  descricao varchar
+  tipo_evento varchar [not null, Note: 'LOGIN_OK, LOGIN_FALHOU, DADOS_ALTERADOS, ERRO_BD']
+  descricao varchar [not null]
   agente_id int [ref: > agents.id]
   ip varchar
   created_at datetime [default: `CURRENT_TIMESTAMP`]
-  Note: 'Registo de eventos do sistema'
+  Note: 'Registo de eventos e auditoria do sistema'
+}
+
+Table consumivel {
+  id int [pk, increment]
+  Note: 'Tabela reservada para gestão de consumíveis'
+}
+
+Table utilizador {
+  id int [pk, increment]
+  Note: 'Tabela reservada'
 }

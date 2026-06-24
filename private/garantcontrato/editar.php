@@ -10,32 +10,47 @@ if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
 }
 
 $sucesso = '';
-$erro = '';
-$erros = [];
-$gc = null;
+$erro    = '';
+$erros   = [];
+$gc      = null;
 
 $idEncrypted = $_GET['id'] ?? null;
-$id = aes_decrypt($idEncrypted);
+$id          = aes_decrypt($idEncrypted);
 if (!$id || !is_numeric($id)) { header("Location: listar.php"); exit; }
 $id = (int)$id;
 
-$equipamentos     = [];
-$tipos_contrato   = get_tipos_contrato();
-$periodicidades   = get_periodicidades();
+$equipamentos   = [];
+$tipos_contrato = get_tipos_contrato();
+$periodicidades = get_periodicidades();
 
 try {
-    $pdo = get_pdo();
+    $pdo          = get_pdo();
     $equipamentos = $pdo->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll();
 } catch (PDOException $err) {
     $erro = "Erro ao carregar lista de equipamentos.";
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $erros = validar_select_obrigatorio($_POST['equipamento'] ?? '', 'Equipamento Associado');
+
+    $entidade = ucwords(strtolower($_POST['entidade'] ?? ''));
+    $inicio   = trim($_POST['inicio'] ?? '');
+    $fim      = trim($_POST['fim']    ?? '');
+
+    $erros = array_merge(
+        validar_select_obrigatorio($_POST['equipamento'] ?? '', 'Equipamento Associado'),
+        validar_select_obrigatorio($_POST['id_tipo']     ?? '', 'Tipo de Contrato')
+    );
+
+    if (!empty($inicio) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicio))
+        $erros[] = "Formato de data de início inválido.";
+    if (!empty($fim) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fim))
+        $erros[] = "Formato de data de fim inválido.";
+    if (!empty($inicio) && !empty($fim) && $fim < $inicio)
+        $erros[] = "A data de fim não pode ser anterior à data de início.";
 
     if (empty($erros)) {
         try {
-            $pdo = get_pdo();
+            $pdo  = get_pdo();
             $stmt = $pdo->prepare(
                 "UPDATE garantia_contrato SET
                     id_equipamento=?, data_inicio=?, data_fim=?, tem_contrato=?,
@@ -47,17 +62,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $stmt->execute([
                 $_POST['equipamento'],
-                $_POST['inicio'] ?: null,
-                $_POST['fim'] ?: null,
+                $inicio ?: null,
+                $fim    ?: null,
                 isset($_POST['tem_contrato']) ? 1 : 0,
                 $_POST['id_tipo'], $_POST['id_tipo'],
-                $_POST['entidade'],
+                $entidade,
                 $_POST['id_periodicidade'] ?: null, $_POST['id_periodicidade'] ?: null,
                 $_POST['observacoes'],
                 $id
             ]);
 
-            $sucesso = "Garantia/Contrato atualizado com sucesso!";
+            $sucesso   = "Garantia/Contrato atualizado com sucesso!";
             $agente_id = $_SESSION['agente_id'] ?? null;
             registar_log('DADOS_ALTERADOS', 'Garantia/Contrato editado (id: ' . $id . ')', $agente_id);
 
@@ -85,8 +100,12 @@ try {
     <h1 class="mb-4">Editar Garantia / Contrato</h1>
 
     <?php if (!empty($sucesso)) : ?><div class="alert alert-success"><?= $sucesso ?></div><?php endif; ?>
-    <?php if (!empty($erro)) : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
-    <?php if (!empty($erros)) : ?><div class="alert alert-danger"><?php foreach ($erros as $e) : ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?></div><?php endif; ?>
+    <?php if (!empty($erro))    : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
+    <?php if (!empty($erros))   : ?>
+        <div class="alert alert-danger">
+            <?php foreach ($erros as $e) : ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
     <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="editar.php?id=<?= $idEncrypted ?>" novalidate autocomplete="off">
         <div class="mb-3">
@@ -113,8 +132,8 @@ try {
             </div>
         </div>
         <div class="mb-3">
-            <label class="form-label">Tipo de contrato</label>
-            <select class="form-select" name="id_tipo">
+            <label class="form-label">Tipo de contrato <span class="text-danger">*</span></label>
+            <select class="form-select" name="id_tipo" required>
                 <option value="">Selecione...</option>
                 <?php foreach ($tipos_contrato as $op) : ?>
                     <option value="<?= $op->id ?>" <?= ($gc->id_tipo_contrato ?? '') == $op->id ? 'selected' : '' ?>><?= htmlspecialchars($op->nome) ?></option>

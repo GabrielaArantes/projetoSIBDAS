@@ -16,13 +16,13 @@
 
 -- A despejar dados para tabela db1241094.agents: ~9 rows (aproximadamente)
 INSERT INTO `agents` (`id`, `nome`, `email`, `password`, `perfil`, `last_login`, `created_at`, `updated_at`, `agent_ativo`, `id_perfil`) VALUES
-	(1, 'Carla Mendes', _binary 0xfa51ff868bb2f34e9d75df1ad4aff0d01e93ef52007a700b83800987997f90ec, '$2y$10$XWhyWtFRCY3Sia9TK/uEjeix1iqi6zwdF9biNvjlxBdFmIqTIfVbu', 'Administrador', '2026-06-23 13:33:34', '2026-06-21 11:01:58', '2026-06-23 13:33:34', 1, 1),
+	(1, 'Carla Mendes', _binary 0xfa51ff868bb2f34e9d75df1ad4aff0d01e93ef52007a700b83800987997f90ec, '$2y$10$XWhyWtFRCY3Sia9TK/uEjeix1iqi6zwdF9biNvjlxBdFmIqTIfVbu', 'Administrador', '2026-06-24 02:59:05', '2026-06-21 11:01:58', '2026-06-24 02:59:05', 1, 1),
 	(2, 'Ricardo Silva', _binary 0x2c34d1c9f9a3a0c29038cc5d8ed8a4e1afa171b48005792b13930bd0203b337e, '$2y$10$fnrNsAaBrqSox0ZesvsQe.Ufqx07BFTyZvBL8HM/tzYr6cJU3HgCG', 'Administrador', NULL, '2026-06-21 11:01:58', '2026-06-23 10:47:48', 1, 1),
 	(3, 'Beatriz Costa', _binary 0x04c49d46c625670da35fc88142ff63e0afa171b48005792b13930bd0203b337e, '$2y$10$fnrNsAaBrqSox0ZesvsQe.Ufqx07BFTyZvBL8HM/tzYr6cJU3HgCG', 'Administrador', NULL, '2026-06-21 11:01:58', '2026-06-23 10:47:48', 1, 1),
-	(4, 'Hugo Pereira', _binary 0x09d7b195511080b65aff236aafe88309bf31e657d7fcf67c7d90c6651006b406, '$2y$10$wwgSzGV43.ab2VUFv.UBz.syQT7hPzU1w4BSRJZZkMFyTJ3nE6zPm', 'Técnico', '2026-06-23 10:49:31', '2026-06-21 11:02:00', '2026-06-23 10:49:31', 1, 2),
+	(4, 'Hugo Pereira', _binary 0x09d7b195511080b65aff236aafe88309bf31e657d7fcf67c7d90c6651006b406, '$2y$10$wwgSzGV43.ab2VUFv.UBz.syQT7hPzU1w4BSRJZZkMFyTJ3nE6zPm', 'Técnico', '2026-06-24 02:31:12', '2026-06-21 11:02:00', '2026-06-24 02:31:12', 1, 2),
 	(5, 'Joana Ribeiro', _binary 0x4021606ab66847016b51718b3e532b1bbf31e657d7fcf67c7d90c6651006b406, '$2y$10$wwgSzGV43.ab2VUFv.UBz.syQT7hPzU1w4BSRJZZkMFyTJ3nE6zPm', 'Técnico', NULL, '2026-06-21 11:02:00', '2026-06-23 10:47:48', 1, 2),
 	(6, 'André Fernandes', _binary 0xc0c5c082818aaf6962c4fd3cb528996cbf31e657d7fcf67c7d90c6651006b406, '$2y$10$wwgSzGV43.ab2VUFv.UBz.syQT7hPzU1w4BSRJZZkMFyTJ3nE6zPm', 'Técnico', NULL, '2026-06-21 11:02:00', '2026-06-23 10:47:48', 1, 2),
-	(7, 'Filipe Gonçalves', _binary 0x55d71edb99a85e38b3f75491743877bcafa171b48005792b13930bd0203b337e, '$2y$10$fnrNsAaBrqSox0ZesvsQe.Ufqx07BFTyZvBL8HM/tzYr6cJU3HgCG', 'Profissional de Saude', '2026-06-23 13:26:08', '2026-06-21 11:02:00', '2026-06-23 13:26:08', 1, 3),
+	(7, 'Filipe Gonçalves', _binary 0x55d71edb99a85e38b3f75491743877bcafa171b48005792b13930bd0203b337e, '$2y$10$fnrNsAaBrqSox0ZesvsQe.Ufqx07BFTyZvBL8HM/tzYr6cJU3HgCG', 'Profissional de Saude', '2026-06-24 02:39:04', '2026-06-21 11:02:00', '2026-06-24 02:39:04', 1, 3),
 	(8, 'Marta Oliveira', _binary 0xa78875cb483c49bc4a9e43d99af9f0b3afa171b48005792b13930bd0203b337e, '$2y$10$fnrNsAaBrqSox0ZesvsQe.Ufqx07BFTyZvBL8HM/tzYr6cJU3HgCG', 'Profissional de Saude', NULL, '2026-06-21 11:02:00', '2026-06-23 10:53:42', 1, 3),
 	(9, 'Tiago Santos', _binary 0x693f80b0b6bf96591bf722b3ebc3bc3aafa171b48005792b13930bd0203b337e, '$2y$10$fnrNsAaBrqSox0ZesvsQe.Ufqx07BFTyZvBL8HM/tzYr6cJU3HgCG', 'Profissional de Saude', NULL, '2026-06-21 11:02:00', '2026-06-23 10:53:42', 1, 3);
 
@@ -169,7 +169,7 @@ INSERT INTO `localizacao` (`id`, `edificio`, `piso`, `servico`, `sala`, `localiz
 	(9, 'Edifício B', '2', 'Internamento', 'Sala 4', 1),
 	(10, 'Edifício B', '2', 'Internamento', 'Sala 4', 1);
 
--- A despejar dados para tabela db1241094.logs: ~33 rows (aproximadamente)
+-- A despejar dados para tabela db1241094.logs: ~2 rows (aproximadamente)
 INSERT INTO `logs` (`id`, `tipo_evento`, `descricao`, `agente_id`, `ip`, `created_at`) VALUES
 	(1, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-22 10:24:34'),
 	(2, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-22 10:33:40'),
@@ -203,7 +203,16 @@ INSERT INTO `logs` (`id`, `tipo_evento`, `descricao`, `agente_id`, `ip`, `create
 	(30, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-23 11:38:00'),
 	(31, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Filipe Gonçalves', 7, '127.0.0.1', '2026-06-23 13:26:09'),
 	(32, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-23 13:33:34'),
-	(33, 'DADOS_ALTERADOS', 'Equipamento editado (id: 11): Analisador Bioquímico', 1, '127.0.0.1', '2026-06-23 13:34:09');
+	(33, 'DADOS_ALTERADOS', 'Equipamento editado (id: 11): Analisador Bioquímico', 1, '127.0.0.1', '2026-06-23 13:34:09'),
+	(34, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-23 22:56:49'),
+	(35, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-23 23:06:28'),
+	(36, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-24 02:09:57'),
+	(37, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Hugo Pereira', 4, '127.0.0.1', '2026-06-24 02:28:27'),
+	(38, 'LOGIN_FALHOU', 'Tentativa de login falhada para o email: saude1@medstock.ptsaude123', NULL, '127.0.0.1', '2026-06-24 02:30:17'),
+	(39, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Filipe Gonçalves', 7, '127.0.0.1', '2026-06-24 02:30:23'),
+	(40, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Hugo Pereira', 4, '127.0.0.1', '2026-06-24 02:31:12'),
+	(41, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Filipe Gonçalves', 7, '127.0.0.1', '2026-06-24 02:39:04'),
+	(42, 'LOGIN_OK', 'Login efetuado com sucesso pelo agente: Carla Mendes', 1, '127.0.0.1', '2026-06-24 02:59:05');
 
 -- A despejar dados para tabela db1241094.mensagem_contacto: ~2 rows (aproximadamente)
 INSERT INTO `mensagem_contacto` (`id`, `nome`, `email`, `telemovel`, `mensagem`, `mensagem_lida`, `created_at`) VALUES

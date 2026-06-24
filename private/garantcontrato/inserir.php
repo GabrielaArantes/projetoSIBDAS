@@ -2,32 +2,30 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/garantcontrato/listar.php');
 start_session();
+require_once __DIR__ . '/../includes/validacoes.php';
 
 $equipamentos   = [];
 $tipos_contrato = get_tipos_contrato();
 $periodicidades = get_periodicidades();
+$erros          = [];
+$erro_sistema   = "";
 
 try {
-    $pdo = get_pdo();
+    $pdo          = get_pdo();
     $equipamentos = $pdo->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll();
 } catch (PDOException $err) {}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $equipamento    = $_POST["equipamento"]   ?? "";
-    $inicio         = trim($_POST["inicio"]   ?? "");
-    $fim            = trim($_POST["fim"]      ?? "");
-    $tem_contrato   = isset($_POST["tem_contrato"]) ? 1 : 0;
-    $id_tipo        = $_POST["id_tipo"]        ?? "";
-    $entidade       = $_POST["entidade"]       ?? "";
-    $id_periodicidade = $_POST["id_periodicidade"] ?? "";
-    $observacoes    = $_POST["observacoes"]    ?? "";
+    $entidade = ucwords(strtolower($_POST["entidade"] ?? ""));
 
-    $erros = [];
-    $erro_sistema = "";
+    $erros = array_merge(
+        validar_select_obrigatorio($_POST['equipamento'] ?? '', 'Equipamento Associado'),
+        validar_select_obrigatorio($_POST['id_tipo'] ?? '', 'Tipo de Contrato')
+    );
 
-    if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
-    if (empty($id_tipo))     $erros[] = "O Tipo de contrato é obrigatório.";
+    $inicio = trim($_POST["inicio"] ?? "");
+    $fim    = trim($_POST["fim"]    ?? "");
 
     if (!empty($inicio) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicio))
         $erros[] = "Formato de data de início inválido.";
@@ -36,11 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($inicio) && !empty($fim) && $fim < $inicio)
         $erros[] = "A data de fim não pode ser anterior à data de início.";
 
-    if (empty($erros)) $entidade = ucwords(strtolower($entidade));
-
     if (empty($erros)) {
         try {
-            $pdo = get_pdo();
+            $pdo  = get_pdo();
             $stmt = $pdo->prepare(
                 "INSERT INTO garantia_contrato (id_equipamento, data_inicio, data_fim, tem_contrato,
                     tipo_contrato, id_tipo_contrato, entidade_responsavel,
@@ -49,15 +45,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?, (SELECT nome FROM periodicidades WHERE id=?), ?, ?)"
             );
             $stmt->execute([
-                $equipamento, $inicio ?: null, $fim ?: null, $tem_contrato,
-                $id_tipo, $id_tipo,
+                $_POST['equipamento'],
+                $inicio ?: null,
+                $fim    ?: null,
+                isset($_POST['tem_contrato']) ? 1 : 0,
+                $_POST['id_tipo'], $_POST['id_tipo'],
                 $entidade,
-                $id_periodicidade ?: null, $id_periodicidade ?: null,
-                $observacoes
+                $_POST['id_periodicidade'] ?: null, $_POST['id_periodicidade'] ?: null,
+                $_POST['observacoes']
             ]);
 
             $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Garantia/Contrato inserido para equipamento id: ' . $equipamento, $agente_id);
+            registar_log('DADOS_ALTERADOS', 'Garantia/Contrato inserido para equipamento id: ' . $_POST['equipamento'], $agente_id);
 
             header("Location: listar.php");
             exit;
@@ -80,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     <?php endif; ?>
     <?php if (!empty($erro_sistema)) : ?>
-        <div class="alert alert-danger"><strong>Erro:</strong> <p><?= htmlspecialchars($erro_sistema) ?></p></div>
+        <div class="alert alert-danger"><strong>Erro:</strong> <?= htmlspecialchars($erro_sistema) ?></div>
     <?php endif; ?>
 
     <form class="shadow p-4 rounded" style="max-width: 850px;" method="POST" action="inserir.php" novalidate>
@@ -142,6 +141,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <script>
     flatpickr("#data_inicio", { dateFormat: "Y-m-d" });
-    flatpickr("#data_fim", { dateFormat: "Y-m-d" });
+    flatpickr("#data_fim",    { dateFormat: "Y-m-d" });
 </script>
 <?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -2,49 +2,32 @@
 require_once __DIR__ . '/../includes/funcoes.php';
 redirect_if_not_role(['Administrador', 'Técnico'], '/private/documentacao/listar.php');
 start_session();
+require_once __DIR__ . '/../includes/validacoes.php';
 
-$equipamentos = [];
+$equipamentos    = [];
+$tipos_documento = get_tipos_documento();
+$erros           = [];
+$erro_sistema    = "";
+
 try {
-    $pdo = get_pdo();
+    $pdo          = get_pdo();
     $equipamentos = $pdo->query("SELECT id, nome FROM equipamento ORDER BY nome")->fetchAll();
 } catch (PDOException $err) {}
 
-$tipos_documento = get_tipos_documento();
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $id_tipo     = $_POST["id_tipo"]     ?? "";
-    $nome        = trim($_POST["nome"]   ?? "");
-    $data        = trim($_POST["data"]   ?? "");
-    $validade    = $_POST["validade"]    ?? "";
-    $equipamento = $_POST["equipamento"] ?? "";
+    $erros = array_merge(
+        validar_nome($_POST['nome'] ?? ''),
+        validar_select_obrigatorio($_POST['id_tipo'] ?? '', 'Tipo de Documento'),
+        validar_data($_POST['data'] ?? '', 'Data do Documento'),
+        validar_select_obrigatorio($_POST['equipamento'] ?? '', 'Equipamento Associado')
+    );
 
-    $erros = [];
-    $erro_sistema = "";
-
-    if (empty($id_tipo)) $erros[] = "O Tipo de Documento é obrigatório.";
-    if (empty($nome))    $erros[] = "O Nome do Documento é obrigatório.";
-
-    if (empty($data)) {
-        $erros[] = "A Data do Documento é obrigatória.";
-    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data)) {
-        $erros[] = "Formato de data inválido. Use AAAA-MM-DD.";
-    } else {
-        $partes = explode('-', $data);
-        if (!checkdate((int)$partes[1], (int)$partes[2], (int)$partes[0]))
-            $erros[] = "Data do Documento inválida.";
-    }
-
-    if (!empty($validade) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $validade))
-        $erros[] = "Formato de data de validade inválido.";
-
-    if (empty($equipamento)) $erros[] = "O Equipamento Associado é obrigatório.";
     if (empty($_FILES['ficheiro']['name'])) $erros[] = "O Ficheiro é obrigatório.";
-
-    if (empty($erros)) $nome = ucwords(strtolower($nome));
 
     $nomeFicheiro = '';
     $nomeOriginal = '';
+
     if (empty($erros)) {
         $nomeOriginal = $_FILES['ficheiro']['name'];
         $extensao     = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
@@ -56,18 +39,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($erros)) {
         try {
-            $pdo = get_pdo();
+            $pdo  = get_pdo();
             $stmt = $pdo->prepare(
                 "INSERT INTO documento (id_equipamento, tipo, id_tipo_documento, nome, data_documento, data_validade, ficheiro, ficheiro_nome_original)
                  VALUES (?, (SELECT nome FROM tipos_documento WHERE id=?), ?, ?, ?, ?, ?, ?)"
             );
             $stmt->execute([
-                $equipamento, $id_tipo, $id_tipo, $nome, $data,
-                $validade ?: null, $nomeFicheiro, $nomeOriginal
+                $_POST['equipamento'],
+                $_POST['id_tipo'], $_POST['id_tipo'],
+                $_POST['nome'], $_POST['data'],
+                $_POST['validade'] ?: null,
+                $nomeFicheiro, $nomeOriginal
             ]);
 
             $agente_id = $_SESSION['agente_id'] ?? null;
-            registar_log('DADOS_ALTERADOS', 'Documento inserido: ' . $nome, $agente_id);
+            registar_log('DADOS_ALTERADOS', 'Documento inserido: ' . ($_POST['nome'] ?? ''), $agente_id);
 
             header("Location: listar.php");
             exit;
@@ -93,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     <?php endif; ?>
     <?php if (!empty($erro_sistema)) : ?>
-        <div class="alert alert-danger"><strong>Erro:</strong> <p><?= htmlspecialchars($erro_sistema) ?></p></div>
+        <div class="alert alert-danger"><strong>Erro:</strong> <?= htmlspecialchars($erro_sistema) ?></div>
     <?php endif; ?>
 
     <div class="shadow p-4 rounded bg-white" style="max-width: 700px; margin: auto;">
