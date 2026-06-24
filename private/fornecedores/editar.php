@@ -10,8 +10,8 @@ if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
 }
 
 $sucesso = '';
-$erro = '';
-$erros = [];
+$erro    = '';
+$erros   = [];
 $fornecedor = null;
 
 $idEncrypted = $_GET['id'] ?? null;
@@ -22,11 +22,18 @@ $id = (int)$id;
 $tipos_fornecedor = get_tipos_fornecedor();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $erros = validar_nome($_POST['nome_empresa'] ?? '');
+    $erros = array_merge(
+        validar_nome($_POST['nome_empresa'] ?? ''),
+        validar_nif($_POST['nif'] ?? ''),
+        validar_telefone($_POST['telefone'] ?? ''),
+        validar_email($_POST['email'] ?? ''),
+        validar_select_obrigatorio($_POST['id_tipo_fornecedor'] ?? '', 'Tipo de Fornecedor'),
+        validar_telefone_opcional($_POST['telefone_contacto'] ?? '', 'Telefone da Pessoa de Contacto')
+    );
 
     if (empty($erros)) {
         try {
-            $pdo = get_pdo();
+            $pdo  = get_pdo();
             $stmt = $pdo->prepare(
                 "UPDATE fornecedor SET nome=?, nif=?, telefone=?, email=?, morada=?, website=?,
                  pessoa_contacto=?, telefone_contacto=?,
@@ -34,13 +41,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                  observacoes=? WHERE id=?"
             );
             $stmt->execute([
-                $_POST['nome_empresa'], $_POST['nif'], $_POST['telefone'], $_POST['email'],
-                $_POST['morada'], $_POST['website'], $_POST['pessoa_contacto'], $_POST['telefone_contacto'],
+                ucwords(strtolower($_POST['nome_empresa'])),
+                $_POST['nif'],
+                $_POST['telefone'],
+                strtolower($_POST['email']),
+                $_POST['morada'],
+                $_POST['website'],
+                ucwords(strtolower($_POST['pessoa_contacto'] ?? '')),
+                $_POST['telefone_contacto'],
                 $_POST['id_tipo_fornecedor'], $_POST['id_tipo_fornecedor'],
-                $_POST['observacoes'], $id
+                $_POST['observacoes'],
+                $id
             ]);
 
-            $sucesso = "Fornecedor atualizado com sucesso!";
+            $sucesso   = "Fornecedor atualizado com sucesso!";
             $agente_id = $_SESSION['agente_id'] ?? null;
             registar_log('DADOS_ALTERADOS', 'Fornecedor editado (id: ' . $id . '): ' . ($_POST['nome_empresa'] ?? ''), $agente_id);
 
@@ -51,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 try {
-    $pdo = get_pdo();
+    $pdo  = get_pdo();
     $stmt = $pdo->prepare("SELECT * FROM fornecedor WHERE id = ?");
     $stmt->execute([$id]);
     $fornecedor = $stmt->fetch();
@@ -68,8 +82,12 @@ try {
     <h1 class="mb-4">Editar Fornecedor</h1>
 
     <?php if (!empty($sucesso)) : ?><div class="alert alert-success"><?= $sucesso ?></div><?php endif; ?>
-    <?php if (!empty($erro)) : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
-    <?php if (!empty($erros)) : ?><div class="alert alert-danger"><?php foreach ($erros as $e) : ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?></div><?php endif; ?>
+    <?php if (!empty($erro))    : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
+    <?php if (!empty($erros))   : ?>
+        <div class="alert alert-danger">
+            <?php foreach ($erros as $e) : ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
     <form class="shadow p-4 rounded" style="max-width: 800px;" method="POST" action="editar.php?id=<?= $idEncrypted ?>" novalidate autocomplete="off">
         <div class="row mb-3">
@@ -78,18 +96,18 @@ try {
                 <input type="text" class="form-control" name="nome_empresa" value="<?= htmlspecialchars($fornecedor->nome ?? '') ?>" required>
             </div>
             <div class="col">
-                <label class="form-label">NIF</label>
-                <input type="text" class="form-control" name="nif" value="<?= htmlspecialchars($fornecedor->nif ?? '') ?>">
+                <label class="form-label">NIF <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="nif" value="<?= htmlspecialchars($fornecedor->nif ?? '') ?>" required>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col">
-                <label class="form-label">Telefone</label>
-                <input type="text" class="form-control" name="telefone" value="<?= htmlspecialchars($fornecedor->telefone ?? '') ?>">
+                <label class="form-label">Telefone <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="telefone" value="<?= htmlspecialchars($fornecedor->telefone ?? '') ?>" required>
             </div>
             <div class="col">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($fornecedor->email ?? '') ?>">
+                <label class="form-label">Email <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($fornecedor->email ?? '') ?>" required>
             </div>
         </div>
         <div class="mb-3">

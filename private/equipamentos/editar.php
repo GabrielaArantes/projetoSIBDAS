@@ -9,9 +9,9 @@ if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'POST'])) {
     exit;
 }
 
-$sucesso = '';
-$erro = '';
-$erros = [];
+$sucesso    = '';
+$erro       = '';
+$erros      = [];
 $equipamento = null;
 
 $idEncrypted = $_GET['id'] ?? null;
@@ -19,7 +19,6 @@ $id = aes_decrypt($idEncrypted);
 if (!$id || !is_numeric($id)) { header("Location: listar.php"); exit; }
 $id = (int)$id;
 
-// Carregar lookups
 $categorias     = get_categorias();
 $estados        = get_estados();
 $criticidades   = get_criticidades();
@@ -28,15 +27,15 @@ $tipos_doc      = get_tipos_documento();
 $tipos_contrato = get_tipos_contrato();
 $periodicidades = get_periodicidades();
 
-$localizacoes = [];
-$fornecedores = [];
+$localizacoes           = [];
+$fornecedores           = [];
 $fornecedoresAssociados = [];
 
 try {
-    $pdo = get_pdo();
+    $pdo          = get_pdo();
     $localizacoes = $pdo->query("SELECT id, edificio, piso, servico, sala FROM localizacao WHERE localizacao_ativo = 1 ORDER BY edificio, piso, servico, sala")->fetchAll();
     $fornecedores = $pdo->query("SELECT id, nome, id_tipo_fornecedor FROM fornecedor WHERE fornecedor_ativo = 1 ORDER BY nome")->fetchAll();
-    $tipos_forn = [];
+    $tipos_forn   = [];
     foreach (get_tipos_fornecedor() as $t) $tipos_forn[$t->id] = $t->nome;
     $stmt = $pdo->prepare("SELECT id_fornecedor FROM equipamento_fornecedor WHERE id_equipamento = ?");
     $stmt->execute([$id]);
@@ -46,6 +45,16 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Obter nome do tipo de entrada para validação condicional do custo
+    $tipo_entrada_nome = '';
+    foreach ($tipos_entrada as $t) {
+        if ($t->id == ($_POST['id_tipo_entrada'] ?? '')) {
+            $tipo_entrada_nome = $t->nome;
+            break;
+        }
+    }
+
     $erros = array_merge(
         validar_designacao($_POST['designacao'] ?? ''),
         validar_marca($_POST['marca'] ?? ''),
@@ -56,7 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         validar_select_obrigatorio($_POST['id_tipo_entrada'] ?? '', 'Tipo de Entrada'),
         validar_select_obrigatorio($_POST['id_estado'] ?? '', 'Estado Atual'),
         validar_select_obrigatorio($_POST['id_criticidade'] ?? '', 'Criticidade'),
-        validar_select_obrigatorio($_POST['localizacao'] ?? '', 'Localização')
+        validar_select_obrigatorio($_POST['localizacao'] ?? '', 'Localização'),
+        validar_data_aquisicao($_POST['data_aquisicao'] ?? ''),
+        validar_ano_fabrico($_POST['ano_fabrico'] ?? ''),
+        validar_custo($_POST['custo_aquisicao'] ?? '', $tipo_entrada_nome)
     );
 
     $fornecedoresEscolhidos = $_POST['fornecedores'] ?? [];
@@ -64,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($erros)) {
         try {
-            $pdo = get_pdo();
+            $pdo            = get_pdo();
             $custoAquisicao = ($_POST['custo_aquisicao'] === '') ? null : $_POST['custo_aquisicao'];
 
             $stmt = $pdo->prepare(
@@ -82,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_POST['codigo_interno'], $_POST['designacao'],
                 $_POST['id_categoria'], $_POST['id_categoria'],
                 $_POST['marca'], $_POST['modelo'], $_POST['numero_serie'], $_POST['fabricante'],
-                $_POST['data_aquisicao'], $_POST['ano_fabrico'], $custoAquisicao,
+                $_POST['data_aquisicao'] ?: null, $_POST['ano_fabrico'] ?: null, $custoAquisicao,
                 $_POST['id_tipo_entrada'], $_POST['id_tipo_entrada'],
                 $_POST['id_estado'], $_POST['id_estado'],
                 $_POST['id_criticidade'], $_POST['id_criticidade'],
@@ -93,12 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Atualizar fornecedores
             $stmt = $pdo->prepare("DELETE FROM equipamento_fornecedor WHERE id_equipamento = ?");
             $stmt->execute([$id]);
-            if (!empty($fornecedoresEscolhidos)) {
-                $stmt = $pdo->prepare("INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor) VALUES (?, ?)");
-                foreach ($fornecedoresEscolhidos as $idForn) $stmt->execute([$id, (int)$idForn]);
-            }
+            $stmt = $pdo->prepare("INSERT INTO equipamento_fornecedor (id_equipamento, id_fornecedor) VALUES (?, ?)");
+            foreach ($fornecedoresEscolhidos as $idForn) $stmt->execute([$id, (int)$idForn]);
 
-            $sucesso = "Equipamento atualizado com sucesso!";
+            $sucesso   = "Equipamento atualizado com sucesso!";
             $agente_id = $_SESSION['agente_id'] ?? null;
             registar_log('DADOS_ALTERADOS', 'Equipamento editado (id: ' . $id . '): ' . ($_POST['designacao'] ?? ''), $agente_id);
             $fornecedoresAssociados = $fornecedoresEscolhidos;
@@ -107,11 +117,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $erro = "Erro ao atualizar: " . $err->getMessage();
         }
 
-        // Processar garantia (se datas preenchidas)
-        $garantia_inicio  = $_POST['garantia_inicio'] ?? '';
-        $garantia_fim     = $_POST['garantia_fim'] ?? '';
-        $id_garantia_tipo = $_POST['id_garantia_tipo'] ?? '';
-        $id_garantia_per  = $_POST['id_garantia_periodicidade'] ?? '';
+        // Processar garantia
+        $garantia_inicio   = $_POST['garantia_inicio'] ?? '';
+        $garantia_fim      = $_POST['garantia_fim'] ?? '';
+        $id_garantia_tipo  = $_POST['id_garantia_tipo'] ?? '';
+        $id_garantia_per   = $_POST['id_garantia_periodicidade'] ?? '';
         $garantia_entidade = ucwords(strtolower($_POST['garantia_entidade'] ?? ''));
         $garantia_obs      = $_POST['garantia_observacoes'] ?? '';
         $tem_contrato      = isset($_POST['tem_contrato']) ? 1 : 0;
@@ -128,8 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 );
                 $stmt->execute([
                     $id,
-                    $garantia_inicio ?: null,
-                    $garantia_fim    ?: null,
+                    $garantia_inicio ?: null, $garantia_fim ?: null,
                     $tem_contrato,
                     $id_garantia_tipo ?: null, $id_garantia_tipo ?: null,
                     $garantia_entidade,
@@ -141,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Processar upload de documento
+        // Upload de documento
         if (!empty($_FILES['documentos']['name'][0])) {
             $doc_tipo_id   = $_POST['doc_tipo'] ?? '';
             $doc_descricao = trim($_POST['doc_descricao'] ?? '');
@@ -167,9 +176,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Carregar equipamento atual
+// Carregar equipamento
 try {
-    $pdo = get_pdo();
+    $pdo  = get_pdo();
     $stmt = $pdo->prepare("SELECT e.*, l.edificio, l.piso, l.servico, l.sala FROM equipamento e LEFT JOIN localizacao l ON e.id_localizacao = l.id WHERE e.id = ?");
     $stmt->execute([$id]);
     $equipamento = $stmt->fetch();
@@ -189,8 +198,12 @@ try {
     </div>
 
     <?php if (!empty($sucesso)) : ?><div class="alert alert-success"><?= $sucesso ?></div><?php endif; ?>
-    <?php if (!empty($erro)) : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
-    <?php if (!empty($erros)) : ?><div class="alert alert-danger"><?php foreach ($erros as $e) : ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?></div><?php endif; ?>
+    <?php if (!empty($erro))    : ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
+    <?php if (!empty($erros))   : ?>
+        <div class="alert alert-danger">
+            <?php foreach ($erros as $e) : ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
     <form method="POST" action="editar.php?id=<?= $idEncrypted ?>" enctype="multipart/form-data" novalidate autocomplete="off" class="shadow p-4 rounded bg-white" style="max-width: 900px; margin: auto;">
 
@@ -234,14 +247,15 @@ try {
                     <label>Fabricante <span class="text-danger">*</span></label>
                     <input type="text" class="form-control mb-2" name="fabricante" value="<?= htmlspecialchars($equipamento->fabricante ?? '') ?>" required>
 
-                    <label>Data de Aquisição <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control mb-2" name="data_aquisicao" value="<?= htmlspecialchars($equipamento->data_aquisicao ?? '') ?>" required>
+                    <label>Data de Aquisição</label>
+                    <input type="date" class="form-control mb-2" name="data_aquisicao" value="<?= htmlspecialchars($equipamento->data_aquisicao ?? '') ?>">
 
-                    <label>Ano de Fabrico <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control mb-2" name="ano_fabrico" value="<?= htmlspecialchars($equipamento->ano_fabrico ?? '') ?>" min="1900" max="2100" required>
+                    <label>Ano de Fabrico</label>
+                    <input type="number" class="form-control mb-2" name="ano_fabrico" value="<?= htmlspecialchars($equipamento->ano_fabrico ?? '') ?>" min="1900" max="<?= date('Y') ?>">
 
                     <label>Custo de Aquisição (€)</label>
-                    <input type="number" class="form-control mb-2" name="custo_aquisicao" value="<?= htmlspecialchars($equipamento->custo ?? '') ?>" min="0">
+                    <input type="number" class="form-control mb-2" name="custo_aquisicao" value="<?= htmlspecialchars($equipamento->custo ?? '') ?>" min="0" step="0.01">
+                    <div class="form-text text-muted mb-2">Obrigatório para tipo de entrada "Compra" ou "Aluguer".</div>
 
                     <label>Tipo de Entrada <span class="text-danger">*</span></label>
                     <select name="id_tipo_entrada" class="form-select mb-2" required>
@@ -366,7 +380,6 @@ try {
                 <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Alterações
             </button>
         </div>
-
     </form>
 </main>
 <?php include __DIR__ . '/../includes/footer.php'; ?>
